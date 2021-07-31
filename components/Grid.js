@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components';
 import { CSSTransition } from 'react-transition-group'
 import Gridline from './Gridline.js';
@@ -30,11 +30,39 @@ const StyledGrid = styled(motion.div)`
 
 
 `
+
+const resizeDelta = 200;
 export default function Grid(props) {
-    const [width, height] = useDeviceSize();
+    const [rowConfigs, setRowConfigs] = useState({});
+    const [colConfigs, setColConfigs] = useState({});
+    const [numColLines, setNumColLines] = useState(1);
+    const [width, setWidth] = useState(0);
+    const [height, setHeight] = useState(0);
+
+    useEffect(() => {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        let rconfigs = {};
+        let cconfigs = {};
+        const nrlines = props.numLines
+        const nclines = Math.floor(width / height * props.numLines + 1)
+        for (let i = 1; i <= nrlines; ++i) {
+            rconfigs[i] = configuration(i)
+
+        }
+        for (let i = 1; i <= nclines; ++i) {
+            cconfigs[i] = configuration(i)
+        }
+        setNumColLines(nclines);
+        setRowConfigs(rconfigs);
+        setColConfigs(cconfigs);
+        setWidth(width)
+        setHeight(height);
+    }, [])
+
+    console.log(colConfigs)
     const numRowLines = props.numLines;
-    const numColLines = Math.floor(width / height * props.numLines + 1);
-    const spacing = Math.floor(100 / props.numLines);
+    const spacing = Math.floor(100 / numRowLines);
 
     const position = (i) => {
         let fixedPos = props.offset + spacing * i;
@@ -55,7 +83,7 @@ export default function Grid(props) {
         const rowLines = []
         for (let i = 1; i <= numRowLines; i++) {
             let conf = configuration(i);
-            rowLines.push(<Gridline key={i} isRow={true} width = {width} height = {height} {...conf} />);
+            rowLines.push(<Gridline key={i} isRow={true} width={width} height={height} {...conf} />);
         }
         return rowLines;
     }
@@ -63,21 +91,29 @@ export default function Grid(props) {
         const colLines = [];
         for (let i = 1; i <= numColLines; i++) {
             let conf = configuration(i);
-            colLines.push(<Gridline key={i + props.numLines} isRow={false} width = {width} height = {height} {...conf} />);
+            colLines.push(<Gridline key={i + props.numLines} isRow={false} width={width} height={height} {...conf} />);
         }
         return colLines;
     }
+
+    setTimeout(() => props.setTriggerNameEnter(true), 3000);
     return (
         <>
             {(width !== 0 && height !== 0) &&
                 <StyledGrid initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     onAnimationComplete={() => {
-                        setTimeout(() => props.setTriggerNameEnter(true), 10000);
                     }}
                     duration={props.duration}>
-                    {renderRowLines()}
-                    {renderColLines()}
+                    {[...Array(numRowLines)].map((_, i) => {
+                        return (
+                            <Gridline key={i} isRow={true} width={width} height={height} {...rowConfigs[i+1]} />);
+                    }
+                    )}
+                    {[...Array(numColLines)].map((_, i) => {
+                        return (<Gridline key={i + props.numLines} isRow={false} width={width} height={height} {...colConfigs[i+1]} />);
+                    }
+                    )}
                 </StyledGrid>
             }
         </>

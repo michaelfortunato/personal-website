@@ -12,14 +12,13 @@ const StyledGridline = styled.div`
     top: ${(props) => props.isRow ? `${props.fixedPos}vh` : 'initial'};
     left: ${(props) => props.isRow ? 'initial' : `${props.fixedPos}vh`};
     
-    transform-origin: ${(props) => props.isRow ? `${props.floatingPos}vh` : '50%'}
-                        ${(props) => props.isRow ? '50%' : `${props.floatingPos}vh`};
-    transform: ${(props) => props.isRow ? `scaleX(${props.circleXScaling})` : `scaleY(${props.circleYScaling})`};    
+    transform: ${(props => props.isRow ? 'scaleX(1) scaleY(.125)' : 'scaleY(1) scaleX(.125)')};
     
-    border-radius: 50%;
     &.line-appear, &.line-enter {
-        border-radius: 50%;
+        transform-origin: ${(props) => props.isRow ? `${props.floatingPos}vh` : '50%'}
+                        ${(props) => props.isRow ? '50%' : `${props.floatingPos}vh`};
         transform: ${(props) => props.isRow ? `scaleX(${props.circleXScaling})` : `scaleY(${props.circleYScaling})`};    
+        border-radius: 50%;
     }
     &.line-appear-active, &.line-enter-active {
         
@@ -35,10 +34,10 @@ const StyledGridline = styled.div`
     }
 `;
 
-export default function Gridline(props) {
+const Gridline = React.memo((props) => {
     const circleSize = 10; //in pixels
     const circleXScaling = circleSize / props.width;
-    const circleYScaling = circleSize / props.width
+    const circleYScaling = circleSize / props.height;
     return (<CSSTransition
         in={true}
         appear={true}
@@ -50,4 +49,6 @@ export default function Gridline(props) {
             circleYScaling={circleYScaling} />
     </CSSTransition>
     );
-}
+})
+
+export default Gridline;
