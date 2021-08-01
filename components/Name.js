@@ -5,7 +5,6 @@ import Letter from './Letter.js'
 
 
 const StyledName = styled.div`
-    font-family: Helvetica, Arial, sans-serif;
     font-size: 56px;
     overflow: visible;
     display: flex;

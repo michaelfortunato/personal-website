@@ -11,7 +11,6 @@ const Wrapper = styled.div`
 
 const StyledNavItem = styled(Link)`
     color: white;
-
 }
 `
     ;

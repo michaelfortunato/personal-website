@@ -2,35 +2,50 @@ import '../styles/globals.css'
 
 import React, { useState, useEffect } from 'react'
 
-
-//import Navbar from '@components/Nav/Navbar.js'
-//import Home from './Home'
-//import About from './About'
-import { createMuiTheme, StylesProvider } from "@material-ui/core/styles"
+import { createTheme, StylesProvider } from "@material-ui/core/styles"
 import { ThemeProvider as MuiThemeProvider } from "@material-ui/core/styles"
-import { ThemeProvider as StyledComponentsThemeProvider } from "styled-components"
+import { ThemeProvider as StyledComponentsThemeProvider, ThemeProvider } from "styled-components"
 import { useRouter } from 'next/router'
+import "@fontsource/roboto"
 import { AnimatePresence, motion } from 'framer-motion'
 import Head from "next/head"
 import styled from 'styled-components'
 import Navbar from '@components/Nav/Navbar'
-import Link from "next/link"
 const StyledRoot = styled(motion.div)`
-  overflow: hidden: 
   width: 100vw;
   height: 100vh;
   background-color: #e6af4b;
 `
-/*
-const routes = [
-  { path: '/about', name: 'About', aniName: 'about', aniEnterTime: 6000, aniExitTime: 3000, Component: About },
-  { path: '/', name: 'Home', aniName: 'home', aniEnterTime: 3000, aniExitTime: 6000, Component: Home }
-]
-*/
 
-const routeTransitions = {
-  "/": {backgroundColor: "#e6af4b"}, 
-  "/about": {backgroundColor: "#14213D"}
+const routes = {
+  "/": {
+    name: "Home",
+    theme: createTheme({
+      palette: {
+        primary: {
+          main: "#e6af4b"
+        },
+        secondary: {
+          main: "#264653"
+        },
+      },
+    }),
+    transition: { backgroundColor: "#e6af4b" }
+  },
+  "/about": {
+    name: "About",
+    theme: createTheme({
+      palette: {
+        primary: {
+          main: "#14213D",
+        },
+        secondary: {
+          main: "#fafafa"
+        },
+      },
+    }),
+    transition: { backgroundColor: "#14213D" }
+  }
 }
 export default function App({ Component, pageProps }) {
   const [initialVisits, setInitialVisits] = useState({ "/": false, "about": false, "/apps": false, "/blog": false })
@@ -62,14 +77,18 @@ export default function App({ Component, pageProps }) {
       <main>
         <div>
           <StylesProvider injectFirst>
-            <Navbar location = {pathname}/> 
-            <AnimatePresence initial = {false}>
-            <StyledRoot animate = {routeTransitions[pathname]}>
-              <AnimatePresence exitBeforeEnter>
-                <Component key={pathname}
-                  {...pageProps} />
-              </AnimatePresence>
-            </StyledRoot>
+            <Navbar routes={routes} currentPage={pathname} />
+            <AnimatePresence initial={false}>
+              <StyledRoot animate={routes[pathname].transition}>
+                <AnimatePresence exitBeforeEnter>
+                  <MuiThemeProvider theme={routes[pathname].theme}>
+                    <StyledComponentsThemeProvider theme={routes[pathname].theme}>
+                      <Component key={pathname}
+                        {...pageProps} />
+                    </StyledComponentsThemeProvider>
+                  </MuiThemeProvider>
+                </AnimatePresence>
+              </StyledRoot>
             </AnimatePresence>
           </StylesProvider>
         </div>
