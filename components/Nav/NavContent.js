@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { CSSTransition } from 'react-transition-group'
 import NavItem from './NavItem.js';
-
 const StyledNavContent = styled.div`
     position: relative;
     left: 0;
