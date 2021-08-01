@@ -38,7 +38,7 @@ class AboutFirstPage extends React.Component {
         return (
             <StyledPage>
             <Lottie
-                lottieRef={this.lottieRef} loop={false} autoplay={false} animationData={animationData} loop = {true}
+                lottieRef={this.lottieRef} loop={false} autoplay={false} animationData={animationData}
                 
             />
                 <div style = {{'position': 'absolute', 'top': '0'}}>

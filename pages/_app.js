@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 
 import { createTheme, StylesProvider } from "@material-ui/core/styles"
 import { ThemeProvider as MuiThemeProvider } from "@material-ui/core/styles"
-import { ThemeProvider as StyledComponentsThemeProvider, ThemeProvider } from "styled-components"
+import { ThemeProvider as StyledComponentsThemeProvider } from "styled-components"
 import { useRouter } from 'next/router'
 import "@fontsource/roboto"
 import { AnimatePresence, motion } from 'framer-motion'
@@ -77,19 +77,19 @@ export default function App({ Component, pageProps }) {
       <main>
         <div>
           <StylesProvider injectFirst>
-            <Navbar routes={routes} currentPage={pathname} />
-            <AnimatePresence initial={false}>
-              <StyledRoot animate={routes[pathname].transition}>
-                <AnimatePresence exitBeforeEnter>
-                  <MuiThemeProvider theme={routes[pathname].theme}>
-                    <StyledComponentsThemeProvider theme={routes[pathname].theme}>
+            <MuiThemeProvider theme={routes[pathname].theme}>
+              <StyledComponentsThemeProvider theme={routes[pathname].theme}>
+                <Navbar routes={routes} currentPage={pathname} />
+                <AnimatePresence initial={false}>
+                  <StyledRoot animate={routes[pathname].transition}>
+                    <AnimatePresence exitBeforeEnter>
                       <Component key={pathname}
                         {...pageProps} />
-                    </StyledComponentsThemeProvider>
-                  </MuiThemeProvider>
+                    </AnimatePresence>
+                  </StyledRoot>
                 </AnimatePresence>
-              </StyledRoot>
-            </AnimatePresence>
+              </StyledComponentsThemeProvider>
+            </MuiThemeProvider>
           </StylesProvider>
         </div>
       </main>
