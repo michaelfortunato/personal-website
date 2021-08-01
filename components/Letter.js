@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import styled from 'styled-components';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { CSSTransition } from 'react-transition-group';
 
 
 const StyledLetter = styled.span`
@@ -40,36 +40,34 @@ const StyledLetter = styled.span`
     &.letter-exit-done {
         transform: translate(${(props) => props.XOffsetExit}vw, ${(props) => props.YOffsetExit}vh);
     }
-:w
-
-    
 `;
 
 
-class Letter extends React.Component {
-    render() {
+export default function Letter(props) {
+    const nodeRef = useRef(null);
         return (
             <CSSTransition
-                in={(this.props.triggerNameEnter) && (this.props.animateNameOut == false)}
+                in={(props.triggerNameEnter) && (props.animateNameOut == false)}
+                classNames = "letter"
                 timeout={{
-                    enter: this.props.durationEnter,
-                    exit: this.props.durationExit + this.props.delayExit
+                    enter: props.durationEnter,
+                    exit: props.durationExit + props.delayExit
                 }}
-                onEntered={this.props.setIsNameDone}
+                onEntered={props.setIsNameDone}
+                nodeRef = {nodeRef}
             >
                 <StyledLetter
-                    XOffsetEnter={this.props.XOffsetEnter}
-                    YOffsetEnter={this.props.YOffsetEnter}
-                    durationEnter={this.props.durationEnter}
-                    XOffsetExit={this.props.XOffsetExit}
-                    YOffsetExit={this.props.YOffsetExit}
-                    durationExit={this.props.durationExit}
-                    delayExit={this.props.delayExit}
+                    ref = {nodeRef}
+                    XOffsetEnter={props.XOffsetEnter}
+                    YOffsetEnter={props.YOffsetEnter}
+                    durationEnter={props.durationEnter}
+                    XOffsetExit={props.XOffsetExit}
+                    YOffsetExit={props.YOffsetExit}
+                    durationExit={props.durationExit}
+                    delayExit={props.delayExit}
                 >
-                    {this.props.char}
+                    {props.char}
                 </StyledLetter>
             </CSSTransition>
         );
-    }
 }
-export { Letter, StyledLetter }

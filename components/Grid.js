@@ -6,15 +6,14 @@ import useDeviceSize from './useDeviceSize.js';
 import { motion } from "framer-motion";
 
 const MIN_DURATION = 250;
-const MIN_DELAY = 400;
+const MIN_DELAY = 1000;
 
 const StyledGrid = styled(motion.div)`
-
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     z-index: 1;
     overflow:hidden;
 
@@ -46,24 +45,28 @@ export default function Grid(props) {
         let cconfigs = {};
         const nrlines = props.numLines
         const nclines = Math.floor(width / height * props.numLines + 1)
+        let gridEnterTimeout = 0;
         for (let i = 1; i <= nrlines; ++i) {
             rconfigs[i] = configuration(i)
+            gridEnterTimeout = Math.max(gridEnterTimeout, rconfigs[i].duration + rconfigs[i].delay);
 
         }
         for (let i = 1; i <= nclines; ++i) {
             cconfigs[i] = configuration(i)
+            gridEnterTimeout = Math.max(gridEnterTimeout, cconfigs[i].duration + cconfigs[i].delay);
         }
         setNumColLines(nclines);
         setRowConfigs(rconfigs);
         setColConfigs(cconfigs);
         setWidth(width)
         setHeight(height);
+        
+        setTimeout(() => props.setTriggerNameEnter(true), gridEnterTimeout);
+        setTimeout(() => props.setTriggerGridExit(true), gridEnterTimeout + 250);
     }, [])
-
-    console.log(colConfigs)
+    
     const numRowLines = props.numLines;
     const spacing = Math.floor(100 / numRowLines);
-
     const position = (i) => {
         let fixedPos = props.offset + spacing * i;
         let floatingPos = 100 * (props.random ? Math.random() : 0);
@@ -79,29 +82,10 @@ export default function Grid(props) {
         let time_conf = timing();
         return { ...pos_conf, ...time_conf, isDot: true }
     }
-    const renderRowLines = () => {
-        const rowLines = []
-        for (let i = 1; i <= numRowLines; i++) {
-            let conf = configuration(i);
-            rowLines.push(<Gridline key={i} isRow={true} width={width} height={height} {...conf} />);
-        }
-        return rowLines;
-    }
-    const renderColLines = () => {
-        const colLines = [];
-        for (let i = 1; i <= numColLines; i++) {
-            let conf = configuration(i);
-            colLines.push(<Gridline key={i + props.numLines} isRow={false} width={width} height={height} {...conf} />);
-        }
-        return colLines;
-    }
-
-    setTimeout(() => props.setTriggerNameEnter(true), 3000);
     return (
         <>
             {(width !== 0 && height !== 0) &&
-                <StyledGrid initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                <StyledGrid
                     onAnimationComplete={() => {
                     }}
                     duration={props.duration}>

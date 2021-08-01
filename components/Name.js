@@ -1,7 +1,7 @@
 import React from 'react'
 import { CSSTransition } from 'react-transition-group';
 import styled from 'styled-components';
-import { Letter, StyledLetter } from './Letter.js'
+import Letter from './Letter.js'
 
 
 const StyledName = styled.div`
@@ -71,30 +71,28 @@ class Name extends React.Component {
         }
     }
     render() {
-        let animateNameOut = (this.props.location != '/') && (this.props.nameEntered == true)
+        let animateNameOut = false //(this.props.location != '/') && (this.props.nameEntered == true)
         return (
             <StyledName>
                 <StyledFirstName>
-                    {this.props.firstName.split('').map((char, index) => (
+                    {this.props.firstName.split('').map((_, index) => (
                         <Letter
                             key={index}
                             animateNameOut={animateNameOut}
                             setIsNameDone={this.props.setNameEntered}
                             triggerNameEnter={this.props.triggerNameEnter}
-                            location = {this.props.location}
                             {...this.firstNameConfigs[index]}
                         />)
                     )}
                 </StyledFirstName>
                 <StyledLastName>
-                    {this.props.lastName.split('').map((char, index) =>
+                    {this.props.lastName.split('').map((_, index) =>
                     (
                         <Letter
                             key={index + 7}
                             animateNameOut ={animateNameOut}
                             setIsNameDone={this.props.setNameEntered}
                             triggerNameEnter={this.props.triggerNameEnter}
-                            location = {this.props.location}
                             {...this.lastNameConfigs[index]}
                         />)
                     )}

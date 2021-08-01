@@ -19,6 +19,7 @@ const StyledGridline = styled.div`
                         ${(props) => props.isRow ? '50%' : `${props.floatingPos}vh`};
         transform: ${(props) => props.isRow ? `scaleX(${props.circleXScaling})` : `scaleY(${props.circleYScaling})`};    
         border-radius: 50%;
+        -moz-border-radius: 50%;
     }
     &.line-appear-active, &.line-enter-active {
         
@@ -38,12 +39,15 @@ const Gridline = React.memo((props) => {
     const circleSize = 10; //in pixels
     const circleXScaling = circleSize / props.width;
     const circleYScaling = circleSize / props.height;
+    const nodeRef = React.useRef(null)
     return (<CSSTransition
         in={true}
         appear={true}
         classNames="line"
-        timeout={props.duration + props.delay}>
-        <StyledGridline {...props}
+        timeout={props.duration + props.delay}
+        nodeRef = {nodeRef}
+        >
+        <StyledGridline ref = {nodeRef} {...props}
             circleSize={circleSize}
             circleXScaling={circleXScaling}
             circleYScaling={circleYScaling} />

@@ -47,8 +47,7 @@ const NavRoutes = [
     {isFirst: true, url: "/", text: "Home"}, 
     {isFirst: false, url: "/about", text: "About"}, 
     {isFirst: false, url: "/apps", text: "Apps"}, 
-    {isFirst: false, url: "/blog", text: "Blog"}, 
-    {},
+    {isFirst: false, url: "/blog", text: "Blog"}
 ]
 
 

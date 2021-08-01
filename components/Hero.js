@@ -2,7 +2,7 @@ import React from 'react';
 import Description from './Description.js';
 import Name from './Name.js';
 import styled from 'styled-components';
-
+import Grid from "@material-ui/core/Grid";
 const StyledBanner = styled.div`
     position: relative;
     top: 16%;
@@ -20,20 +20,20 @@ class Hero extends React.Component {
 
     render() {
         return (
-            <div className='row hero'>
-                <div className='col l3 s0 ' />
-                <StyledBanner className='col l6 s12'>
-                    <Name firstName='Michael'
-                        lastName='Fortunato'
-                        triggerNameEnter={this.props.triggerNameEnter}
-                        nameEntered={this.state.nameEntered}
-                        setNameEntered={this.setNameEntered}
-                        location={this.props.location}
-                    />
-                    {this.state.nameEntered ? <Description /> : null}
-                </StyledBanner>
-                <div className='col l3 s0' />
-            </div>
+            <Grid container style={{ "height": "90vh" }} justifyContent = "center" alignItems="center">
+                <Grid item>
+                    <StyledBanner>
+                        <Name firstName='Michael'
+                            lastName='Fortunato'
+                            triggerNameEnter={this.props.triggerNameEnter}
+                            nameEntered={this.state.nameEntered}
+                            setNameEntered={this.setNameEntered}
+                            location={this.props.location}
+                        />
+                        {this.state.nameEntered ? <Description /> : null}
+                    </StyledBanner>
+                </Grid>
+            </Grid>
         );
     }
 }
