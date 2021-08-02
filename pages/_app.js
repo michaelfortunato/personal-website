@@ -60,6 +60,7 @@ export default function App({ Component, pageProps, router }) {
       jssStyles.parentElement.removeChild(jssStyles);
     }
   }, []);
+
   return (
     <div>
       <Head>
@@ -70,11 +71,11 @@ export default function App({ Component, pageProps, router }) {
       <main>
         <div>
           <StylesProvider injectFirst>
-            <MuiThemeProvider theme={pathname !== "/_error" && routes[pathname].theme}>
-              <StyledComponentsThemeProvider theme={pathname !== "/_error" && routes[pathname].theme}>
+            <MuiThemeProvider theme={routes[pathname].theme}>
+              <StyledComponentsThemeProvider theme={routes[pathname].theme}>
                 <Navbar routes={routes} currentPage={pathname} />
                 <AnimatePresence initial={false}>
-                  <StyledRoot animate={pathname !== "/_error" && routes[pathname].transition}>
+                  <StyledRoot animate={routes[pathname].transition}>
                     <AnimatePresence exitBeforeEnter>
                       <Component key={pathname}
                         {...pageProps} />
