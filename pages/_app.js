@@ -27,7 +27,7 @@ const routes = {
         },
         secondary: {
           main: "#264653"
-        },
+        }, 
       },
     }),
     transition: { backgroundColor: "#e6af4b" }
@@ -42,16 +42,15 @@ const routes = {
         secondary: {
           main: "#fafafa"
         },
+        text: {
+          primary: "#fff"
+        },
       },
     }),
-    transition: { backgroundColor: "#14213D" }
-  }
+    transition: { backgroundColor: "#14213D" }, 
+  }, 
 }
-export default function App({ Component, pageProps }) {
-  const [initialVisits, setInitialVisits] = useState({ "/": false, "about": false, "/apps": false, "/blog": false })
-  const [prevLocation, setPrevLocation] = useState(null);
-  const [hasEntered, setHasEntered] = useState(true)
-  const router = useRouter()
+export default function App({ Component, pageProps, router }) {
   const pathname = router.pathname
 
   useEffect(() => {
@@ -61,12 +60,6 @@ export default function App({ Component, pageProps }) {
       jssStyles.parentElement.removeChild(jssStyles);
     }
   }, []);
-
-  useEffect(() => {
-    if (pathname != prevLocation) {
-      setPrevLocation(pathname)
-    }
-  })
   return (
     <div>
       <Head>
@@ -77,11 +70,11 @@ export default function App({ Component, pageProps }) {
       <main>
         <div>
           <StylesProvider injectFirst>
-            <MuiThemeProvider theme={routes[pathname].theme}>
-              <StyledComponentsThemeProvider theme={routes[pathname].theme}>
+            <MuiThemeProvider theme={pathname !== "/_error" && routes[pathname].theme}>
+              <StyledComponentsThemeProvider theme={pathname !== "/_error" && routes[pathname].theme}>
                 <Navbar routes={routes} currentPage={pathname} />
                 <AnimatePresence initial={false}>
-                  <StyledRoot animate={routes[pathname].transition}>
+                  <StyledRoot animate={pathname !== "/_error" && routes[pathname].transition}>
                     <AnimatePresence exitBeforeEnter>
                       <Component key={pathname}
                         {...pageProps} />

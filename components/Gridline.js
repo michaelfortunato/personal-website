@@ -55,4 +55,5 @@ const Gridline = React.memo((props) => {
     );
 })
 
+Gridline.displayName = 'MyComponent';
 export default Gridline;

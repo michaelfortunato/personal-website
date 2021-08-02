@@ -6,9 +6,8 @@ import Link from "next/link";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { AnimatePresence, motion } from "framer-motion"
-import { Fade as Hamburger } from "hamburger-react";
+import { Twirl as Hamburger } from "hamburger-react";
 import Divider from "@material-ui/core/Divider"
-import { useTheme } from '@material-ui/core';
 
 const StyledNavbar = styled(Grid)`
     position: fixed; 
@@ -19,12 +18,11 @@ const StyledNavbar = styled(Grid)`
 
 const Underline = styled(Divider)`
     ${({ theme }) => `background-color: #fff;`}
-    height: 3px;
+    height: 2px;
 `
 
 export default function Navbar(props) {
     const [isVisible, setIsVisible] = useState(false);
-    console.log(useTheme());
 
     const underlineAnimations = {
         "activePage": {
@@ -55,7 +53,7 @@ export default function Navbar(props) {
                         <Grid key={url} item container xs={12} md={1} alignItems="center">
                             <Grid item>
                                 <Link href={url}>
-                                    <a><Typography variant="button">{name}</Typography></a>
+                                    <a><Typography variant="h6">{name}</Typography></a>
                                 </Link>
                                 <AnimatePresence initial={false}>
                                 <motion.div style={{ originX: 0 }}

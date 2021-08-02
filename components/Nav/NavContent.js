@@ -60,7 +60,8 @@ class NavContent extends React.Component {
 
                 <StyledNavContent className='row' backgroundColor={this.props.styleConfig.backgroundColor}>
                     {NavRoutes.map(({isFirst, url, text}) => 
-                        <NavItem isFirst={isFirst} 
+                        <NavItem key = {url} 
+                        isFirst={isFirst} 
                                 url={url} 
                                 text={text} 
                                 textColor={this.props.styleConfig.textColor} 
