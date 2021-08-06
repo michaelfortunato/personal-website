@@ -50,9 +50,10 @@ const routes = {
     transition: { backgroundColor: "#14213D" }, 
   }, 
 }
-export default function App({ Component, pageProps, router }) {
+export default function App({ Component, pageProps }) {
+  const router = useRouter();
   const pathname = router.pathname
-
+  console.log(pathname)
   useEffect(() => {
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector("#jss-server-side");

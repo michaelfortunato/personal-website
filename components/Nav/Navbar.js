@@ -53,7 +53,7 @@ export default function Navbar(props) {
                         <Grid key={url} item container xs={12} md={1} alignItems="center">
                             <Grid item>
                                 <Link href={url}>
-                                    <a><Typography variant="h6">{name}</Typography></a>
+                                    <a><Typography variant="h5">{name}</Typography></a>
                                 </Link>
                                 <AnimatePresence initial={false}>
                                 <motion.div style={{ originX: 0 }}
