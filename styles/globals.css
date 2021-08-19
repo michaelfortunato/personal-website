@@ -40,42 +40,42 @@ a {
 .st0 {
   fill: none;
   stroke: #00933C;
-  stroke-width: 35;
+  stroke-width: 34;
   stroke-linejoin: round;
 }
 
 .st1 {
   fill: none;
   stroke: #0039A6;
-  stroke-width: 35;
+  stroke-width: 34;
   stroke-linejoin: round;
 }
 
 .st2 {
   fill: none;
   stroke: #FCCC0A;
-  stroke-width: 35;
+  stroke-width: 34;
   stroke-linejoin: round;
 }
 
 .st3 {
   fill: none;
   stroke: #FF6319;
-  stroke-width: 35;
+  stroke-width: 34;
   stroke-linejoin: round;
 }
 
 .st4 {
   fill: none;
   stroke: #EE352E;
-  stroke-width: 35;
+  stroke-width: 34;
   stroke-linejoin: round;
 }
 
 .st5 {
   fill: #FFFFFF;
   stroke: #4D4D4D;
-  stroke-width: 6;
+  stroke-width: 5;
 }
 
 .st6 {
@@ -86,10 +86,4 @@ a {
 
 .st7 {
   fill: #FFFFFF;
-}
-
-.st8 {
-  fill: #FFFFFF;
-  stroke: #4D4D4D;
-  stroke-width: 5;
 }
