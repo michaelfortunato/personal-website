@@ -79,7 +79,6 @@ export default function About(props) {
                 />
             </StyledPage>
             <About2 />
-            <StyledPage key={3} />
         </AboutRoot >
 
     );
