@@ -43,28 +43,25 @@ const ContentBox = (props) => (
 )
 const ContentBoxes = [{
 	title: "Beginnings",
-	body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque sagittis odio quam, eu cursus orci ullamcorper eget. Vestibulum justo tortor, posuere sed ullamcorper non, molestie condimentum libero. Praesent nulla erat, consequat eu lacus non, egestas dignissim lorem. Vivamus sollicitudin, lorem eget consequat commodo, quam diam vehicula ipsum, ut euismod augue lorem lobortis dui. Nullam semper mattis leo. Phasellus porttitor sodales mauris, eu vehicula odio ullamcorper a. Suspendisse ex ante, scelerisque non luctus eget, dignissim at justo. Integer a diam nulla. Phasellus fermentum odio eu enim ultrices, rutrum lacinia ex pretium. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ornare gravida mollis. Nullam sit amet vulputate tortor. Nulla non nisl eu tellus placerat lobortis. Sed at ligula ut ligula ullamcorper consectetur. Phasellus ultrices justo eu neque sagittis, quis vehicula sem ullamcorper.",
 	x: 5,
-	y: 10,
-	ld: "1659.5,228.7 1399.8,231.2 1250,343.2 913,339.9",
-	ad: "M849.2,339.2c30-11.3,67.5-30.7,90.7-51.4l-18.6,52.1l17.7,52.5C916.1,371.3,879.1,351.1,849.2,339.2z",
-	cd: "M1677.9,228.7c0,9.4-7.3,17-16.3,17c-9,0-16.3-7.6-16.3-17s7.3-17,16.3-17l0,0 C1670.6,211.7,1677.9,219.4,1677.9,228.7z"
+	y: 20,
+	cd: "M1677.9,228.7c0,9.4-7.3,17-16.3,17c-9,0-16.3-7.6-16.3-17s7.3-17,16.3-17l0,0C1670.6,211.7,1677.9,219.4,1677.9,228.7z",
+	ld: "1659.5,228.7 1399.8,231.2 1250,343.2 913,339.9 			",
+	ad: "M849.2,339.2c30-11.3,67.5-30.7,90.7-51.4l-18.6,52.1l17.7,52.5C916.1,371.3,879.1,351.1,849.2,339.2z"
 }, {
 	title: "Youth",
-	body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque sagittis odio quam, eu cursus orci ullamcorper eget. Vestibulum justo tortor, posuere sed ullamcorper non, molestie condimentum libero. Praesent nulla erat, consequat eu lacus non, egestas dignissim lorem. Vivamus sollicitudin, lorem eget consequat commodo, quam diam vehicula ipsum, ut euismod augue lorem lobortis dui. Nullam semper mattis leo. Phasellus porttitor sodales mauris, eu vehicula odio ullamcorper a. Suspendisse ex ante, scelerisque non luctus eget, dignissim at justo. Integer a diam nulla. Phasellus fermentum odio eu enim ultrices, rutrum lacinia ex pretium. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ornare gravida mollis. Nullam sit amet vulputate tortor. Nulla non nisl eu tellus placerat lobortis. Sed at ligula ut ligula ullamcorper consectetur. Phasellus ultrices justo eu neque sagittis, quis vehicula sem ullamcorper.",
 	x: 5,
-	y: 10,
-	ld: "658.8,417 1930.7,239.2 2338.8,242.7",
+	y: 11,
+	ld: "1658.8,417 1930.7,239.2 2338.8,242.7 			",
 	ad: "M2402.5,243.2c-30,11.3-67.4,30.8-90.6,51.6l18.5-52.2l-17.8-52.5C2335.6,211.3,2372.7,231.4,2402.5,243.2z",
-	cd: "M1672.9,404.2c13.9,18.2-6.7,38.8-24.9,24.9C1634.2,410.9,1654.6,390.3,1672.9,404.2z",
+	cd: "M1672.9,404.2c13.9,18.2-6.7,38.8-24.9,24.9C1634.2,410.9,1654.6,390.3,1672.9,404.2z"
 },
 {
 	title: "Youth",
-	body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque sagittis odio quam, eu cursus orci ullamcorper eget. Vestibulum justo tortor, posuere sed ullamcorper non, molestie condimentum libero. Praesent nulla erat, consequat eu lacus non, egestas dignissim lorem. Vivamus sollicitudin, lorem eget consequat commodo, quam diam vehicula ipsum, ut euismod augue lorem lobortis dui. Nullam semper mattis leo. Phasellus porttitor sodales mauris, eu vehicula odio ullamcorper a. Suspendisse ex ante, scelerisque non luctus eget, dignissim at justo. Integer a diam nulla. Phasellus fermentum odio eu enim ultrices, rutrum lacinia ex pretium. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ornare gravida mollis. Nullam sit amet vulputate tortor. Nulla non nisl eu tellus placerat lobortis. Sed at ligula ut ligula ullamcorper consectetur. Phasellus ultrices justo eu neque sagittis, quis vehicula sem ullamcorper.",
-	x: 5,
-	y: 10,
-	ld: "M1658.5,605.1l-150.4-94.8l-291.1,7.4l-160,80.1c-9.1,4.6-19.2,7-29.3,7H741.1",
-	ad: "M677.4,604.8c30-11.6,67.2-31.4,90.2-52.3l-18.1,52.3l18.1,52.3C744.6,636.1,707.3,616.4,677.4,604.8z",
+	x: 68,
+	y: 3,
+	ld: "1658.8,605.3 1259.5,605.3 1155.4,487.3 818.2,487.3 ",
+	ad: "M751.8,487.3c31.2-11.6,70-31.4,94-52.3l-18.9,52.3l18.9,52.3C821.8,518.7,783.1,498.9,751.8,487.3z",
 	cd: "M1676.5,605.3c0,9.4-7.6,17-17,17s-17-7.6-17-17s7.6-17,17-17S1676.5,595.9,1676.5,605.3L1676.5,605.3	"
 },
 {
@@ -74,7 +71,7 @@ const ContentBoxes = [{
 },
 {
 	cd: "M1770.3,949.4c0,9.4-7.6,17-17,17s-17-7.6-17-17s7.6-17,17-17l0,0C1762.7,932.4,1770.3,940.1,1770.3,949.4z",
-	ld="1750.6,949.4 1478.7,1127.2 1070.6,1123.7 			",
+	ld: "1750.6,949.4 1478.7,1127.2 1070.6,1123.7 			",
 	ad: "M1006.8,1123.2c30-11.3,67.4-30.8,90.6-51.6l-18.5,52.2l17.8,52.5C1073.8,1155.1,1036.7,1135,1006.8,1123.2z"
 },
 {
@@ -86,6 +83,11 @@ const ContentBoxes = [{
 	cd: "M1829.3,1401.4c0,9.4-7.6,17-17,17s-17-7.6-17-17s7.6-17,17-17l0,0C1821.7,1384.4,1829.3,1392,1829.3,1401.4z",
 	ld: "1813.4,1401.8 1553.8,1399.3 1404,1287.3 1066.9,1290.7 			",
 	ad: "M1003.2,1291.3c29.9-11.9,66.9-32,89.8-53.2l-17.7,52.5l18.6,52.1C1070.6,1322,1033.3,1302.6,1003.2,1291.3z"
+},
+{
+	cd: "M1829.3,1612.9c0,10-8.7,18-18.9,16.9c-7.8-0.9-14.1-7.2-15-15c-1.1-10.3,6.9-18.9,16.9-18.9C1821.7,1595.9,1829.3,1603.5,1829.3,1612.9L1829.3,1612.9z",
+	ld: "1813.4,1612.9 1964.5,1697.3 2589.1,1697.3",
+	ad: "M2655.5,1697.3c-31.2,11.6-70,31.4-94,52.3l18.9-52.3l-18.9-52.3C2585.5,1666,2624.3,1685.7,2655.5,1697.3z"
 },
 {
 	cd: "M1829.3,1885.6c0,9.4-7.6,17-17,17s-17-7.6-17-17s7.6-17,17-17l0,0C1821.7,1868.6,1829.3,1876.2,1829.3,1885.6z",
@@ -104,17 +106,17 @@ const ContentBoxes = [{
 },
 {
 	cd: "M1829.3,2625c0,9.4-7.6,17-17,17s-17-7.6-17-17c0-9.4,7.6-17,17-17S1829.3,2615.6,1829.3,2625L1829.3,2625z",
-	ld: "M1811.3,2624.8l-150.4-94.8l-291.1,7.4l-160,80.1c-9.1,4.6-19.2,7-29.3,7H894",
-	ad: "M830.2,2624.5c30-11.6,67.2-31.4,90.2-52.3l-18.1,52.3l18.1,52.3C897.4,2655.8,860.2,2636.1,830.2,2624.5z"
+	ld: "1811.4,2624.8 1551.7,2625 1365.2,2485.7 914.1,2485.7",
+	ad: "M847.7,2485.7c31.2-11.6,70-31.4,94-52.3l-18.9,52.3l18.9,52.3C917.7,2517,879,2497.3,847.7,2485.7z"
 }
 ]
 const SVGLine = (props) => {
 	return (
 		<g id={props.id} data-name={props.id}>
-			<path id={`circle-${props.id}`} class="cls-2" d={props.cd} transform="translate(-673 0.15)" />
+			<path id={`circle-${props.id}`} class="st5" d={props.cd} />
 			<g>
-				<polyline class="cls-3" points={props.ld} />
-				<path class="cls-4" d={props.ad} />
+				<polyline class="st6" points={props.ld} />
+				<path class="st7" d={props.ad} />
 			</g>
 		</g>)
 }
@@ -152,108 +154,7 @@ export default function About2(props) {
 				<path id="FL" class="st3" d="M1818.9,2976.7L249,3243.2l-2.6,3243.2" />
 				<path id="RedLine_4_" class="st4" d="M1728.4,0v101.8l-66.8,43.2v4.1V809l150,224.6l2.6,1964.4" />
 				<g id="Main">
-					<g id="_1">
-						<path id="circle11956" class="st5" d="M1677.9,228.7c0,9.4-7.3,17-16.3,17c-9,0-16.3-7.6-16.3-17s7.3-17,16.3-17l0,0C1670.6,211.7,1677.9,219.4,1677.9,228.7z" />
-						<g>
-							<polyline class="st6" points="1659.5,228.7 1399.8,231.2 1250,343.2 913,339.9" />
-							<path class="st7" d="M849.2,339.2c30-11.3,67.5-30.7,90.7-51.4l-18.6,52.1l17.7,52.5C916.1,371.3,879.1,351.1,849.2,339.2z" />
-						</g>
-					</g>
-					<g id="_2">
-						<path id="circle11956-2" class="st5" d="M1672.9,404.2c13.9,18.2-6.7,38.8-24.9,24.9C1634.2,410.9,1654.6,390.3,1672.9,404.2z" />
-						<g>
-							<polyline class="st6" points="1658.8,417 1930.7,239.2 2338.8,242.7 			" />
-							<path class="st7" d="M2402.5,243.2c-30,11.3-67.4,30.8-90.6,51.6l18.5-52.2l-17.8-52.5C2335.6,211.3,2372.7,231.4,2402.5,243.2z"
-							/>
-						</g>
-					</g>
-					<g id="_3">
-						<path id="circle11956-3" class="st5" d="M1676.5,605.3c0,9.4-7.6,17-17,17s-17-7.6-17-17s7.6-17,17-17S1676.5,595.9,1676.5,605.3
-			L1676.5,605.3z"/>
-						<g>
-							<path class="st6" d="M1658.5,605.1l-150.4-94.8l-291.1,7.4l-160,80.1c-9.1,4.6-19.2,7-29.3,7H741.1" />
-							<path class="st7" d="M677.4,604.8c30-11.6,67.2-31.4,90.2-52.3l-18.1,52.3l18.1,52.3C744.6,636.1,707.3,616.4,677.4,604.8z" />
-						</g>
-					</g>
-					<g id="_4">
-						<path id="circle11956-5" class="st5" d="M1675.9,778.1c0,9.8-7.6,17.7-17,17.7s-17-7.9-17-17.7s7.6-17.7,17-17.7l0,0
-			C1668.3,760.4,1675.9,768.3,1675.9,778.1z"/>
-						<g>
-							<polyline class="st6" points="1658.8,779 2107.8,785.8 2239.8,605.3 2741,605.3 			" />
-							<path class="st7" d="M2804.8,605.3c-30,11.6-67.2,31.4-90.2,52.3l18.1-52.3l-18.1-52.3C2737.6,573.9,2774.8,593.7,2804.8,605.3z"
-							/>
-						</g>
-					</g>
-					<g id="_5">
-						<path id="circle11956-4" class="st5" d="M1770.3,949.4c0,9.4-7.6,17-17,17s-17-7.6-17-17s7.6-17,17-17l0,0
-			C1762.7,932.4,1770.3,940.1,1770.3,949.4z"/>
-						<g>
-							<polyline class="st6" points="1750.6,949.4 1478.7,1127.2 1070.6,1123.7 			" />
-							<path class="st7" d="M1006.8,1123.2c30-11.3,67.4-30.8,90.6-51.6l-18.5,52.2l17.8,52.5C1073.8,1155.1,1036.7,1135,1006.8,1123.2z
-				"/>
-						</g>
-					</g>
-					<g id="_6">
-						<path id="circle11956-6" class="st5" d="M1831.3,1165.2c0,10-7.7,18-17.3,18c-9.6,0-17.3-8.1-17.3-18c0-10,7.7-18,17.3-18
-			C1823.5,1147.2,1831.3,1155.3,1831.3,1165.2L1831.3,1165.2z"/>
-						<g>
-							<polyline class="st6" points="1814.3,1164.9 2263.2,1171.7 2395.3,991.1 2896.6,991.1 			" />
-							<path class="st7" d="M2960.2,991.1c-30,11.6-67.2,31.4-90.2,52.3l18.1-52.3l-18.1-52.3C2893.1,959.8,2930.3,979.6,2960.2,991.1z"
-							/>
-						</g>
-					</g>
-					<g id="_7">
-						<path id="circle11956-7" class="st5" d="M1829.3,1401.4c0,9.4-7.6,17-17,17s-17-7.6-17-17s7.6-17,17-17l0,0
-			C1821.7,1384.4,1829.3,1392,1829.3,1401.4z"/>
-						<g>
-							<polyline class="st6" points="1813.4,1401.8 1553.8,1399.3 1404,1287.3 1066.9,1290.7 			" />
-							<path class="st7" d="M1003.2,1291.3c29.9-11.9,66.9-32,89.8-53.2l-17.7,52.5l18.6,52.1C1070.6,1322,1033.3,1302.6,1003.2,1291.3z
-				"/>
-						</g>
-					</g>
-					<g id="_8">
-						<path id="circle11956-8" class="st5" d="M1829.3,1612.9c0,10-8.7,18-18.9,16.9c-7.8-0.9-14.1-7.2-15-15
-			c-1.1-10.3,6.9-18.9,16.9-18.9C1821.7,1595.9,1829.3,1603.5,1829.3,1612.9L1829.3,1612.9z"/>
-						<g>
-							<path class="st6" d="M1812.6,1612.6l150.4-94.8l268,1.8l212.4,92.6h286.7" />
-							<path class="st7" d="M2793.7,1612.3c-30,11.6-67.2,31.4-90.2,52.3l18.1-52.3l-18.1-52.3
-				C2726.5,1580.9,2763.7,1600.7,2793.7,1612.3z"/>
-						</g>
-					</g>
-					<g id="_9">
-						<path id="circle11956-9" class="st5" d="M1829.3,1885.6c0,9.4-7.6,17-17,17s-17-7.6-17-17s7.6-17,17-17l0,0
-			C1821.7,1868.6,1829.3,1876.2,1829.3,1885.6z"/>
-						<g>
-							<polyline class="st6" points="1811.4,1885.3 2071.1,1887.8 2220.9,1999.8 2558,1996.5 			" />
-							<path class="st7" d="M2621.7,1995.8c-29.9,11.9-66.9,32-89.8,53.2l17.7-52.5l-18.6-52.1
-				C2554.2,1965.2,2591.6,1984.6,2621.7,1995.8z"/>
-						</g>
-					</g>
-					<g id="_10">
-						<path id="circle11956-10" class="st5" d="M1824.9,2156.4c13.3,18.2-6.4,38.8-23.9,24.9C1787.7,2163.1,1807.5,2142.5,1824.9,2156.4
-			z"/>
-						<g>
-							<polyline class="st6" points="1813.6,2171 1466.6,2169.3 1286.6,1880.9 751.8,1880.9 			" />
-							<path class="st7" d="M688.1,1880.9c30-11.6,67.2-31.4,90.2-52.3l-18.1,52.3l18.1,52.3C755.3,1912.2,718,1892.4,688.1,1880.9z" />
-						</g>
-					</g>
-					<g id="11">
-						<path id="circle11956-9_1_" class="st5" d="M1830.6,2415.8c0,9.4-7.6,17-17,17s-17-7.6-17-17c0-9.4,7.6-17,17-17l0,0
-			C1823,2398.8,1830.6,2406.4,1830.6,2415.8z"/>
-						<g>
-							<polyline class="st6" points="1812.8,2415.5 2072.5,2418 2222.2,2530 2559.3,2526.7 			" />
-							<path class="st7" d="M2623,2526c-29.9,11.9-66.9,32-89.8,53.2l17.7-52.5l-18.6-52.1C2555.5,2495.4,2592.9,2514.8,2623,2526z" />
-						</g>
-					</g>
-					<g id="12">
-						<path id="circle11956-3_1_" class="st5" d="M1829.3,2625c0,9.4-7.6,17-17,17s-17-7.6-17-17c0-9.4,7.6-17,17-17
-			S1829.3,2615.6,1829.3,2625L1829.3,2625z"/>
-						<g>
-							<path class="st6" d="M1811.3,2624.8l-150.4-94.8l-291.1,7.4l-160,80.1c-9.1,4.6-19.2,7-29.3,7H894" />
-							<path class="st7" d="M830.2,2624.5c30-11.6,67.2-31.4,90.2-52.3l-18.1,52.3l18.1,52.3C897.4,2655.8,860.2,2636.1,830.2,2624.5z"
-							/>
-						</g>
-					</g>
+					{ContentBoxes.map(({ ld, ad, cd }, i) => <SVGLine ld={ld} ad={ad} cd={cd} id={i} />)}
 				</g>
 				<g id="FL_4_">
 					<g id="_x31_0">
