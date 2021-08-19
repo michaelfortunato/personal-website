@@ -20,18 +20,20 @@ const ContentBoxContainer = styled.div`
 	position: absolute;
 	left: ${props => props.x}%;
 	top: ${props => props.y}%;
+	display: inline;
+	max-width: 25%;
 `
 const ContentBox = (props) => (
 	<ContentBoxContainer ref={props.boxRef} x={props.x} y={props.y}>
-		<Paper >
-			<Grid container style={{ width: '20vw' }} justify="center" spacing={2}>
+		<Paper style={{ padding: 20 }}>
+			<Grid justify="center">
 				<Grid item xs={12} >
 					<BlackTypography variant={"h4"}>
 						{props.title}
 					</BlackTypography>
 					<Divider />
 				</Grid>
-				<Grid item xs={10}>
+				<Grid style={{ marginTop: 10 }} item xs={10}>
 					<BlackTypography>
 						{props.body}
 					</BlackTypography>
@@ -42,24 +44,26 @@ const ContentBox = (props) => (
 
 )
 const ContentBoxes = [{
-	title: "Beginnings",
-	x: 5,
-	y: 20,
+	title: "Family Background",
+	body: "My mother is Jewish, and my father is Italian, German, and French in that order.",
+	x: 4,
+	y: 4,
 	cd: "M1677.9,228.7c0,9.4-7.3,17-16.3,17c-9,0-16.3-7.6-16.3-17s7.3-17,16.3-17l0,0C1670.6,211.7,1677.9,219.4,1677.9,228.7z",
 	ld: "1659.5,228.7 1399.8,231.2 1250,343.2 913,339.9 			",
 	ad: "M849.2,339.2c30-11.3,67.5-30.7,90.7-51.4l-18.6,52.1l17.7,52.5C916.1,371.3,879.1,351.1,849.2,339.2z"
-}, {
-	title: "Youth",
-	x: 5,
-	y: 11,
+},
+{
+	title: "Upper West Side, IPS, and Spanish Lessons",
+	x: 68,
+	y: 3,
 	ld: "1658.8,417 1930.7,239.2 2338.8,242.7 			",
 	ad: "M2402.5,243.2c-30,11.3-67.4,30.8-90.6,51.6l18.5-52.2l-17.8-52.5C2335.6,211.3,2372.7,231.4,2402.5,243.2z",
 	cd: "M1672.9,404.2c13.9,18.2-6.7,38.8-24.9,24.9C1634.2,410.9,1654.6,390.3,1672.9,404.2z"
 },
 {
-	title: "Youth",
-	x: 68,
-	y: 3,
+	title: "PreK",
+	x: 1,
+	y: 7,
 	ld: "1658.8,605.3 1259.5,605.3 1155.4,487.3 818.2,487.3 ",
 	ad: "M751.8,487.3c31.2-11.6,70-31.4,94-52.3l-18.9,52.3l18.9,52.3C821.8,518.7,783.1,498.9,751.8,487.3z",
 	cd: "M1676.5,605.3c0,9.4-7.6,17-17,17s-17-7.6-17-17s7.6-17,17-17S1676.5,595.9,1676.5,605.3L1676.5,605.3	"
@@ -111,41 +115,61 @@ const ContentBoxes = [{
 }
 ]
 const SVGLine = (props) => {
+	const percentToSVGX = (x) => {
+		if (props.cRef.current === null) {
+			return 0
+		}
+		if (props.x < 50) {
+			return (VIEWBOX_WIDTH / 100 * (x + props.cRef.current.offsetWidth / props.pageWidth * 100))
+		}
+		else {
+			return (VIEWBOX_WIDTH / 100 * x)
+		}
+	}
+	const percentToSVGY = (y) => {
+		if (props.cRef.current === null) {
+			return 0
+		} else {
+			return (VIEWBOX_HEIGHT / 100 * (y + props.cRef.current.offsetHeight / props.pageHeight * 50));
+		}
+	}
+
+	// The first thing we need to do is place the arrow in the correct position. Get the move position of the arrow
+	const adArray = props.ad.split(",")
+	const arrowShiftX = adArray[0].substring(1) //M<number>
+	const arrowShiftY = adArray[1].substring(0, adArray[1].indexOf("c")) //<number>c<number>
+
+	// Now get the svg coordinate position of the middle of the box. Right side for x < 50. left side for X > 50
+	const contentPosX = percentToSVGX(props.x);
+	const contentPosY = percentToSVGY(props.y);
+
 	return (
 		<g id={props.id} data-name={props.id}>
-			<path id={`circle-${props.id}`} class="st5" d={props.cd} />
+			<path id={`circle-${props.id}`} className="st5" d={props.cd} />
 			<g>
-				<polyline class="st6" points={props.ld} />
-				<path class="st7" d={props.ad} />
+				<polyline className="st6" points={props.ld} />
+				<path className="st7" d={props.ad} transform={`translate(${contentPosX - arrowShiftX} ${contentPosY - arrowShiftY})`} />
 			</g>
 		</g>)
 }
 
 
 
-const VIEWBOX_WIDTH = 2365.94;
-const VIEWBOX_HEIGHT = 2162.15;
+const VIEWBOX_WIDTH = 3658.6;
+const VIEWBOX_HEIGHT = 6486.5;
 
 export default function About2(props) {
 	const [pageWidth, setPageWidth] = useState(0);
 	const [pageHeight, setPageHeight] = useState(0);
 	const pageRef = useRef(null);
 	const contentBoxRefs = ContentBoxes.map(() => useRef(null));
-
-	const percentToSVGX = (x, cRef) => (
-		cRef.current !== null ? VIEWBOX_WIDTH / 100 * (x + cRef.current.offsetWidth / pageWidth * 100) : 0
-	)
-	const percentToSVGY = (y, cRef) => (
-		cRef.current !== null ? VIEWBOX_HEIGHT / 100 * (y + cRef.current.offsetHeight / pageHeight * 50) : 0
-	)
 	useEffect(() => {
 		setPageWidth(pageRef.current.offsetWidth)
 		setPageHeight(pageRef.current.offsetHeight)
 	}, [])
-	console.log(ContentBoxes[0].x)
 	return (
 		<StyledPage ref={pageRef}>
-			{ContentBoxes.map((props, i) => <ContentBox boxRef={contentBoxRefs[i]} {...props} />)}
+			{ContentBoxes.map((props, i) => <ContentBox key={i} boxRef={contentBoxRefs[i]} {...props} />)}
 			<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"
 				viewBox="0 0 3658.6 6486.5" preserveAspectRatio="none">
 				<path id="FR" class="st0" d="M1807,2976.3l1571.9,266.9l-2.6,3243.2" />
@@ -154,7 +178,7 @@ export default function About2(props) {
 				<path id="FL" class="st3" d="M1818.9,2976.7L249,3243.2l-2.6,3243.2" />
 				<path id="RedLine_4_" class="st4" d="M1728.4,0v101.8l-66.8,43.2v4.1V809l150,224.6l2.6,1964.4" />
 				<g id="Main">
-					{ContentBoxes.map(({ ld, ad, cd }, i) => <SVGLine ld={ld} ad={ad} cd={cd} id={i} />)}
+					{ContentBoxes.map((props, i) => <SVGLine key={i} cRef={contentBoxRefs[i]} {...props} pageWidth={pageWidth} pageHeight={pageHeight} />)}
 				</g>
 				<g id="FL_4_">
 					<g id="_x31_0">
