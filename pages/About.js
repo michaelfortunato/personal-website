@@ -48,7 +48,6 @@ export default function About(props) {
     const [isXL, setIsXL] = useState(false)
 
     useEffect(() => {
-
         // Set a timer that delays the animation
         setTimeout(() => {
             lottieRef.current.play()
@@ -66,7 +65,6 @@ export default function About(props) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            hiddenProp={isSubwayDone ? "none" : "hidden"}
         >
             <StyledPage key={1}>
                 <Lottie lottieRef={lottieRef}
@@ -74,8 +72,6 @@ export default function About(props) {
                     loop={false}
                     autoplay={false}
                     animationData={animationData}
-                    onComplete={() => setIsSubwayDone(true)}
-
                 />
             </StyledPage>
             <About2 />

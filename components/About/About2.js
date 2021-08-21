@@ -29,7 +29,7 @@ const ContentBox = (props) => (
 		<Paper style={{ padding: 20 }}>
 			<Grid container justifyContent="center">
 				<Grid item xs={12} >
-					<BlackTypography style = {{textAlign:"center"}}variant={"h4"}>
+					<BlackTypography style={{ textAlign: "center" }} variant={"h4"}>
 						{props.title}
 					</BlackTypography>
 					<Divider />
@@ -402,11 +402,10 @@ const FRContentBoxes = [
 const SVGLine = (props) => {
 	try {
 		const arrowRef = useRef(null)
+		const [isOpen, setIsOpen] = useState(true);
 		const contentBoxWidth = props.cRef.current !== null ? props.cRef.current.offsetWidth : 0
 		const contentBoxHeight = props.cRef.current !== null ? props.cRef.current.offsetHeight : 0
-		const [arrowWidth, setArrowWidth] = useState(0);
-		
-		
+
 		const BtoAx = (x) => (VIEWBOX_WIDTH / 100 * x)
 		const BtoAy = (y) => (VIEWBOX_HEIGHT / 100 * y)
 		const BPrimeToAx = (x) => (VIEWBOX_WIDTH / props.pageWidth * x)
@@ -436,41 +435,47 @@ const SVGLine = (props) => {
 		const contentPosY = BtoAy(props.y) + BPrimeToAy(contentBoxHeight / 2);
 
 		// We now calculate the back scale factor for x
-		const originalLength = Math.abs(ldPoints[ldPoints.length - 1][0]-ldPoints[0][0])
-		const desiredLength = Math.abs(ldPoints[0][0]-contentPosX)
-		const scaleFactor = desiredLength/originalLength * .80
+		const originalLength = Math.abs(ldPoints[ldPoints.length - 1][0] - ldPoints[0][0])
+		const desiredLength = Math.abs(ldPoints[0][0] - contentPosX)
+		const scaleFactor = desiredLength / originalLength * .80
 		const shiftFactor = ldPoints[0][0]
 
 
 		ldPoints.forEach((pair, index) => {
 			if (index !== 0 && !isNaN(contentPosX)) {
-				ldPoints[index][0] = (ldPoints[index][0] - shiftFactor) *  scaleFactor + shiftFactor
+				ldPoints[index][0] = (ldPoints[index][0] - shiftFactor) * scaleFactor + shiftFactor
 			}
 		})
 		// Next get the y val
-		ldPoints[ldPoints.length-1][1] = contentPosY
-		const destinationX = (arrowRef.current !== null && props.pageHeight !== 0) ? BPrimeToAx(arrowRef.current.getBoundingClientRect().x + arrowRef.current.getBoundingClientRect().width/2): contentPosX 
-		ldPoints.push([destinationX,contentPosY])
+		ldPoints[ldPoints.length - 1][1] = contentPosY
+		const destinationX = (arrowRef.current !== null && props.pageHeight !== 0) ? BPrimeToAx(arrowRef.current.getBoundingClientRect().x + arrowRef.current.getBoundingClientRect().width / 2) : contentPosX
+		ldPoints.push([destinationX, contentPosY])
 		if (!isNaN(contentPosY)) {
-			console.log(arrowWidth)
+			console.log(props.cRef.current)
 			console.log(ldPoints)
 		}
 
+
+		const strokeDashlength = Math.abs(destinationX - ldPoints[0][0]) + 400
 		return (
 			<g id={props.id} data-name={props.id}>
 				<path id={`circle-${props.id}`} className="st5" d={props.cd} />
 				<g>
-					<path className="st6" d={ldPoints.reduce(ldPointsToSVGStringReducer, "")} />
-					<path ref = {arrowRef} className="st7" d={props.ad} transform={`translate(${contentPosX - arrowShiftX} ${contentPosY - arrowShiftY})`} />
+					<motion.path strokeDashoffset={strokeDashlength} initial={{ strokeDashoffset: strokeDashlength }} animate={isOpen ? { strokeDashoffset: 0 } : { strokeDashoffset: strokeDashlength }}
+						strokeDasharray={strokeDashlength} className="st6" d={ldPoints.reduce(ldPointsToSVGStringReducer, "")} />
+					<motion.path ref={arrowRef} className="st7" d={props.ad} transform={`translate(${contentPosX - arrowShiftX} ${contentPosY - arrowShiftY})`} />
 				</g>
 			</g>)
 	}
-	catch (ex) { 
+	catch (ex) {
 		console.log(ex)
-		return null }
+		return null
+	}
 }
 
-
+const svgLine = (props) =>  {
+		const ldPointsToSVGStringReducer = (svgString, tuple, index) => (index === 0 ? svgString + `M${tuple[0]},${tuple[1]}` : svgString + " " + `${tuple[0]},${tuple[1]}`)
+}
 
 const VIEWBOX_WIDTH = 3658.6;
 const VIEWBOX_HEIGHT = 6486.5;
@@ -484,17 +489,26 @@ export default function About2(props) {
 	const NLContentBoxRefs = NLContentBoxes.map(() => useRef(null));
 	const NRContentBoxRefs = NRContentBoxes.map(() => useRef(null));
 	const FRContentBoxRefs = FRContentBoxes.map(() => useRef(null));
+
+	const { activeBox, setActiveBox } = useState("Main-0");
+
+
 	useEffect(() => {
 		setPageWidth(pageRef.current.offsetWidth)
 		setPageHeight(pageRef.current.offsetHeight)
+
 	}, [])
+	console.log("rendered");
+
+	const comp = <div><p>klsdfj;skldjf</p><p>sdjf;alksdj</p></div>;
+	console.log(comp.props.children)
 	return (
 		<StyledPage ref={pageRef}>
-			{ContentBoxes.map((props, i) => <ContentBox key={`Main-${props.key}`} boxRef={contentBoxRefs[props.key]} {...props} />)}
-			{FLContentBoxes.map((props, i) => <ContentBox key={`FL-${props.key}`} boxRef={FLContentBoxRefs[props.key]} {...props} />)}
-			{NLContentBoxes.map((props, i) => <ContentBox key={`NL-${props.key}`} boxRef={NLContentBoxRefs[props.key]} {...props} />)}
-			{NRContentBoxes.map((props, i) => <ContentBox key={`NR-${props.key}`} boxRef={NRContentBoxRefs[props.key]} {...props} />)}
-			{FRContentBoxes.map((props, i) => <ContentBox key={`FR-${props.key}`} boxRef={FRContentBoxRefs[props.key]} {...props} />)}
+			{ContentBoxes.map((props, i) => (true) && <ContentBox key={`Main-${props.key}`} containerId={`Main-${props.key}`} boxRef={contentBoxRefs[props.key]} {...props} />)}
+			{FLContentBoxes.map((props, i) => (activeBox === `FL-${props.key}`) && <ContentBox key={`FL-${props.key}`} containerId={`FL-${props.key}`} boxRef={FLContentBoxRefs[props.key]} {...props} />)}
+			{NLContentBoxes.map((props, i) => (activeBox === `NL-${props.key}`) && <ContentBox key={`NL-${props.key}`} containerId={`NL-${props.key}`} boxRef={NLContentBoxRefs[props.key]} {...props} />)}
+			{NRContentBoxes.map((props, i) => (activeBox === `NR-${props.key}`) && <ContentBox key={`NR-${props.key}`} containerId={`NR-${props.key}`} boxRef={NRContentBoxRefs[props.key]} {...props} />)}
+			{FRContentBoxes.map((props, i) => (activeBox === `FR-${props.key}`) && <ContentBox key={`FR-${props.key}`} containerId={`FR-${props.key}`} boxRef={FRContentBoxRefs[props.key]} {...props} />)}
 			<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"
 				viewBox="0 0 3658.6 6486.5" preserveAspectRatio="none">
 				<path id="FR" className="st0" d="M1807,2976.3l1571.9,266.9l-2.6,3243.2" />
@@ -503,19 +517,19 @@ export default function About2(props) {
 				<path id="FL" className="st3" d="M1818.9,2976.7L249,3243.2l-2.6,3243.2" />
 				<path id="RedLine_4_" className="st4" d="M1728.4,0v101.8l-66.8,43.2v4.1V809l150,224.6l2.6,1964.4" />
 				<g id="Main">
-					{ContentBoxes.map((props, i) => <SVGLine key={`Main-${props.key}`} grpId ="Main" cRef={contentBoxRefs[props.key]} {...props} pageWidth={pageWidth} pageHeight={pageHeight} />)}
+					{ContentBoxes.map((props, i) => <SVGLine key={`Main-${props.key}`} grpId="Main" cRef={contentBoxRefs[props.key]} {...props} pageWidth={pageWidth} pageHeight={pageHeight} />)}
 				</g>
 				<g id="FL_4_">
-					{FLContentBoxes.map((props, i) => <SVGLine key={`FL-${props.key}`} grpId ="FL" cRef={FLContentBoxRefs[props.key]} {...props} pageWidth={pageWidth} pageHeight={pageHeight} />)}
+					{FLContentBoxes.map((props, i) => <SVGLine key={`FL-${props.key}`} grpId="FL" cRef={FLContentBoxRefs[props.key]} {...props} pageWidth={pageWidth} pageHeight={pageHeight} />)}
 				</g>
 				<g id="NL_1_">
-					{NLContentBoxes.map((props, i) => <SVGLine key={`NL-${props.key}`} grpId = "NL" cRef={NLContentBoxRefs[props.key]} {...props} pageWidth={pageWidth} pageHeight={pageHeight} />)}
+					{NLContentBoxes.map((props, i) => <SVGLine key={`NL-${props.key}`} grpId="NL" cRef={NLContentBoxRefs[props.key]} {...props} pageWidth={pageWidth} pageHeight={pageHeight} />)}
 				</g>
 				<g id="NR_1_">
-					{NRContentBoxes.map((props, i) => <SVGLine key={`NR-${props.key}`} grpId = "NR" cRef={NRContentBoxRefs[props.key]} {...props} pageWidth={pageWidth} pageHeight={pageHeight} />)}
+					{NRContentBoxes.map((props, i) => <SVGLine key={`NR-${props.key}`} grpId="NR" cRef={NRContentBoxRefs[props.key]} {...props} pageWidth={pageWidth} pageHeight={pageHeight} />)}
 				</g>
 				<g id="FR_1_">
-					{FRContentBoxes.map((props, i) => <SVGLine key={`FR-${props.key}`} grpId = "FR" cRef={FRContentBoxRefs[props.key]} {...props} pageWidth={pageWidth} pageHeight={pageHeight} />)}
+					{FRContentBoxes.map((props, i) => <SVGLine key={`FR-${props.key}`} grpId="FR" cRef={FRContentBoxRefs[props.key]} {...props} pageWidth={pageWidth} pageHeight={pageHeight} />)}
 				</g>
 			</svg>
 
