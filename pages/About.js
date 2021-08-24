@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Lottie from 'lottie-react'
-import animationData from '@public/NYC_ARROW.json'
+import animationData from '@public/About_Page1_ISA.json'
 import styled from 'styled-components'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'

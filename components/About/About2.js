@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Grid from "@material-ui/core/Grid"
 import Paper from "@material-ui/core/Paper"
 import Typography from "@material-ui/core/Typography";
@@ -7,6 +7,7 @@ import { motion } from "framer-motion"
 import Divider from "@material-ui/core/Divider"
 import React from "react";
 import { darken } from "@material-ui/core";
+import { useResizeDetector } from 'react-resize-detector';
 
 const ContentBoxes = [
 	{
@@ -383,10 +384,10 @@ const ContentBox = (props) => {
 	const boxRef = useRef(null);
 	useEffect(() => {
 		if (boxRef.current !== null) {
-			props.setContentBoxWidths(prevState => ({...prevState, [props.boxId]: boxRef.current.offsetWidth}));
-			props.setContentBoxHeights(prevState => ({...prevState, [props.boxId]: boxRef.current.offsetHeight}));
+			props.setContentBoxWidths(prevState => ({ ...prevState, [props.boxId]: boxRef.current.offsetWidth }));
+			props.setContentBoxHeights(prevState => ({ ...prevState, [props.boxId]: boxRef.current.offsetHeight }));
 		}
-	}, [props.isOpen])
+	}, [props.isOpen, props.pageWidth, props.pageHeight])
 	return (
 		props.isOpen ?
 			<ContentBoxContainer ref={boxRef} x={props.x} y={props.y}>
@@ -432,10 +433,6 @@ const SVGComponent = (props) => {
 	const [lineDestinationX, setLineDestinationX] = useState(0);
 	// The first thing we need to do is place the arrow in the correct position. Get the move position of the arrow
 	// Now get the svg coordinate position of the middle of the box. Right side for x < 50. left side for x > 50
-	useEffect(()=> {
-		console.log(props.boxId)
-		console.log(arrowRef.current)
-	}, [props.isOpen])
 	const boxPosX = (props.boxId.includes("Main") && (props.x < 50)) || (props.boxId.includes("NR") || props.boxId.includes("FR")) ? props.BtoAx(props.x) + props.BPrimeToAx(props.contentBoxWidth) : props.BtoAx(props.x)
 	const boxPosY = props.BtoAy(props.y) + props.BPrimeToAy(props.contentBoxHeight / 2);
 	return (<g key={props.boxId} id={props.boxId} data-name={props.boxId}>
@@ -443,7 +440,7 @@ const SVGComponent = (props) => {
 		{(props.isOpen && props.contentBoxWidth !== 0 && props.contentBoxHeight !== 0) &&
 			<g>
 				{lineDestinationX !== 0 && <SVGLine boxPosX={boxPosX} boxPosY={boxPosY} lineDestinationX={lineDestinationX} ld={props.ld} />}
-				<SVGArrow boxPosX={boxPosX} boxPosY={boxPosY} ad={props.ad} setLineDestinationX={setLineDestinationX} BPrimeToAx={props.BPrimeToAx}/>
+				<SVGArrow arrowRef={arrowRef} boxPosX={boxPosX} boxPosY={boxPosY} ad={props.ad} lineDestinationX={lineDestinationX} setLineDestinationX={setLineDestinationX} BPrimeToAx={props.BPrimeToAx} />
 			</g>}
 	</g>);
 
@@ -451,13 +448,16 @@ const SVGComponent = (props) => {
 
 
 const SVGArrow = (props) => {
-	const arrowRef = useRef(null)
+	const arrowRef = useRef(null);
 	const adArray = props.ad.split(",")
 	const arrowShiftX = adArray[0].substring(1) //M<number>
 	const arrowShiftY = adArray[1].substring(0, adArray[1].indexOf("c")) //<number>c<number>
-	useEffect(()=> {
-		props.setLineDestinationX((arrowRef.current !== null) ? props.BPrimeToAx(arrowRef.current.getBoundingClientRect().x + arrowRef.current.getBoundingClientRect().width / 2) : 0)
-	}, [])
+	useEffect(() => {
+		const newLineDestinationX = props.BPrimeToAx(arrowRef.current.getBoundingClientRect().x + arrowRef.current.getBoundingClientRect().width / 2);
+		if (arrowRef.current !== null && props.lineDestinationX !== newLineDestinationX) {
+			props.setLineDestinationX(newLineDestinationX);
+		}
+	})
 	return (<motion.path ref={arrowRef} className="st7" d={props.ad} transform={`translate(${props.boxPosX - arrowShiftX} ${props.boxPosY - arrowShiftY})`} />)
 }
 
@@ -497,11 +497,14 @@ const VIEWBOX_WIDTH = 3658.6;
 const VIEWBOX_HEIGHT = 6486.5;
 
 export default function About2(props) {
-	const [pageWidth, setPageWidth] = useState(0);
-	const [pageHeight, setPageHeight] = useState(0);
-	const pageRef = useRef(null);
-
-
+	const onResize = useCallback(() => {
+		console.log("I was triggered")
+	}, []);
+	const { width: pageWidth, height: pageHeight, ref: pageRef } = useResizeDetector({
+		refreshMode: 'debounce',
+		refreshRate: 1000,
+		onResize
+	});
 	const openStates = {};
 	const initContentBoxWidths = {};
 	const initContentBoxHeights = {};
@@ -535,12 +538,6 @@ export default function About2(props) {
 	const [contentBoxWidths, setContentBoxWidths] = useState(initContentBoxWidths);
 	const [contentBoxHeights, setContentBoxHeights] = useState(initContentBoxHeights);
 
-	useEffect(() => {
-		setPageWidth(pageRef.current.offsetWidth)
-		setPageHeight(pageRef.current.offsetHeight)
-
-	}, [])
-
 	const BtoAx = (x) => (VIEWBOX_WIDTH / 100 * x)
 	const BtoAy = (y) => (VIEWBOX_HEIGHT / 100 * y)
 	const BPrimeToAx = (x) => (VIEWBOX_WIDTH / pageWidth * x)
@@ -564,9 +561,9 @@ export default function About2(props) {
 				<path id="FL" className="st3" d="M1818.9,2976.7L249,3243.2l-2.6,3243.2" />
 				<path id="RedLine_4_" className="st4" d="M1728.4,0v101.8l-66.8,43.2v4.1V809l150,224.6l2.6,1964.4" />
 				<g id="Main">
-					{ContentBoxes.map((props, i) => <SVGComponent key={`Main-${props.key}`} 
-						boxId={`Main-${props.key}`} 
-						isOpen={isOpen[`Main-${props.key}`]} 
+					{ContentBoxes.map((props, i) => <SVGComponent key={`Main-${props.key}`}
+						boxId={`Main-${props.key}`}
+						isOpen={isOpen[`Main-${props.key}`]}
 						setIsOpen={setIsOpen}
 						contentBoxWidth={contentBoxWidths[`Main-${props.key}`]}
 						contentBoxHeight={contentBoxHeights[`Main-${props.key}`]}
