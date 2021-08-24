@@ -436,10 +436,14 @@ const SVGComponent = (props) => {
 	const boxPosX = (props.boxId.includes("Main") && (props.x < 50)) || (props.boxId.includes("NR") || props.boxId.includes("FR")) ? props.BtoAx(props.x) + props.BPrimeToAx(props.contentBoxWidth) : props.BtoAx(props.x)
 	const boxPosY = props.BtoAy(props.y) + props.BPrimeToAy(props.contentBoxHeight / 2);
 	return (<g key={props.boxId} id={props.boxId} data-name={props.boxId}>
-		<path id={`circle-${props.boxId}`} className="st5" d={props.cd} onClick={() => props.setIsOpen(prevState => ({ ...prevState, [props.boxId]: !props.isOpen }))} />
+		<path id={`circle-${props.boxId}`} className="st5" d={props.cd} onClick={() => props.setIsOpen(prevState => {
+				console.log("I was clicked")	
+				return ({ ...prevState, [props.boxId]: !props.isOpen })
+			}	
+			)} />
 		{(props.isOpen && props.contentBoxWidth !== 0 && props.contentBoxHeight !== 0) &&
 			<g>
-				{lineDestinationX !== 0 && <SVGLine boxPosX={boxPosX} boxPosY={boxPosY} lineDestinationX={lineDestinationX} ld={props.ld} />}
+				{lineDestinationX !== 0 && <SVGLine isOpen = {props.isOpen} boxPosX={boxPosX} boxPosY={boxPosY} lineDestinationX={lineDestinationX} ld={props.ld} />}
 				<SVGArrow arrowRef={arrowRef} boxPosX={boxPosX} boxPosY={boxPosY} ad={props.ad} lineDestinationX={lineDestinationX} setLineDestinationX={setLineDestinationX} BPrimeToAx={props.BPrimeToAx} />
 			</g>}
 	</g>);
@@ -486,7 +490,8 @@ const SVGLine = (props) => {
 	ldPoints[ldPoints.length - 1][1] = props.boxPosY
 
 	ldPoints.push([props.lineDestinationX, props.boxPosY])
-	const strokeDashlength = Math.abs(props.destinationX - ldPoints[0][0]) + 400
+	const strokeDashlength = Math.abs(props.lineDestinationX - ldPoints[0][0]) + 400
+	console.log(strokeDashlength)
 	return (<motion.path strokeDashoffset={strokeDashlength} initial={{ strokeDashoffset: strokeDashlength }} animate={props.isOpen ? { strokeDashoffset: 0 } : { strokeDashoffset: strokeDashlength }}
 		strokeDasharray={strokeDashlength} className="st6" d={ldPoints.reduce(ldPointsToSVGStringReducer, "")} />
 	);

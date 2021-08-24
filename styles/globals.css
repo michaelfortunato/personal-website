@@ -76,6 +76,7 @@ a {
   fill: #FFFFFF;
   stroke: #4D4D4D;
   stroke-width: 5;
+  z-index: 10000;
 }
 
 .st6 {
