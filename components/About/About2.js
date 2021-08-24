@@ -6,12 +6,13 @@ import styled from "styled-components"
 import { motion } from "framer-motion"
 import Divider from "@material-ui/core/Divider"
 import React from "react";
+import { darken } from "@material-ui/core";
 
 const ContentBoxes = [
 	{
 		key: 0,
 		title: "Family Background",
-		body: "My mother is Jewish, and my father is Italian, German, and French in that order.",
+		body: "Isa",
 		x: 4,
 		y: 4,
 		cd: "M1677.9,228.7c0,9.4-7.3,17-16.3,17c-9,0-16.3-7.6-16.3-17s7.3-17,16.3-17l0,0C1670.6,211.7,1677.9,219.4,1677.9,228.7z",
@@ -380,33 +381,32 @@ const ContentBoxContainer = styled.div`
 
 const ContentBox = (props) => {
 	const boxRef = useRef(null);
-	const arrowRef = useRef(null);
 	useEffect(() => {
 		if (boxRef.current !== null) {
-			props.setContentBoxWidth(boxRef.current.offsetWidth);
-			props.setContentBoxHeight(boxRef.current.offsetHeight);
+			props.setContentBoxWidths(prevState => ({...prevState, [props.boxId]: boxRef.current.offsetWidth}));
+			props.setContentBoxHeights(prevState => ({...prevState, [props.boxId]: boxRef.current.offsetHeight}));
 		}
-	}, [])
+	}, [props.isOpen])
 	return (
 		props.isOpen ?
-		<ContentBoxContainer ref={boxRef} x={props.x} y={props.y}>
-			<Paper style={{ padding: 20 }}>
-				<Grid container justifyContent="center">
-					<Grid item xs={12} >
-						<BlackTypography style={{ textAlign: "center" }} variant={"h4"}>
-							{props.title}
-						</BlackTypography>
-						<Divider />
+			<ContentBoxContainer ref={boxRef} x={props.x} y={props.y}>
+				<Paper style={{ padding: 20 }}>
+					<Grid container justifyContent="center">
+						<Grid item xs={12} >
+							<BlackTypography style={{ textAlign: "center" }} variant={"h4"}>
+								{props.title}
+							</BlackTypography>
+							<Divider />
+						</Grid>
+						<Grid style={{ marginTop: 10 }} item xs={10}>
+							<BlackTypography>
+								{props.body}
+							</BlackTypography>
+						</Grid>
 					</Grid>
-					<Grid style={{ marginTop: 10 }} item xs={10}>
-						<BlackTypography>
-							{props.body}
-						</BlackTypography>
-					</Grid>
-				</Grid>
-			</Paper>
-		</ContentBoxContainer>
-		: null
+				</Paper>
+			</ContentBoxContainer>
+			: null
 	)
 }
 /* 
@@ -428,38 +428,37 @@ const ContentBox = (props) => {
 
 
 const SVGComponent = (props) => {
-	try {
-		const arrowRef = useRef(null)
-		// The first thing we need to do is place the arrow in the correct position. Get the move position of the arrow
-		// Now get the svg coordinate position of the middle of the box. Right side for x < 50. left side for x > 50
-		const contentPosX = (props.grpId.includes("Main") && (props.x < 50)) || (props.grpId.includes("NR") || props.grpId.includes("FR")) ? props.BtoAx(props.x) + props.BPrimeToAx(props.contentBoxWidth) : props.BtoAx(props.x)
-		const contentPosY = props.BtoAy(props.y) + props.BPrimeToAy(props.contentBoxHeight / 2);
+	const arrowRef = useRef(null)
+	const [lineDestinationX, setLineDestinationX] = useState(0);
+	// The first thing we need to do is place the arrow in the correct position. Get the move position of the arrow
+	// Now get the svg coordinate position of the middle of the box. Right side for x < 50. left side for x > 50
+	useEffect(()=> {
+		console.log(props.boxId)
+		console.log(arrowRef.current)
+	}, [props.isOpen])
+	const boxPosX = (props.boxId.includes("Main") && (props.x < 50)) || (props.boxId.includes("NR") || props.boxId.includes("FR")) ? props.BtoAx(props.x) + props.BPrimeToAx(props.contentBoxWidth) : props.BtoAx(props.x)
+	const boxPosY = props.BtoAy(props.y) + props.BPrimeToAy(props.contentBoxHeight / 2);
+	return (<g key={props.boxId} id={props.boxId} data-name={props.boxId}>
+		<path id={`circle-${props.boxId}`} className="st5" d={props.cd} onClick={() => props.setIsOpen(prevState => ({ ...prevState, [props.boxId]: !props.isOpen }))} />
+		{(props.isOpen && props.contentBoxWidth !== 0 && props.contentBoxHeight !== 0) &&
+			<g>
+				{lineDestinationX !== 0 && <SVGLine boxPosX={boxPosX} boxPosY={boxPosY} lineDestinationX={lineDestinationX} ld={props.ld} />}
+				<SVGArrow boxPosX={boxPosX} boxPosY={boxPosY} ad={props.ad} setLineDestinationX={setLineDestinationX} BPrimeToAx={props.BPrimeToAx}/>
+			</g>}
+	</g>);
 
-
-		const strokeDashlength = Math.abs(destinationX - ldPoints[0][0]) + 400
-		return (<g key={props.boxId} id={props.boxId} data-name={props.boxId}>
-			<path id={`circle-${props.boxId}`} className="st5" d={props.cd} onClick={() => setIsOpen(!isOpen)} />
-			{(props.isOpen && props.contentBoxWidth !== 0 && contentBoxHeight !== 0) &&
-				<g>
-					{lineDestinationX !== 0 && <SVGLine isOpen={isOpen} boxPosX={boxPosX} boxPosY={boxPosY} lineDestinationX={lineDestinationX} ld={props.ld} />}
-					<SVGArrow arrowRef={arrowRef} boxPosX={boxPosX} boxPosY={boxPosY} ad={props.ad} />
-				</g>}
-		</g>);
-
-	}
-	catch (ex) {
-		console.log(ex)
-		return null
-	}
 }
 
 
 const SVGArrow = (props) => {
+	const arrowRef = useRef(null)
 	const adArray = props.ad.split(",")
 	const arrowShiftX = adArray[0].substring(1) //M<number>
 	const arrowShiftY = adArray[1].substring(0, adArray[1].indexOf("c")) //<number>c<number>
-
-	return (<motion.path ref={props.arrowRef} className="st7" d={props.ad} transform={`translate(${props.boxPosX - arrowShiftX} ${props.boxPosY - arrowShiftY})`} />)
+	useEffect(()=> {
+		props.setLineDestinationX((arrowRef.current !== null) ? props.BPrimeToAx(arrowRef.current.getBoundingClientRect().x + arrowRef.current.getBoundingClientRect().width / 2) : 0)
+	}, [])
+	return (<motion.path ref={arrowRef} className="st7" d={props.ad} transform={`translate(${props.boxPosX - arrowShiftX} ${props.boxPosY - arrowShiftY})`} />)
 }
 
 const SVGLine = (props) => {
@@ -507,27 +506,27 @@ export default function About2(props) {
 	const initContentBoxWidths = {};
 	const initContentBoxHeights = {};
 	ContentBoxes.forEach((pair, _) => {
-		openStates[`Main-${pair.key}`] = 0;
+		openStates[`Main-${pair.key}`] = false;
 		initContentBoxWidths[`Main-${pair.key}`] = 0;
 		initContentBoxHeights[`Main-${pair.key}`] = 0;
 	})
 	FLContentBoxes.forEach((pair, _) => {
-		openStates[`FL-${pair.key}`] = 0;
+		openStates[`FL-${pair.key}`] = false;
 		initContentBoxWidths[`FL-${pair.key}`] = 0;
 		initContentBoxHeights[`FL-${pair.key}`] = 0;
 	})
 	NLContentBoxes.forEach((pair, _) => {
-		openStates[`NL-${pair.key}`] = 0;
+		openStates[`NL-${pair.key}`] = false;
 		initContentBoxWidths[`NL-${pair.key}`] = 0;
 		initContentBoxHeights[`NL-${pair.key}`] = 0;
 	})
 	NRContentBoxes.forEach((pair, _) => {
-		openStates[`NR-${pair.key}`] = 0;
+		openStates[`NR-${pair.key}`] = false;
 		initContentBoxWidths[`NR-${pair.key}`] = 0;
 		initContentBoxHeights[`NR-${pair.key}`] = 0;
 	})
 	FRContentBoxes.forEach((pair, _) => {
-		openStates[`FR-${pair.key}`] = 0;
+		openStates[`FR-${pair.key}`] = false;
 		initContentBoxWidths[`FR-${pair.key}`] = 0;
 		initContentBoxHeights[`FR-${pair.key}`] = 0;
 	})
@@ -552,6 +551,8 @@ export default function About2(props) {
 			{ContentBoxes.map((props, i) => <ContentBox key={`Main-${props.key}`}
 				boxId={`Main-${props.key}`}
 				isOpen={isOpen[`Main-${props.key}`]}
+				setContentBoxWidths={setContentBoxWidths}
+				setContentBoxHeights={setContentBoxHeights}
 				pageWidth={pageWidth}
 				pageHeight={pageHeight}
 				{...props} />)}
@@ -563,9 +564,18 @@ export default function About2(props) {
 				<path id="FL" className="st3" d="M1818.9,2976.7L249,3243.2l-2.6,3243.2" />
 				<path id="RedLine_4_" className="st4" d="M1728.4,0v101.8l-66.8,43.2v4.1V809l150,224.6l2.6,1964.4" />
 				<g id="Main">
-					{ContentBoxes.map((props, i) => <ContentBox key={`Main-${props.key}`} 
-					boxId={`Main-${props.key}`} 
-					{...props} />)}
+					{ContentBoxes.map((props, i) => <SVGComponent key={`Main-${props.key}`} 
+						boxId={`Main-${props.key}`} 
+						isOpen={isOpen[`Main-${props.key}`]} 
+						setIsOpen={setIsOpen}
+						contentBoxWidth={contentBoxWidths[`Main-${props.key}`]}
+						contentBoxHeight={contentBoxHeights[`Main-${props.key}`]}
+						BtoAx={BtoAx}
+						BtoAy={BtoAy}
+						BPrimeToAx={BPrimeToAx}
+						BPrimeToAy={BPrimeToAy}
+
+						{...props} />)}
 				</g>
 				<g id="FL_4_">
 				</g>
