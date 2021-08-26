@@ -508,7 +508,7 @@ const VIEWBOX_HEIGHT = 6486.5;
 export default function About2(props) {
 	const { width: pageWidth, height: pageHeight, ref: pageRef } = useResizeDetector({
 		refreshMode: 'debounce',
-		refreshRate: 1000,
+		refreshRate: 300,
 	});
 
 	const MainRef = useRef(null);
