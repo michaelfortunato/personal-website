@@ -1,3 +1,4 @@
+import ReactDOM from "react-dom";
 import { useState, useEffect, useCallback, useRef } from "react";
 import Grid from "@material-ui/core/Grid"
 import Paper from "@material-ui/core/Paper"
@@ -363,51 +364,57 @@ const ContentBoxContainer = styled.div`
 	max-width: 25%;
 	overflow-wrap: break-word; // breaks the word if it overflows 
 `
-/* 
-	Let A be the svgviewBox basis = {a_1, a_2}
-	Let B be the percentage basis = {b_1, b_2}
-	Let B` be the window pixel basis
-	We need to find P which is the B to A transform matrix
-	To do this we need to get the components of the basis vectors of B in terms of the basis vectors of a
-	[b_1]_A = ? [b_2]_A = ?
-	We set up the equation 100b_1 + 0b_2 = VIEWBOX_WIDTHa_1 + 0 a_2, 
-	0b_1 + 1b_2 = 0a_1 + VIEWBOX_HEIGHTa_2
-	=> [b_1]A = (VIEWBOX_WIDTH, 0)
-	=> [b_2]A = (0, VIEWBOX_HEIGHT)
-	A similar calculation shows that 
-	P`, which is B` to A is
-	[b_1`]A = (VIEWBOX_WIDTH/pageWidth, 0)
-	[b_2`]A = (0, VIEWBOX_HEIGHT)
-	*/
+const ContentBoxMachine = (props) => {
+	const [isOpen, setIsOpen] = useState(0);
+	const [contentBoxWidth, setContentBoxWidth] = useState(0);
+	const [contentBoxHeight, setContentBoxHeight] = useState(0);
+	return (<>
+		{ReactDOM.createPortal(<ContentBox
+			isOpen={isOpen}
+			contentBoxWidth={contentBoxWidth}
+			contentBoxHeight={contentBoxHeight}
+			setContentBoxWidth={setContentBoxWidth}
+			setContentBoxHeight={setContentBoxHeight}
+			{...props} />, props.pageRef)}
+		{ReactDOM.createPortal(<SVGComponent
+			isOpen={isOpen}
+			setIsOpen={setIsOpen}
+			contentBoxWidth={contentBoxWidth}
+			contentBoxHeight={contentBoxHeight}
+			{...props}
+		/>, props.svgRef)}
+	</>
+	)
+}
 
 const ContentBox = (props) => {
 	const boxRef = useRef(null);
 	useEffect(() => {
-		if (boxRef.current !== null) {
-			props.setContentBoxWidths(prevState => ({ ...prevState, [props.boxId]: boxRef.current.offsetWidth }));
-			props.setContentBoxHeights(prevState => ({ ...prevState, [props.boxId]: boxRef.current.offsetHeight }));
+		const isChanged = boxRef.current !== null && (props.contentBoxWidth !== boxRef.current.offsetWidth || props.contentBoxHeight !== boxRef.current.offsetHeight);
+		if (props.isOpen && boxRef.current !== null && isChanged) {
+			props.setContentBoxWidth(boxRef.current.offsetWidth);
+			props.setContentBoxHeight(boxRef.current.offsetHeight);
 		}
-	}, [props.isOpen, props.pageWidth, props.pageHeight])
-	return (
-		props.isOpen ?
-			<ContentBoxContainer ref={boxRef} x={props.x} y={props.y}>
-				<Paper style={{ padding: 20 }}>
-					<Grid container justifyContent="center">
-						<Grid item xs={12} >
-							<BlackTypography style={{ textAlign: "center" }} variant={"h4"}>
-								{props.title}
-							</BlackTypography>
-							<Divider />
-						</Grid>
-						<Grid style={{ marginTop: 10 }} item xs={10}>
-							<BlackTypography>
-								{props.body}
-							</BlackTypography>
-						</Grid>
+	})
+	return (props.isOpen ?
+		<ContentBoxContainer ref={boxRef} x={props.x} y={props.y}>
+			<Paper style={{ padding: 20 }}>
+				<Grid container justifyContent="center">
+					<Grid item xs={12} >
+						<BlackTypography style={{ textAlign: "center" }} variant={"h4"}>
+							{props.title}
+						</BlackTypography>
+						<Divider />
 					</Grid>
-				</Paper>
-			</ContentBoxContainer>
-			: null
+					<Grid style={{ marginTop: 10 }} item xs={10}>
+						<BlackTypography>
+							{props.body}
+						</BlackTypography>
+					</Grid>
+				</Grid>
+			</Paper>
+		</ContentBoxContainer>
+		: null
 	)
 }
 /* 
@@ -436,14 +443,11 @@ const SVGComponent = (props) => {
 	const boxPosX = (props.boxId.includes("Main") && (props.x < 50)) || (props.boxId.includes("NR") || props.boxId.includes("FR")) ? props.BtoAx(props.x) + props.BPrimeToAx(props.contentBoxWidth) : props.BtoAx(props.x)
 	const boxPosY = props.BtoAy(props.y) + props.BPrimeToAy(props.contentBoxHeight / 2);
 	return (<g key={props.boxId} id={props.boxId} data-name={props.boxId}>
-		<path id={`circle-${props.boxId}`} className="st5" d={props.cd} onClick={() => props.setIsOpen(prevState => {
-				console.log("I was clicked")	
-				return ({ ...prevState, [props.boxId]: !props.isOpen })
-			}	
-			)} />
+		<path id={`circle-${props.boxId}`} className="st5" d={props.cd} onClick={() => props.setIsOpen(!props.isOpen)}
+		/>
 		{(props.isOpen && props.contentBoxWidth !== 0 && props.contentBoxHeight !== 0) &&
 			<g>
-				{lineDestinationX !== 0 && <SVGLine isOpen = {props.isOpen} boxPosX={boxPosX} boxPosY={boxPosY} lineDestinationX={lineDestinationX} ld={props.ld} />}
+				{lineDestinationX !== 0 && <SVGLine isOpen={props.isOpen} boxPosX={boxPosX} boxPosY={boxPosY} lineDestinationX={lineDestinationX} ld={props.ld} />}
 				<SVGArrow arrowRef={arrowRef} boxPosX={boxPosX} boxPosY={boxPosY} ad={props.ad} lineDestinationX={lineDestinationX} setLineDestinationX={setLineDestinationX} BPrimeToAx={props.BPrimeToAx} />
 			</g>}
 	</g>);
@@ -502,47 +506,21 @@ const VIEWBOX_WIDTH = 3658.6;
 const VIEWBOX_HEIGHT = 6486.5;
 
 export default function About2(props) {
-	const onResize = useCallback(() => {
-		console.log("I was triggered")
-	}, []);
 	const { width: pageWidth, height: pageHeight, ref: pageRef } = useResizeDetector({
 		refreshMode: 'debounce',
 		refreshRate: 1000,
-		onResize
 	});
-	const openStates = {};
-	const initContentBoxWidths = {};
-	const initContentBoxHeights = {};
-	ContentBoxes.forEach((pair, _) => {
-		openStates[`Main-${pair.key}`] = false;
-		initContentBoxWidths[`Main-${pair.key}`] = 0;
-		initContentBoxHeights[`Main-${pair.key}`] = 0;
-	})
-	FLContentBoxes.forEach((pair, _) => {
-		openStates[`FL-${pair.key}`] = false;
-		initContentBoxWidths[`FL-${pair.key}`] = 0;
-		initContentBoxHeights[`FL-${pair.key}`] = 0;
-	})
-	NLContentBoxes.forEach((pair, _) => {
-		openStates[`NL-${pair.key}`] = false;
-		initContentBoxWidths[`NL-${pair.key}`] = 0;
-		initContentBoxHeights[`NL-${pair.key}`] = 0;
-	})
-	NRContentBoxes.forEach((pair, _) => {
-		openStates[`NR-${pair.key}`] = false;
-		initContentBoxWidths[`NR-${pair.key}`] = 0;
-		initContentBoxHeights[`NR-${pair.key}`] = 0;
-	})
-	FRContentBoxes.forEach((pair, _) => {
-		openStates[`FR-${pair.key}`] = false;
-		initContentBoxWidths[`FR-${pair.key}`] = 0;
-		initContentBoxHeights[`FR-${pair.key}`] = 0;
-	})
 
-	const [isOpen, setIsOpen] = useState(openStates)
-	const [contentBoxWidths, setContentBoxWidths] = useState(initContentBoxWidths);
-	const [contentBoxHeights, setContentBoxHeights] = useState(initContentBoxHeights);
+	const MainRef = useRef(null);
+	const FLRef = useRef(null);
+	const NLRef = useRef(null);
+	const NRRef = useRef(null);
+	const FRRef = useRef(null);
 
+	const [currentMainRef, setCurrentMainRef] = useState(null);
+	useEffect(() => {
+		setCurrentMainRef(MainRef.current);
+	}, [])
 	const BtoAx = (x) => (VIEWBOX_WIDTH / 100 * x)
 	const BtoAy = (y) => (VIEWBOX_HEIGHT / 100 * y)
 	const BPrimeToAx = (x) => (VIEWBOX_WIDTH / pageWidth * x)
@@ -550,34 +528,27 @@ export default function About2(props) {
 
 	return (
 		<StyledPage ref={pageRef}>
-			{ContentBoxes.map((props, i) => <ContentBox key={`Main-${props.key}`}
-				boxId={`Main-${props.key}`}
-				isOpen={isOpen[`Main-${props.key}`]}
-				setContentBoxWidths={setContentBoxWidths}
-				setContentBoxHeights={setContentBoxHeights}
-				pageWidth={pageWidth}
-				pageHeight={pageHeight}
-				{...props} />)}
+			{pageRef.current !== null && currentMainRef !== null &&
+				ContentBoxes.map((props, i) => <ContentBoxMachine key={`Main-${props.key}`}
+					pageRef={pageRef.current}
+					svgRef={currentMainRef}
+					boxId={`Main-${props.key}`}
+					pageWidth={pageWidth}
+					pageHeight={pageHeight}
+					BtoAx={BtoAx}
+					BtoAy={BtoAy}
+					BPrimeToAx={BPrimeToAx}
+					BPrimeToAy={BPrimeToAy}
+					{...props} />)
+			}
 			<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"
-				viewBox="0 0 3658.6 6486.5" preserveAspectRatio="none">
+				viewBox="0 0 3658.6 6486.5" preserveAspectRatio="none" >
 				<path id="FR" className="st0" d="M1807,2976.3l1571.9,266.9l-2.6,3243.2" />
 				<path id="NL" className="st1" d="M1814.1,2976.3l-503.4,210.9l4.3,3299.2" />
 				<path id="NR" className="st2" d="M1814.7,2974.9l489.4,210.9l3.7,3300.7" />
 				<path id="FL" className="st3" d="M1818.9,2976.7L249,3243.2l-2.6,3243.2" />
 				<path id="RedLine_4_" className="st4" d="M1728.4,0v101.8l-66.8,43.2v4.1V809l150,224.6l2.6,1964.4" />
-				<g id="Main">
-					{ContentBoxes.map((props, i) => <SVGComponent key={`Main-${props.key}`}
-						boxId={`Main-${props.key}`}
-						isOpen={isOpen[`Main-${props.key}`]}
-						setIsOpen={setIsOpen}
-						contentBoxWidth={contentBoxWidths[`Main-${props.key}`]}
-						contentBoxHeight={contentBoxHeights[`Main-${props.key}`]}
-						BtoAx={BtoAx}
-						BtoAy={BtoAy}
-						BPrimeToAx={BPrimeToAx}
-						BPrimeToAy={BPrimeToAy}
-
-						{...props} />)}
+				<g ref={MainRef} id="Main" style={{ outline: "none" }}>
 				</g>
 				<g id="FL_4_">
 				</g>
