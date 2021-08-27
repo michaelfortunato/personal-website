@@ -390,10 +390,13 @@ const ContentBoxMachine = (props) => {
 const ContentBox = (props) => {
 	const boxRef = useRef(null);
 	useEffect(() => {
-		const isChanged = boxRef.current !== null && (props.contentBoxWidth !== boxRef.current.offsetWidth || props.contentBoxHeight !== boxRef.current.offsetHeight);
-		if (props.isOpen && boxRef.current !== null && isChanged) {
-			props.setContentBoxWidth(boxRef.current.offsetWidth);
-			props.setContentBoxHeight(boxRef.current.offsetHeight);
+		if (props.isOpen) {
+			const contentBoxWidth = boxRef.current.offsetWidth;
+			const contentBoxHeight = boxRef.current.offsetHeight;
+			if (props.contentBoxWidth !== contentBoxWidth  || props.contentBoxHeight !== contentBoxHeight) {
+				props.setContentBoxWidth(contentBoxWidth);
+				props.setContentBoxHeight(contentBoxHeight);
+			}
 		}
 	})
 	return (props.isOpen ?
@@ -437,18 +440,19 @@ const ContentBox = (props) => {
 
 const SVGComponent = (props) => {
 	const arrowRef = useRef(null)
-	const [lineDestinationX, setLineDestinationX] = useState(0);
+	const [arrowWidth, setArrowWidth] = useState(0);
 	// The first thing we need to do is place the arrow in the correct position. Get the move position of the arrow
 	// Now get the svg coordinate position of the middle of the box. Right side for x < 50. left side for x > 50
-	const boxPosX = (props.boxId.includes("Main") && (props.x < 50)) || (props.boxId.includes("NR") || props.boxId.includes("FR")) ? props.BtoAx(props.x) + props.BPrimeToAx(props.contentBoxWidth) : props.BtoAx(props.x)
+ 	const isLeft = (props.boxId.includes("Main") && (props.x < 50)) || (props.boxId.includes("NR") || props.boxId.includes("FR")) 
+	const boxPosX = isLeft ? props.BtoAx(props.x) + props.BPrimeToAx(props.contentBoxWidth) : props.BtoAx(props.x)
 	const boxPosY = props.BtoAy(props.y) + props.BPrimeToAy(props.contentBoxHeight / 2);
 	return (<g key={props.boxId} id={props.boxId} data-name={props.boxId}>
 		<path id={`circle-${props.boxId}`} className="st5" d={props.cd} onClick={() => props.setIsOpen(!props.isOpen)}
 		/>
 		{(props.isOpen && props.contentBoxWidth !== 0 && props.contentBoxHeight !== 0) &&
 			<g>
-				{lineDestinationX !== 0 && <SVGLine isOpen={props.isOpen} boxPosX={boxPosX} boxPosY={boxPosY} lineDestinationX={lineDestinationX} ld={props.ld} />}
-				<SVGArrow arrowRef={arrowRef} boxPosX={boxPosX} boxPosY={boxPosY} ad={props.ad} lineDestinationX={lineDestinationX} setLineDestinationX={setLineDestinationX} BPrimeToAx={props.BPrimeToAx} />
+				{arrowWidth !== 0 && <SVGLine isOpen={props.isOpen} boxPosX={boxPosX} boxPosY={boxPosY} isLeft={isLeft} arrowWidth={arrowWidth} ld={props.ld} />}
+				<SVGArrow arrowRef={arrowRef} boxPosX={boxPosX} boxPosY={boxPosY} ad={props.ad} arrowWidth={arrowWidth} setArrowWidth={setArrowWidth} BPrimeToAx={props.BPrimeToAx} />
 			</g>}
 	</g>);
 
@@ -461,9 +465,9 @@ const SVGArrow = (props) => {
 	const arrowShiftX = adArray[0].substring(1) //M<number>
 	const arrowShiftY = adArray[1].substring(0, adArray[1].indexOf("c")) //<number>c<number>
 	useEffect(() => {
-		const newLineDestinationX = props.BPrimeToAx(arrowRef.current.getBoundingClientRect().x + arrowRef.current.getBoundingClientRect().width / 2);
-		if (arrowRef.current !== null && props.lineDestinationX !== newLineDestinationX) {
-			props.setLineDestinationX(newLineDestinationX);
+		const arrowWidth = props.BPrimeToAx(arrowRef.current.getBoundingClientRect().width / 2);
+		if (props.arrowWidth !== arrowWidth) {
+			props.setArrowWidth(arrowWidth);
 		}
 	})
 	return (<motion.path ref={arrowRef} className="st7" d={props.ad} transform={`translate(${props.boxPosX - arrowShiftX} ${props.boxPosY - arrowShiftY})`} />)
@@ -493,8 +497,9 @@ const SVGLine = (props) => {
 	// Next set the y val
 	ldPoints[ldPoints.length - 1][1] = props.boxPosY
 
-	ldPoints.push([props.lineDestinationX, props.boxPosY])
-	const strokeDashlength = Math.abs(props.lineDestinationX - ldPoints[0][0]) + 400
+	const finalPos = [props.isLeft ? props.boxPosX + props.arrowWidth : props.boxPosX - props.arrowWidth, props.boxPosY ]
+	ldPoints.push(finalPos)
+	const strokeDashlength = Math.abs(finalPos[0]- ldPoints[0][0]) + 400
 	console.log(strokeDashlength)
 	return (<motion.path strokeDashoffset={strokeDashlength} initial={{ strokeDashoffset: strokeDashlength }} animate={props.isOpen ? { strokeDashoffset: 0 } : { strokeDashoffset: strokeDashlength }}
 		strokeDasharray={strokeDashlength} className="st6" d={ldPoints.reduce(ldPointsToSVGStringReducer, "")} />
@@ -511,6 +516,7 @@ export default function About2(props) {
 		refreshRate: 300,
 	});
 
+	const [hasMounted, setHasMounted] = useState(false)
 	const MainRef = useRef(null);
 	const FLRef = useRef(null);
 	const NLRef = useRef(null);
@@ -519,7 +525,7 @@ export default function About2(props) {
 
 	const [currentMainRef, setCurrentMainRef] = useState(null);
 	useEffect(() => {
-		setCurrentMainRef(MainRef.current);
+		setHasMounted(true);
 	}, [])
 	const BtoAx = (x) => (VIEWBOX_WIDTH / 100 * x)
 	const BtoAy = (y) => (VIEWBOX_HEIGHT / 100 * y)
@@ -528,10 +534,10 @@ export default function About2(props) {
 
 	return (
 		<StyledPage ref={pageRef}>
-			{pageRef.current !== null && currentMainRef !== null &&
+			{pageRef.current !== null && MainRef.current !== null &&
 				ContentBoxes.map((props, i) => <ContentBoxMachine key={`Main-${props.key}`}
 					pageRef={pageRef.current}
-					svgRef={currentMainRef}
+					svgRef={MainRef.current}
 					boxId={`Main-${props.key}`}
 					pageWidth={pageWidth}
 					pageHeight={pageHeight}
