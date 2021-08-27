@@ -9,6 +9,10 @@ import Divider from "@material-ui/core/Divider"
 import React from "react";
 import { darken } from "@material-ui/core";
 import { useResizeDetector } from 'react-resize-detector';
+import { gsap } from "gsap"
+import { MotionPathPlugin } from "gsap/dist/MotionPathPlugin";
+
+gsap.registerPlugin(MotionPathPlugin);
 
 const ContentBoxes = [
 	{
@@ -363,24 +367,64 @@ const ContentBoxContainer = styled.div`
 	display: inline;
 	max-width: 25%;
 	overflow-wrap: break-word; // breaks the word if it overflows 
+	opacity: 0;
 `
 const ContentBoxMachine = (props) => {
-	const [isOpen, setIsOpen] = useState(0);
-	const [contentBoxWidth, setContentBoxWidth] = useState(0);
-	const [contentBoxHeight, setContentBoxHeight] = useState(0);
+	const [isOpen, setIsOpen] = useState(false);
+	const [boxPosX, setBoxPosX] = useState(0);
+	const [boxPosY, setBoxPosY] = useState(0);
+	const [arrowWidth, setArrowWidth] = useState(0)
+	const boxRef = useRef(null);
+	const lineRef = useRef(null);
+	const arrowRef = useRef(null);
+
+	const timeLine = useRef(null);
+	const isLeft = (props.boxId.includes("Main") && (props.x < 50)) || (props.boxId.includes("NR") || props.boxId.includes("FR"))
+	useEffect(() => {
+		if (isOpen) {
+			const newBoxPosX = isLeft ? props.BtoAx(props.x) + props.BPrimeToAx(boxRef.current.offsetWidth) : props.BtoAx(props.x)
+			const newBoxPosY = props.BtoAy(props.y) + props.BPrimeToAy(boxRef.current.offsetHeight / 2);
+			const newArrowWidth = props.BPrimeToAx(arrowRef.current.getBoundingClientRect().width / 2);
+			if (newBoxPosX !== boxPosX) { setBoxPosX(newBoxPosX) }
+			if (newBoxPosY !== boxPosY) { setBoxPosY(newBoxPosY) }
+			if (newArrowWidth !== arrowWidth) { setArrowWidth(newArrowWidth) }
+		}
+	}, [isOpen, props.pageWidth, props.pageHeight])
+
+	useEffect(() => {
+		if (boxRef.current !== null && lineRef.current !== null && arrowRef.current !== null) {
+			console.log(lineRef.current.getAttribute("d"))
+			timeLine.current = gsap.timeline()
+					.to(boxRef.current, { opacity: 1, duration: 1 })
+					.to(arrowRef.current, {
+						motionPath: {
+							path: lineRef.current.getAttribute("d"),
+							align: lineRef.current
+						}
+					})
+
+		}
+	}, [isOpen, boxPosX, boxPosY, arrowWidth])
+
+	useEffect(()=> {
+		if (isOpen) {
+			timeLine.current && timeLine.current.play()
+		}
+	}, [isOpen])
 	return (<>
 		{ReactDOM.createPortal(<ContentBox
+			boxRef={boxRef}
 			isOpen={isOpen}
-			contentBoxWidth={contentBoxWidth}
-			contentBoxHeight={contentBoxHeight}
-			setContentBoxWidth={setContentBoxWidth}
-			setContentBoxHeight={setContentBoxHeight}
 			{...props} />, props.pageRef)}
 		{ReactDOM.createPortal(<SVGComponent
+			lineRef={lineRef}
+			arrowRef={arrowRef}
 			isOpen={isOpen}
 			setIsOpen={setIsOpen}
-			contentBoxWidth={contentBoxWidth}
-			contentBoxHeight={contentBoxHeight}
+			isLeft={isLeft}
+			boxPosX={boxPosX}
+			boxPosY={boxPosY}
+			arrowWidth={arrowWidth}
 			{...props}
 		/>, props.svgRef)}
 	</>
@@ -388,19 +432,8 @@ const ContentBoxMachine = (props) => {
 }
 
 const ContentBox = (props) => {
-	const boxRef = useRef(null);
-	useEffect(() => {
-		if (props.isOpen) {
-			const contentBoxWidth = boxRef.current.offsetWidth;
-			const contentBoxHeight = boxRef.current.offsetHeight;
-			if (props.contentBoxWidth !== contentBoxWidth  || props.contentBoxHeight !== contentBoxHeight) {
-				props.setContentBoxWidth(contentBoxWidth);
-				props.setContentBoxHeight(contentBoxHeight);
-			}
-		}
-	})
 	return (props.isOpen ?
-		<ContentBoxContainer ref={boxRef} x={props.x} y={props.y}>
+		<ContentBoxContainer ref={props.boxRef} x={props.x} y={props.y}>
 			<Paper style={{ padding: 20 }}>
 				<Grid container justifyContent="center">
 					<Grid item xs={12} >
@@ -439,38 +472,32 @@ const ContentBox = (props) => {
 
 
 const SVGComponent = (props) => {
-	const arrowRef = useRef(null)
-	const [arrowWidth, setArrowWidth] = useState(0);
 	// The first thing we need to do is place the arrow in the correct position. Get the move position of the arrow
 	// Now get the svg coordinate position of the middle of the box. Right side for x < 50. left side for x > 50
- 	const isLeft = (props.boxId.includes("Main") && (props.x < 50)) || (props.boxId.includes("NR") || props.boxId.includes("FR")) 
-	const boxPosX = isLeft ? props.BtoAx(props.x) + props.BPrimeToAx(props.contentBoxWidth) : props.BtoAx(props.x)
-	const boxPosY = props.BtoAy(props.y) + props.BPrimeToAy(props.contentBoxHeight / 2);
 	return (<g key={props.boxId} id={props.boxId} data-name={props.boxId}>
 		<path id={`circle-${props.boxId}`} className="st5" d={props.cd} onClick={() => props.setIsOpen(!props.isOpen)}
 		/>
-		{(props.isOpen && props.contentBoxWidth !== 0 && props.contentBoxHeight !== 0) &&
-			<g>
-				{arrowWidth !== 0 && <SVGLine isOpen={props.isOpen} boxPosX={boxPosX} boxPosY={boxPosY} isLeft={isLeft} arrowWidth={arrowWidth} ld={props.ld} />}
-				<SVGArrow arrowRef={arrowRef} boxPosX={boxPosX} boxPosY={boxPosY} ad={props.ad} arrowWidth={arrowWidth} setArrowWidth={setArrowWidth} BPrimeToAx={props.BPrimeToAx} />
-			</g>}
+		<g>
+			{props.isOpen && props.boxPosX !== 0 && props.boxPosY !== 0 && props.arrowWidth !== 0 && <SVGLine
+				lineRef={props.lineRef}
+				isOpen={props.isOpen} l
+				boxPosX={props.boxPosX}
+				boxPosY={props.boxPosY}
+				isLeft={props.isLeft}
+				arrowWidth={props.arrowWidth}
+				ld={props.ld} />}
+			<SVGArrow arrowRef={props.arrowRef} boxPosX={props.boxPosX} boxPosY={props.boxPosY} ad={props.ad} BPrimeToAx={props.BPrimeToAx} />
+		</g>
 	</g>);
 
 }
 
 
 const SVGArrow = (props) => {
-	const arrowRef = useRef(null);
 	const adArray = props.ad.split(",")
 	const arrowShiftX = adArray[0].substring(1) //M<number>
 	const arrowShiftY = adArray[1].substring(0, adArray[1].indexOf("c")) //<number>c<number>
-	useEffect(() => {
-		const arrowWidth = props.BPrimeToAx(arrowRef.current.getBoundingClientRect().width / 2);
-		if (props.arrowWidth !== arrowWidth) {
-			props.setArrowWidth(arrowWidth);
-		}
-	})
-	return (<motion.path ref={arrowRef} className="st7" d={props.ad} transform={`translate(${props.boxPosX - arrowShiftX} ${props.boxPosY - arrowShiftY})`} />)
+	return (<motion.path ref={props.arrowRef} className="st7" d={props.ad} transform={`translate(${props.boxPosX - arrowShiftX} ${props.boxPosY - arrowShiftY})`} />)
 }
 
 const SVGLine = (props) => {
@@ -497,11 +524,11 @@ const SVGLine = (props) => {
 	// Next set the y val
 	ldPoints[ldPoints.length - 1][1] = props.boxPosY
 
-	const finalPos = [props.isLeft ? props.boxPosX + props.arrowWidth : props.boxPosX - props.arrowWidth, props.boxPosY ]
+	const finalPos = [props.isLeft ? props.boxPosX + props.arrowWidth : props.boxPosX - props.arrowWidth, props.boxPosY]
+
 	ldPoints.push(finalPos)
-	const strokeDashlength = Math.abs(finalPos[0]- ldPoints[0][0]) + 400
-	console.log(strokeDashlength)
-	return (<motion.path strokeDashoffset={strokeDashlength} initial={{ strokeDashoffset: strokeDashlength }} animate={props.isOpen ? { strokeDashoffset: 0 } : { strokeDashoffset: strokeDashlength }}
+	const strokeDashlength = Math.abs(finalPos[0] - ldPoints[0][0]) + 400
+	return (<motion.path ref = {props.lineRef} strokeDashoffset={strokeDashlength} initial={{ strokeDashoffset: strokeDashlength }} animate={props.isOpen ? { strokeDashoffset: 0 } : { strokeDashoffset: strokeDashlength }}
 		strokeDasharray={strokeDashlength} className="st6" d={ldPoints.reduce(ldPointsToSVGStringReducer, "")} />
 	);
 
@@ -523,7 +550,6 @@ export default function About2(props) {
 	const NRRef = useRef(null);
 	const FRRef = useRef(null);
 
-	const [currentMainRef, setCurrentMainRef] = useState(null);
 	useEffect(() => {
 		setHasMounted(true);
 	}, [])
