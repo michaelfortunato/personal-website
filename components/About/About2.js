@@ -393,18 +393,26 @@ const ContentBoxMachine = (props) => {
 
 	useEffect(() => {
 		if (boxRef.current !== null && lineRef.current !== null && arrowRef.current !== null) {
-			console.log(lineRef.current.getAttribute("d"))
 			timeLine.current = gsap.timeline()
-					.to(boxRef.current, { opacity: 1, duration: 1 })
 					.to(arrowRef.current, {
 						motionPath: {
 							path: lineRef.current.getAttribute("d"),
-							align: lineRef.current
-						}
+							align: lineRef.current,
+							autoRotate: true,
+							alignOrigin: [0.5, 0.5],
+							autoRotate: isLeft ?  180 : 0
+						}, 
+						duration : 1, 
+					}).to(lineRef.current, {
+						strokeDashlength: lineRef.current.getAttribute("stroke-dasharray"), 
+						duration : 1, 
 					})
+					.to(arrowRef.current, { opacity: 1, duration: .2 }, "<")
+					.to(boxRef.current, { opacity: 1, duration: 1 }, "=-1")
+
 
 		}
-	}, [isOpen, boxPosX, boxPosY, arrowWidth])
+	}, [boxPosX, boxPosY, arrowWidth])
 
 	useEffect(()=> {
 		if (isOpen) {
@@ -497,7 +505,7 @@ const SVGArrow = (props) => {
 	const adArray = props.ad.split(",")
 	const arrowShiftX = adArray[0].substring(1) //M<number>
 	const arrowShiftY = adArray[1].substring(0, adArray[1].indexOf("c")) //<number>c<number>
-	return (<motion.path ref={props.arrowRef} className="st7" d={props.ad} transform={`translate(${props.boxPosX - arrowShiftX} ${props.boxPosY - arrowShiftY})`} />)
+	return (<motion.path ref={props.arrowRef} className="st7" d={props.ad}  />)
 }
 
 const SVGLine = (props) => {
@@ -528,7 +536,7 @@ const SVGLine = (props) => {
 
 	ldPoints.push(finalPos)
 	const strokeDashlength = Math.abs(finalPos[0] - ldPoints[0][0]) + 400
-	return (<motion.path ref = {props.lineRef} strokeDashoffset={strokeDashlength} initial={{ strokeDashoffset: strokeDashlength }} animate={props.isOpen ? { strokeDashoffset: 0 } : { strokeDashoffset: strokeDashlength }}
+	return (<motion.path ref = {props.lineRef} strokeDashlength = {0}
 		strokeDasharray={strokeDashlength} className="st6" d={ldPoints.reduce(ldPointsToSVGStringReducer, "")} />
 	);
 
