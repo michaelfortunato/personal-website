@@ -372,15 +372,14 @@ const ContentBoxContainer = styled.div`
 const ContentBoxMachine = (props) => {
 
 	const [isOpen, setIsOpen] = useState(false);
+	const [isClosing, setIsClosing] = useState(false);
 	const [boxPosX, setBoxPosX] = useState(0);
 	const [boxPosY, setBoxPosY] = useState(0);
 	const [arrowWidth, setArrowWidth] = useState(0)
-	const [timeline, setTimeline] = useState(() => gsap.timeline());
 	const boxRef = useRef(null);
 	const lineRef = useRef(null);
 	const arrowRef = useRef(null);
 
-	const timeLine = useRef(null);
 	const isLeft = (props.boxId.includes("Main") && (props.x < 50)) || (props.boxId.includes("NR") || props.boxId.includes("FR"))
 	useEffect(() => {
 		if (isOpen) {
@@ -392,11 +391,9 @@ const ContentBoxMachine = (props) => {
 			if (newArrowWidth !== arrowWidth) { setArrowWidth(newArrowWidth) }
 		}
 	}, [isOpen, props.pageWidth, props.pageHeight])
-
 	return (<>
 		{ReactDOM.createPortal(<ContentBox
 			boxRef={boxRef}
-			timeline={timeline}
 			isOpen={isOpen}
 			{...props} />, props.pageRef)}
 		{ReactDOM.createPortal(<SVGComponent
@@ -404,11 +401,13 @@ const ContentBoxMachine = (props) => {
 			arrowRef={arrowRef}
 			isOpen={isOpen}
 			setIsOpen={setIsOpen}
+			isClosing={isClosing}
+			setIsClosing={setIsClosing}
 			isLeft={isLeft}
 			boxPosX={boxPosX}
 			boxPosY={boxPosY}
+			boxRef={boxRef}
 			arrowWidth={arrowWidth}
-			timeline={timeline}
 			{...props}
 		/>, props.svgRef)}
 	</>
@@ -459,19 +458,31 @@ const SVGComponent = (props) => {
 	// The first thing we need to do is place the arrow in the correct position. Get the move position of the arrow
 	// Now get the svg coordinate position of the middle of the box. Right side for x < 50. left side for x > 50
 	return (<g key={props.boxId} id={props.boxId} data-name={props.boxId}>
-		<path id={`circle-${props.boxId}`} className="st5" d={props.cd} onClick={() => props.setIsOpen(!props.isOpen)}
+		<path id={`circle-${props.boxId}`} className="st5" d={props.cd} onClick={() => {
+			if (!props.isOpen) {
+				props.setIsOpen(true)
+			} else {
+				props.setIsClosing(true)
+			}
+		}}
 		/>
 		{props.isOpen && <g>
-			{props.boxPosX !== 0 && props.boxPosY !== 0 && props.arrowWidth !== 0 && <SVGLine
-				lineRef={props.lineRef}
-				isOpen={props.isOpen} l
-				boxPosX={props.boxPosX}
-				boxPosY={props.boxPosY}
-				isLeft={props.isLeft}
-				arrowRef={props.arrowRef}
-				arrowWidth={props.arrowWidth}
-				timeline={props.timeline}
-				ld={props.ld} />}
+			{props.boxPosX !== 0 && props.boxPosY !== 0 && props.arrowWidth !== 0 &&
+				<SVGLine
+					lineRef={props.lineRef}
+					isOpen={props.isOpen}
+					setIsOpen={props.setIsOpen}
+					isClosing={props.isClosing}
+					setIsClosing={props.setIsClosing}
+					boxPosX={props.boxPosX}
+					boxPosY={props.boxPosY}
+					isLeft={props.isLeft}
+					boxRef={props.boxRef}
+					arrowRef={props.arrowRef}
+					arrowWidth={props.arrowWidth}
+					timeline={props.timeline}
+					ld={props.ld} />
+			}
 			<SVGArrow arrowRef={props.arrowRef} boxPosX={props.boxPosX} boxPosY={props.boxPosY} ad={props.ad} BPrimeToAx={props.BPrimeToAx} />
 		</g>}
 	</g>);
@@ -483,24 +494,32 @@ const SVGArrow = (props) => {
 	const adArray = props.ad.split(",")
 	const arrowShiftX = adArray[0].substring(1) //M<number>
 	const arrowShiftY = adArray[1].substring(0, adArray[1].indexOf("c")) //<number>c<number>
-	return (<motion.path ref={props.arrowRef} className="st7" d={props.ad} />)
+	return (<motion.path ref={props.arrowRef} className="st7" d={props.ad} transform={`translate(${props.boxPosX - arrowShiftX} ${props.boxPosY - arrowShiftY})`} />)
 }
 
 const SVGLine = (props) => {
+	const timeline = useRef(null);
 	useEffect(() => {
 		const pathLength = props.lineRef.current.getTotalLength();
-		gsap.set(props.lineRef.current, { strokeDasharray: pathLength })
-		props.timeline.to(props.arrowRef.current, .2, { opacity: 1 })
-		.to(props.arrowRef.current, 1, {
-			motionPath: {
-				path: props.lineRef.current.getAttribute("d"),
-				align: props.lineRef.current,
-				autoRotate: true,
-				alignOrigin: [0.5, 0.5],
-				autoRotate: props.isLeft ? 180 : 0
-			},
-		}, "<").fromTo(props.lineRef.current, 1, { strokeDashoffset: pathLength }, { strokeDashoffset: 0 }, "<")
+		timeline.current = gsap.timeline({ onReverseComplete: () => { props.setIsClosing(false); props.setIsOpen(false); } })
+			.set(props.lineRef.current, { strokeDasharray: pathLength })
+			.to(props.arrowRef.current, { opacity: 1, duration: .2 })
+			.to(props.arrowRef.current, {
+				motionPath: {
+					path: props.lineRef.current.getAttribute("d"),
+					align: props.lineRef.current,
+					autoRotate: true,
+					alignOrigin: [0.5, 0.5],
+					autoRotate: props.isLeft ? 180 : 0
+				},
+				duration: .5
+			}, "<").fromTo(props.lineRef.current, { strokeDashoffset: pathLength  }, { strokeDashoffset: 0, duration: .5 }, "<")
+			.fromTo(props.boxRef.current, { yPercent: -10 }, { yPercent: 0, opacity: 1, duration: .5 }, ">-0.5")
+		return () => { timeline.current.kill() }
 	}, [])
+	useEffect(() => {
+		if (props.isClosing) { timeline.current.reverse(); }
+	}, [props.isClosing])
 	const ldPointsToSVGStringReducer = (svgString, tuple, index) => (index === 0 ? svgString + `M${tuple[0]},${tuple[1]}` : svgString + " " + `${tuple[0]},${tuple[1]}`)
 	// Get lds to transform them
 	let ldPoints = new Array();
