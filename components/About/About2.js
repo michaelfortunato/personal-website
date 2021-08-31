@@ -370,10 +370,12 @@ const ContentBoxContainer = styled.div`
 	opacity: 0;
 `
 const ContentBoxMachine = (props) => {
+
 	const [isOpen, setIsOpen] = useState(false);
 	const [boxPosX, setBoxPosX] = useState(0);
 	const [boxPosY, setBoxPosY] = useState(0);
 	const [arrowWidth, setArrowWidth] = useState(0)
+	const [timeline, setTimeline] = useState(() => gsap.timeline());
 	const boxRef = useRef(null);
 	const lineRef = useRef(null);
 	const arrowRef = useRef(null);
@@ -391,37 +393,10 @@ const ContentBoxMachine = (props) => {
 		}
 	}, [isOpen, props.pageWidth, props.pageHeight])
 
-	useEffect(() => {
-		if (boxRef.current !== null && lineRef.current !== null && arrowRef.current !== null) {
-			timeLine.current = gsap.timeline()
-					.to(arrowRef.current, {
-						motionPath: {
-							path: lineRef.current.getAttribute("d"),
-							align: lineRef.current,
-							autoRotate: true,
-							alignOrigin: [0.5, 0.5],
-							autoRotate: isLeft ?  180 : 0
-						}, 
-						duration : 1, 
-					}).to(lineRef.current, {
-						strokeDashlength: lineRef.current.getAttribute("stroke-dasharray"), 
-						duration : 1, 
-					})
-					.to(arrowRef.current, { opacity: 1, duration: .2 }, "<")
-					.to(boxRef.current, { opacity: 1, duration: 1 }, "=-1")
-
-
-		}
-	}, [boxPosX, boxPosY, arrowWidth])
-
-	useEffect(()=> {
-		if (isOpen) {
-			timeLine.current && timeLine.current.play()
-		}
-	}, [isOpen])
 	return (<>
 		{ReactDOM.createPortal(<ContentBox
 			boxRef={boxRef}
+			timeline={timeline}
 			isOpen={isOpen}
 			{...props} />, props.pageRef)}
 		{ReactDOM.createPortal(<SVGComponent
@@ -433,6 +408,7 @@ const ContentBoxMachine = (props) => {
 			boxPosX={boxPosX}
 			boxPosY={boxPosY}
 			arrowWidth={arrowWidth}
+			timeline={timeline}
 			{...props}
 		/>, props.svgRef)}
 	</>
@@ -485,17 +461,19 @@ const SVGComponent = (props) => {
 	return (<g key={props.boxId} id={props.boxId} data-name={props.boxId}>
 		<path id={`circle-${props.boxId}`} className="st5" d={props.cd} onClick={() => props.setIsOpen(!props.isOpen)}
 		/>
-		<g>
-			{props.isOpen && props.boxPosX !== 0 && props.boxPosY !== 0 && props.arrowWidth !== 0 && <SVGLine
+		{props.isOpen && <g>
+			{props.boxPosX !== 0 && props.boxPosY !== 0 && props.arrowWidth !== 0 && <SVGLine
 				lineRef={props.lineRef}
 				isOpen={props.isOpen} l
 				boxPosX={props.boxPosX}
 				boxPosY={props.boxPosY}
 				isLeft={props.isLeft}
+				arrowRef={props.arrowRef}
 				arrowWidth={props.arrowWidth}
+				timeline={props.timeline}
 				ld={props.ld} />}
 			<SVGArrow arrowRef={props.arrowRef} boxPosX={props.boxPosX} boxPosY={props.boxPosY} ad={props.ad} BPrimeToAx={props.BPrimeToAx} />
-		</g>
+		</g>}
 	</g>);
 
 }
@@ -505,10 +483,24 @@ const SVGArrow = (props) => {
 	const adArray = props.ad.split(",")
 	const arrowShiftX = adArray[0].substring(1) //M<number>
 	const arrowShiftY = adArray[1].substring(0, adArray[1].indexOf("c")) //<number>c<number>
-	return (<motion.path ref={props.arrowRef} className="st7" d={props.ad}  />)
+	return (<motion.path ref={props.arrowRef} className="st7" d={props.ad} />)
 }
 
 const SVGLine = (props) => {
+	useEffect(() => {
+		const pathLength = props.lineRef.current.getTotalLength();
+		gsap.set(props.lineRef.current, { strokeDasharray: pathLength })
+		props.timeline.to(props.arrowRef.current, .2, { opacity: 1 })
+		.to(props.arrowRef.current, 1, {
+			motionPath: {
+				path: props.lineRef.current.getAttribute("d"),
+				align: props.lineRef.current,
+				autoRotate: true,
+				alignOrigin: [0.5, 0.5],
+				autoRotate: props.isLeft ? 180 : 0
+			},
+		}, "<").fromTo(props.lineRef.current, 1, { strokeDashoffset: pathLength }, { strokeDashoffset: 0 }, "<")
+	}, [])
 	const ldPointsToSVGStringReducer = (svgString, tuple, index) => (index === 0 ? svgString + `M${tuple[0]},${tuple[1]}` : svgString + " " + `${tuple[0]},${tuple[1]}`)
 	// Get lds to transform them
 	let ldPoints = new Array();
@@ -535,10 +527,7 @@ const SVGLine = (props) => {
 	const finalPos = [props.isLeft ? props.boxPosX + props.arrowWidth : props.boxPosX - props.arrowWidth, props.boxPosY]
 
 	ldPoints.push(finalPos)
-	const strokeDashlength = Math.abs(finalPos[0] - ldPoints[0][0]) + 400
-	return (<motion.path ref = {props.lineRef} strokeDashlength = {0}
-		strokeDasharray={strokeDashlength} className="st6" d={ldPoints.reduce(ldPointsToSVGStringReducer, "")} />
-	);
+	return (<motion.path ref={props.lineRef} className="st6" d={ldPoints.reduce(ldPointsToSVGStringReducer, "")} />);
 
 }
 
