@@ -457,16 +457,23 @@ const ContentBox = (props) => {
 const SVGComponent = (props) => {
 	// The first thing we need to do is place the arrow in the correct position. Get the move position of the arrow
 	// Now get the svg coordinate position of the middle of the box. Right side for x < 50. left side for x > 50
-	return (<g key={props.boxId} id={props.boxId} data-name={props.boxId}>
-		<path id={`circle-${props.boxId}`} className="st5" d={props.cd} onClick={() => {
-			if (!props.isOpen) {
-				props.setIsOpen(true)
-			} else {
-				props.setIsClosing(true)
-			}
-		}}
+	return (<>
+		<motion.path id={`circle-${props.boxId}`}
+			className="st5" 
+			d={props.cd} 
+			whileHover={{
+				scale: 1.5,
+			}}
+			whileTap={{scale: 1}}
+			onClick={() => {
+				if (!props.isOpen) {
+					props.setIsOpen(true)
+				} else {
+					props.setIsClosing(true)
+				}
+			}}
 		/>
-		{props.isOpen && <g>
+		{props.isOpen && <>
 			{props.boxPosX !== 0 && props.boxPosY !== 0 && props.arrowWidth !== 0 &&
 				<SVGLine
 					lineRef={props.lineRef}
@@ -484,8 +491,8 @@ const SVGComponent = (props) => {
 					ld={props.ld} />
 			}
 			<SVGArrow arrowRef={props.arrowRef} boxPosX={props.boxPosX} boxPosY={props.boxPosY} ad={props.ad} BPrimeToAx={props.BPrimeToAx} />
-		</g>}
-	</g>);
+		</>}
+	</>);
 
 }
 
@@ -501,8 +508,10 @@ const SVGLine = (props) => {
 	const timeline = useRef(null);
 	useEffect(() => {
 		const pathLength = props.lineRef.current.getTotalLength();
+		const arrowDuration = .5;
+		gsap.set(props.lineRef.current, { strokeDasharray: pathLength })
+		gsap.set(props.lineRef.current, { opacity: 1 })
 		timeline.current = gsap.timeline({ onReverseComplete: () => { props.setIsClosing(false); props.setIsOpen(false); } })
-			.set(props.lineRef.current, { strokeDasharray: pathLength })
 			.to(props.arrowRef.current, { opacity: 1, duration: .2 })
 			.to(props.arrowRef.current, {
 				motionPath: {
@@ -512,8 +521,8 @@ const SVGLine = (props) => {
 					alignOrigin: [0.5, 0.5],
 					autoRotate: props.isLeft ? 180 : 0
 				},
-				duration: .5
-			}, "<").fromTo(props.lineRef.current, { strokeDashoffset: pathLength  }, { strokeDashoffset: 0, duration: .5 }, "<")
+				duration: arrowDuration
+			}, "<").fromTo(props.lineRef.current, { strokeDashoffset: pathLength }, { strokeDashoffset: 0, duration: arrowDuration }, "<")
 			.fromTo(props.boxRef.current, { yPercent: -10 }, { yPercent: 0, opacity: 1, duration: .5 }, ">-0.5")
 		return () => { timeline.current.kill() }
 	}, [])
