@@ -17,25 +17,6 @@ a {
   fill: none;
 }
 
-.cls-1 {
-  stroke: #ee352e;
-  stroke-linejoin: round;
-  stroke-width: 35px;
-}
-
-.cls-2, .cls-4 {
-  fill: #fff;
-}
-
-.cls-2 {
-  stroke: #4d4d4d;
-  stroke-width: 6px;
-}
-
-.cls-3 {
-  stroke: #fff;
-  stroke-width: 11px;
-}
 
 .st0 {
   fill: none;
@@ -73,6 +54,7 @@ a {
 }
 
 .st5 {
+  cursor: pointer;
   fill: #FFFFFF;
   stroke: #4D4D4D;
   stroke-width: 5;
