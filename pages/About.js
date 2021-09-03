@@ -9,19 +9,17 @@ import { useTheme } from '@material-ui/core/styles'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import Paper from '@material-ui/core/Paper'
 import Divider from '@material-ui/core/Divider'
-
+import { useInView } from "react-intersection-observer";
 import About2 from '@components/About/About2'
 
 const AboutRoot = styled(motion.div)`
-    height: 100%;
     width: 100%;
     overflow-x: hidden;
-    overflow-y: scroll;
 `
 const StyledPage = styled(motion.div)`
     width: 100vw;
     overflow-x: hidden;
-    min-height: 100vh;
+    height: 100vh;
     position: relative;
 `
 const TitleContainer = styled.div`
@@ -43,10 +41,20 @@ const BlackTypography = styled(Typography)`
 export default function About(props) {
     const lottieRef = useRef(null);
     const secondPageRef = useRef(null);
+    const [hasScrolledDown, setHasScrolledDown] = useState(false);
     const [releaseScroll, setReleaseScroll] = useState(false);
     const [lastScrollY, setLastScrollY] = useState(0);
     const theme = useTheme();
     const [isXL, setIsXL] = useState(false)
+    const [hasMounted, setHasMounted] = useState(false);
+    const [triggerAniRef, isAniInView] = useInView({initialInView: true});
+    useEffect(() => {
+        if(hasMounted) {
+            if (isAniInView) lottieRef.current.play()
+            if (!isAniInView) lottieRef.current.pause()
+
+        }
+    }, [isAniInView])
 
     useEffect(() => {
         // Set a timer that delays the animation
@@ -56,13 +64,19 @@ export default function About(props) {
         setTimeout(() => {
             setReleaseScroll(true)
         }, 4000);
-        try {
-            if (window.matchMedia('(min-width: 3000px)').matches) {
-                setIsXL(true)
-            }
-        } catch (ex) { }
-
+        if (window.matchMedia('(min-width: 3000px)').matches) {
+            setIsXL(true)
+        }
     }, [])
+    useEffect(() => {
+        document.body.style.overflowY = "scroll";
+    }, [])
+
+    useEffect(() => {
+        setHasMounted(true);
+    }, [])
+
+
     return (
         <AboutRoot
             initial={{ opacity: 0 }}
@@ -76,8 +90,9 @@ export default function About(props) {
                     autoplay={false}
                     animationData={animationData}
                 />
+                <div ref={triggerAniRef} style={{ opacity: 0, position: "absolute", "left": "50%", top: "20%" }} />
             </StyledPage>
-            {releaseScroll && <About2 />}
+            {releaseScroll && <About2 key={2} />}
         </AboutRoot >
 
     );

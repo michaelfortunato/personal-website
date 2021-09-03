@@ -12,7 +12,6 @@ import { useResizeDetector } from 'react-resize-detector';
 import { gsap } from "gsap"
 import { MotionPathPlugin } from "gsap/dist/MotionPathPlugin";
 import { useInView } from "react-intersection-observer";
-import { useScrollPosition } from '@n8tb1t/use-scroll-position'
 
 gsap.registerPlugin(MotionPathPlugin);
 const MainContentBoxes = [
@@ -26,7 +25,8 @@ const MainContentBoxes = [
 		y: 4,
 		cd: "M1677.9,228.7c0,9.4-7.3,17-16.3,17c-9,0-16.3-7.6-16.3-17s7.3-17,16.3-17l0,0C1670.6,211.7,1677.9,219.4,1677.9,228.7z",
 		ld: "M1659.5,228.7 1399.8,228.7 1250,343.2 913,339.9 			",
-		ad: "M849.2,339.2c30-11.3,67.5-30.7,90.7-51.4l-18.6,52.1l17.7,52.5C916.1,371.3,879.1,351.1,849.2,339.2z"
+		ad: "M849.2,339.2c30-11.3,67.5-30.7,90.7-51.4l-18.6,52.1l17.7,52.5C916.1,371.3,879.1,351.1,849.2,339.2z",
+		imageUrl: "",
 	},
 	{
 		key: "Main-1",
@@ -604,15 +604,15 @@ const TimelineIntro = (props) => {
 		const query = gsap.utils.selector(document.body);
 		const introElements = query(".tlIntro")
 		timeline.current = gsap.timeline({ onComplete: () => setAnimationIsDone(true) })
-		const stayTimes = [2, 2, 2];
+		const stayTimes = [1, 1.2, 3];
 		const leaveAnimation = {}
 		introElements.forEach((elem, index) => {
 			let leaveAnimation = {};
 			if (index === introElements.length - 1) {
-				leaveAnimation = { opacity: 0, duration: .3 }
+				leaveAnimation = { opacity: 0, duration: .7 }
 			}
 			else {
-				leaveAnimation = { opacity: 0, duration: .3 }
+				leaveAnimation = { opacity: 0, duration: .7 }
 			}
 
 			timeline.current
@@ -665,15 +665,9 @@ const VIEWBOX_SHIFT_X = scaleFactor !== 1 ? VIEWBOX_WIDTH / (scaleFactor * 2 * 2
 
 export default function About2(props) {
 	const [hasMounted, setHasMounted] = useState(false);
-	const [instantiatedTimeline, setInstantiatedTimeline] = useState(false);
 	const [introAlreadyMounted, setIntroAlreadyMounted] = useState(false);
-	const svgRef = useRef(null);
-	const MainLineRef = useRef(null);
-	const FLLineRef = useRef(null);
-	const NLLineRef = useRef(null);
-	const NRLineRef = useRef(null);
-	const FRLineRef = useRef(null);
 
+	const svgRef = useRef(null);
 	const redTimeline = useRef(null)
 	const orangeTimeline = useRef(null)
 	const blueTimeline = useRef(null)
@@ -681,6 +675,7 @@ export default function About2(props) {
 	const greenTimeline = useRef(null)
 	const otherTimelines = useRef(null);
 
+	const imageCache = useRef(null);
 	const { width: pageWidth, height: pageHeight, ref: pageRef } = useResizeDetector({
 		refreshMode: 'debounce',
 		refreshRate: 300,
@@ -693,7 +688,7 @@ export default function About2(props) {
 
 	const circleQuery = gsap.utils.selector(svgRef);
 	useEffect(() => {
-		const BulidTimeline = (lineId, circleClass,  options) => {
+		const BulidTimeline = (lineId, circleClass, options) => {
 			let timeline = null;
 			const circles = circleQuery(circleClass);
 			if (circleClass !== ".Main-Circle") circles.reverse();
@@ -711,15 +706,15 @@ export default function About2(props) {
 		}
 		if (hasMounted) {
 			if (redTimeline.current === null) {
-				redTimeline.current = BulidTimeline("MainLine", ".Main-Circle", { circleDelay: 6, paused: true, lineAni: { strokeDashoffset: 0, duration: 8, ease: "none" } })
+				redTimeline.current = BulidTimeline("MainLine", ".Main-Circle", { circleDelay: 6, paused: true, lineAni: { strokeDashoffset: 0, duration: 1, ease: "none" } })
 			}
 			if (orangeTimeline.current === null && blueTimeline.current === null
 				&& yellowTimeline.current === null && greenTimeline.current === null) {
 				otherTimelines.current = gsap.timeline({ paused: true })
-					.add(BulidTimeline("FL", ".FL-Circle",  { circleDelay: 1, paused: false, lineAni: { strokeDashoffset: 0, duration: 3, ease: "none" } }))
-					.add(BulidTimeline("NL", ".NL-Circle",  { circleDelay: 1, paused: false, lineAni: { strokeDashoffset: 0, duration: 3, ease: "none" } }), "<1")
-					.add(BulidTimeline("NR", ".NR-Circle",  { circleDelay: 1, paused: false, lineAni: { strokeDashoffset: 0, duration: 3, ease: "none" } }), "<1")
-					.add(BulidTimeline("FR", ".FR-Circle",  { circleDelay: 1, paused: false, lineAni: { strokeDashoffset: 0, duration: 3, ease: "none" } }), "<1")
+					.add(BulidTimeline("FL", ".FL-Circle", { circleDelay: 1, paused: false, lineAni: { strokeDashoffset: 0, duration: 3, ease: "none" } }))
+					.add(BulidTimeline("NL", ".NL-Circle", { circleDelay: 1, paused: false, lineAni: { strokeDashoffset: 0, duration: 3, ease: "none" } }), "<1")
+					.add(BulidTimeline("NR", ".NR-Circle", { circleDelay: 1, paused: false, lineAni: { strokeDashoffset: 0, duration: 3, ease: "none" } }), "<1")
+					.add(BulidTimeline("FR", ".FR-Circle", { circleDelay: 1, paused: false, lineAni: { strokeDashoffset: 0, duration: 3, ease: "none" } }), "<1")
 			}
 		}
 	}, [hasMounted])
@@ -754,15 +749,16 @@ export default function About2(props) {
 							BtoAy={BtoAy}
 							BPrimeToAx={BPrimeToAx}
 							BPrimeToAy={BPrimeToAy}
+							imageCache={imageCache}
 							{...props} />))
 			}
 			<svg version="1.1" className="SVGContainer" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"
 				viewBox={`${-VIEWBOX_SHIFT_X} 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`} preserveAspectRatio="none" >
-				<StyledLine ref={FLLineRef} id="FL" color="#FF6319" d="M1818.9,2976.7L249,3243.2l-2.6,3243.2" />
-				<StyledLine ref={NLLineRef} id="NL" color="#0039A6" d="M1814.1,2976.3l-503.4,210.9l4.3,3299.2" />
-				<StyledLine ref={NRLineRef} id="NR" color="#FCCC0A" d="M1814.7,2974.9l489.4,210.9l3.7,3300.7" />
-				<StyledLine ref={FRLineRef} id="FR" color="#00933C" d="M1807,2976.3l1571.9,266.9l-2.6,3243.2" />
-				<StyledLine ref={MainLineRef} id="MainLine" color="#EE352E" d="M1728.4,0v101.8l-66.8,43.2v4.1V809l150,224.6l2.6,1964.4" />
+				<StyledLine id="FL" color="#FF6319" d="M1818.9,2976.7L249,3243.2l-2.6,3243.2" />
+				<StyledLine id="NL" color="#0039A6" d="M1814.1,2976.3l-503.4,210.9l4.3,3299.2" />
+				<StyledLine id="NR" color="#FCCC0A" d="M1814.7,2974.9l489.4,210.9l3.7,3300.7" />
+				<StyledLine id="FR" color="#00933C" d="M1807,2976.3l1571.9,266.9l-2.6,3243.2" />
+				<StyledLine id="MainLine" color="#EE352E" d="M1728.4,0v101.8l-66.8,43.2v4.1V809l150,224.6l2.6,1964.4" />
 				<g ref={svgRef} style={{ outline: "none" }} />
 			</svg>
 			<div ref={redLineAniRef} style={{ position: "absolute", opacity: 0, top: "50px", left: "90%" }} />

@@ -1,6 +1,6 @@
 import '../styles/globals.css'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 import { createTheme, StylesProvider } from "@material-ui/core/styles"
 import { ThemeProvider as MuiThemeProvider } from "@material-ui/core/styles"
@@ -12,8 +12,6 @@ import Head from "next/head"
 import styled from 'styled-components'
 import Navbar from '@components/Nav/Navbar'
 const StyledRoot = styled(motion.div)`
-  width: 100vw;
-  height: 100vh;
   background-color: #e6af4b;
 `
 
@@ -78,7 +76,7 @@ export default function App({ Component, pageProps }) {
                 <AnimatePresence initial={false}>
                   <StyledRoot animate={routes[pathname].transition}>
                     <AnimatePresence exitBeforeEnter>
-                      <Component key={pathname}
+                      <Component key={pathname} 
                         {...pageProps} />
                     </AnimatePresence>
                   </StyledRoot>
