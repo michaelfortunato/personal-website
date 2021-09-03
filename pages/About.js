@@ -94,9 +94,10 @@ export default function About(props) {
 
     const [scrollStarted, setScrollStarted] = useState(false);
     useScrollPosition(({ prevPos, currPos }) => {
-        if (!hasScrolledDown && (prevPos.y > currPos.y)) { setHasScrolledDown(true) }
+        //if (!hasScrolledDown && (prevPos.y > currPos.y)) { setHasScrolledDown(true) }
     })
 
+    /*
     useEffect(() => {
         if (hasScrolledDown) {
             scroller.scrollTo("myScrollToElement", {
@@ -106,7 +107,7 @@ export default function About(props) {
                 spyThrottle: 0
             })
         }
-    }, [hasScrolledDown])
+    }, [hasScrolledDown])*/
 
     useEffect(() => {
         if (hasMounted) {
@@ -121,14 +122,18 @@ export default function About(props) {
         setTimeout(() => {
             lottieRef.current.playSegments([[0, 693], [693, 883]], true)
         }, 500);
-        setTimeout(() => {
-            setReleaseScroll(true);
-        }, 4000);
+        setTimeout(() => scroller.scrollTo("myScrollToElement", {
+            duration: 1000,
+            delay: 0,
+            smooth: true,
+            spyThrottle: 0,
+            ignoreCancelEvents: true
+        }), 4000);
         if (window.matchMedia('(min-width: 3000px)').matches) {
             setIsXL(true)
         }
     }, [])
-
+    /*
     useEffect(() => {
         //document.body.style.overflowY = "scroll";
         Events.scrollEvent.register('end', (to, element) => {
@@ -147,6 +152,7 @@ export default function About(props) {
             }
         })
     }, [])
+    */
 
     useEffect(() => {
         setHasMounted(true);
@@ -170,8 +176,8 @@ export default function About(props) {
                 <div ref={triggerAniRef} style={{ opacity: 0, position: "absolute", "left": "50%", top: "20%" }} />
             </StyledPage>
             <Element name="myScrollToElement">
-                    <ScrollLock isActive={!releaseScroll} />
-                    {<About2 triggerTlIntro = {triggerTlIntro} setReleaseScroll = {setReleaseScroll} key={2} />}
+                <ScrollLock isActive={!releaseScroll} />
+                {<About2 triggerTlIntro={triggerTlIntro} setReleaseScroll={setReleaseScroll} key={2} />}
             </Element>
         </AboutRoot >
 
