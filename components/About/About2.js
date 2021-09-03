@@ -12,7 +12,7 @@ import { useResizeDetector } from 'react-resize-detector';
 import { gsap } from "gsap"
 import { MotionPathPlugin } from "gsap/dist/MotionPathPlugin";
 import { useInView } from "react-intersection-observer";
-
+import ScrollLock, { TouchScrollable } from 'react-scrolllock';
 gsap.registerPlugin(MotionPathPlugin);
 const MainContentBoxes = [
 	{
@@ -603,7 +603,12 @@ const TimelineIntro = (props) => {
 	useEffect(() => {
 		const query = gsap.utils.selector(document.body);
 		const introElements = query(".tlIntro")
-		timeline.current = gsap.timeline({ onComplete: () => setAnimationIsDone(true) })
+		timeline.current = gsap.timeline({
+			onComplete: () => {
+				props.setReleaseScroll(true);
+				setAnimationIsDone(true)
+			}
+		})
 		const stayTimes = [1, 1.2, 3];
 		const leaveAnimation = {}
 		introElements.forEach((elem, index) => {
@@ -706,7 +711,7 @@ export default function About2(props) {
 		}
 		if (hasMounted) {
 			if (redTimeline.current === null) {
-				redTimeline.current = BulidTimeline("MainLine", ".Main-Circle", { circleDelay: 6, paused: true, lineAni: { strokeDashoffset: 0, duration: 1, ease: "none" } })
+				redTimeline.current = BulidTimeline("MainLine", ".Main-Circle", { circleDelay: 3, paused: true, lineAni: { strokeDashoffset: 0, duration: 1, ease: "none" } })
 			}
 			if (orangeTimeline.current === null && blueTimeline.current === null
 				&& yellowTimeline.current === null && greenTimeline.current === null) {
@@ -726,8 +731,7 @@ export default function About2(props) {
 		}
 	}, [otherLinesInView])
 	useEffect(() => { setHasMounted(true); }, [])
-
-	if (redLineInView && redTimeline.current !== null) setTimeout(() => redTimeline.current.play(), 1000);
+	if (props.triggerTlIntro && redTimeline.current !== null) setTimeout(() => redTimeline.current.play(), 1000);
 
 
 	const BtoAx = (x) => (VIEWBOX_WIDTH / 100 * x - VIEWBOX_SHIFT_X)
@@ -763,6 +767,6 @@ export default function About2(props) {
 			</svg>
 			<div ref={redLineAniRef} style={{ position: "absolute", opacity: 0, top: "50px", left: "90%" }} />
 			<div ref={otherLinesAniRef} style={{ position: "absolute", opacity: 0, top: "50%" }} />
-			{(redLineInView || introAlreadyMounted) && <TimelineIntro setIntroAlreadyMounted={setIntroAlreadyMounted} />}
+			{(props.triggerTlIntro || introAlreadyMounted) && <TimelineIntro setReleaseScroll={props.setReleaseScroll} setIntroAlreadyMounted={setIntroAlreadyMounted} />}
 		</StyledPage>);
 }
