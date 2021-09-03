@@ -13,8 +13,8 @@ import { gsap } from "gsap"
 import { MotionPathPlugin } from "gsap/dist/MotionPathPlugin";
 import { useInView } from "react-intersection-observer";
 import { useScrollPosition } from '@n8tb1t/use-scroll-position'
-gsap.registerPlugin(MotionPathPlugin);
 
+gsap.registerPlugin(MotionPathPlugin);
 const MainContentBoxes = [
 	{
 		key: "Main-0",
@@ -363,12 +363,22 @@ const StyledPage = styled(motion.div)`
 const BlackTypography = styled(Typography)`
     color: black;
 `
+const StyledLine = styled.path`
+  fill: none;
+  stroke: ${props => props.color};
+  stroke-width: 34;
+  stroke-linejoin: round;
+  stroke-dasharray: 3100;
+  stroke-dashoffset: 3100;
+`
 const ContentBoxContainer = styled.div`
 	position: absolute;
 	left: ${props => props.x}%;
 	top: ${props => props.y}%;
 	display: inline;
-	max-width: 25%;
+	max-width: 33%;
+	max-height: 50vh;
+	overflow-y: auto;
 	overflow-wrap: break-word; // breaks the word if it overflows 
 	opacity: 0;
 `
@@ -436,7 +446,7 @@ const ContentBox = (props) => {
 						<Divider />
 					</Grid>
 					<Grid style={{ marginTop: 10 }} item xs={10}>
-						<BlackTypography>
+						<BlackTypography variant="body1">
 							{props.body}
 						</BlackTypography>
 					</Grid>
@@ -563,7 +573,7 @@ const SVGLine = (props) => {
 
 	const originalLength = Math.abs(ldPoints[ldPoints.length - 1][0] - ldPoints[0][0])
 	const desiredLength = Math.abs(ldPoints[0][0] - props.boxPosX)
-	const scaleFactor = desiredLength / originalLength * .80
+	const scaleFactor = desiredLength / originalLength * .7
 	const shiftFactor = ldPoints[0][0]
 
 	ldPoints.forEach((pair, index) => {
@@ -578,24 +588,85 @@ const SVGLine = (props) => {
 	return (<motion.path ref={props.lineRef} className="st6" d={ldPoints.reduce(ldPointsToSVGStringReducer, "")} />);
 
 }
-const scaleFactor = 1;
-const VIEWBOX_WIDTH = scaleFactor* 3658.6;
-const VIEWBOX_HEIGHT = scaleFactor*6486.5;
-const VIEWBOX_SHIFT_X = scaleFactor !== 1 ? VIEWBOX_WIDTH/(scaleFactor*2*2) : 0;
 
-
-const StyledLine = styled.path`
-  fill: none;
-  stroke: ${props => props.color};
-  stroke-width: 34;
-  stroke-linejoin: round;
-  stroke-dasharray: 3100;
-  stroke-dashoffset: 3100;
+const StyledTimelineIntro = styled.div`
+	position: absolute; 
+	top: 20vh;;
+	left: 60%;
+	color: white;
+	display: block;
+	opacity: 0;
+	transform: scale(0);
 `
+const TimelineIntro = (props) => {
+	const [animationIsDone, setAnimationIsDone] = useState(false);
+	const timeline = useRef(null);
+	useEffect(() => {
+		const query = gsap.utils.selector(document.body);
+		const introElements = query(".tlIntro")
+		timeline.current = gsap.timeline({ onComplete: () => setAnimationIsDone(true) })
+		const stayTimes = [.7, 2, 2];
+		const leaveAnimation = {}
+		introElements.forEach((elem, index) => {
+			let leaveAnimation = {};
+			if (index === introElements.length - 1) {
+				leaveAnimation = {opacity : 0, duration: .3}
+			}
+			else {
+				leaveAnimation = {opacity : 0, duration: .3}
+			}
+
+			timeline.current
+				.to(elem, { opacity: 1, duration: .7 }, `${index !== 0 ? ">0.2" : "<"}`)
+				.to(elem, {
+					scale: 1, duration: 1,
+					ease: "back.out(2)"
+				}, "<")
+				.to(elem, leaveAnimation, `>${stayTimes[index]}`)
+})
+	props.setIntroAlreadyMounted(true)
+	}, [])
+return (
+	!animationIsDone &&
+	<>
+		<StyledTimelineIntro className="tlIntro">
+			<Grid container justifyContent="center">
+				<Grid item xs={12}>
+					<Typography variant="h4">
+						This is a timeline of my life.
+					</Typography>
+				</Grid>
+			</Grid>
+		</StyledTimelineIntro>
+		<StyledTimelineIntro className="tlIntro">
+			<Grid container justifyContent="center">
+				<Grid item xs={12}>
+					<Typography variant="h4">
+						Red for the 1 train (the best train) which went through my childhood neighborhood, the Upper West Side.
+					</Typography>
+				</Grid>
+			</Grid>
+		</StyledTimelineIntro>
+		<StyledTimelineIntro className="tlIntro">
+			<Grid container justifyContent="center">
+				<Grid item xs={12}>
+					<Typography variant="h4">
+						Click on the subway stops to learn about me. Thanks for visiting!
+					</Typography>
+				</Grid>
+			</Grid>
+		</StyledTimelineIntro>
+	</>)
+}
+const scaleFactor = 1;
+const VIEWBOX_WIDTH = scaleFactor * 3658.6;
+const VIEWBOX_HEIGHT = scaleFactor * 6486.5;
+const VIEWBOX_SHIFT_X = scaleFactor !== 1 ? VIEWBOX_WIDTH / (scaleFactor * 2 * 2) : 0;
 
 export default function About2(props) {
 	const [hasMounted, setHasMounted] = useState(false);
 	const [instantiatedTimeline, setInstantiatedTimeline] = useState(false);
+	const [introAlreadyMounted, setIntroAlreadyMounted] = useState(false);
 	const svgRef = useRef(null);
 	const MainLineRef = useRef(null);
 	const FLLineRef = useRef(null);
@@ -630,11 +701,10 @@ export default function About2(props) {
 			if (line !== null && circles.length !== 0) {
 				const lineLength = line.getTotalLength();
 				gsap.set(line, { strokeDasharray: lineLength, strokeDashoffset: lineLength })
-
 				timeline = gsap.timeline({ paused: paused })
-					.to(line, { strokeDashoffset: 0, duration: 4, ease: "none" })
-					.fromTo(circles, { scale: 0, opacity: 0 }, { scale: 1.3, opacity: 1, stagger: 0.35, duration: 0.5 }, "<")
-					.to(circles, { scale: 1, stagger: 0.35, duration: 0.5 }, "<0.5")
+					.to(line, { strokeDashoffset: 0, duration: 5, ease: "none" })
+					.fromTo(circles, { scale: 0, opacity: 0 }, { scale: 1.3, opacity: 1, stagger: 0.4, duration: 0.5 }, "<10")
+					.to(circles, { scale: 1, stagger: 0.4, duration: 0.5 }, "<0.5")
 
 			}
 			return timeline;
@@ -652,10 +722,8 @@ export default function About2(props) {
 					.add(BulidTimeline("FR", ".FR-Circle", false), "<.2")
 		}
 	}, [hasMounted])
-	useEffect(() => {
-		if (redLineInView) redTimeline.current.play();
 
-	}, [redLineInView])
+
 	useEffect(() => {
 		if (otherLinesInView) {
 			otherTimelines.current.play();
@@ -663,11 +731,13 @@ export default function About2(props) {
 	}, [otherLinesInView])
 	useEffect(() => { setHasMounted(true); }, [])
 
+	if (redLineInView && redTimeline.current !== null) setTimeout(()=>redTimeline.current.play(), 1000);
+
+
 	const BtoAx = (x) => (VIEWBOX_WIDTH / 100 * x - VIEWBOX_SHIFT_X)
 	const BtoAy = (y) => (VIEWBOX_HEIGHT / 100 * y)
 	const BPrimeToAx = (x) => (VIEWBOX_WIDTH / pageWidth * x)
 	const BPrimeToAy = (y) => (VIEWBOX_HEIGHT / pageHeight * y)
-
 	return (
 		<StyledPage ref={pageRef}>
 			{pageRef.current !== null && svgRef.current !== null &&
@@ -694,7 +764,8 @@ export default function About2(props) {
 				<StyledLine ref={MainLineRef} id="MainLine" color="#EE352E" d="M1728.4,0v101.8l-66.8,43.2v4.1V809l150,224.6l2.6,1964.4" />
 				<g ref={svgRef} style={{ outline: "none" }} />
 			</svg>
-			<div ref={redLineAniRef} style={{ position: "absolute", opacity: 0, top: "30px", left: "99%" }} />
+			<div ref={redLineAniRef} style={{ position: "absolute", opacity: 0, top: "50px", left: "90%" }} />
 			<div ref={otherLinesAniRef} style={{ position: "absolute", opacity: 0, top: "20%" }} />
+			{(redLineInView || introAlreadyMounted) && <TimelineIntro setIntroAlreadyMounted={setIntroAlreadyMounted} />}
 		</StyledPage>);
 }

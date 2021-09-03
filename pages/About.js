@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Lottie from 'lottie-react'
-import animationData from '@public/About_Page1_ISA.json'
+import animationData from '@public/About_Page1_ISA-Loop.json'
 import styled from 'styled-components'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
@@ -50,7 +50,7 @@ export default function About(props) {
     useEffect(() => {
         // Set a timer that delays the animation
         setTimeout(() => {
-            lottieRef.current.play()
+            lottieRef.current.playSegments([[0,693], [693,883]], true)
         }, 500);
 
         try {
@@ -69,7 +69,7 @@ export default function About(props) {
             <StyledPage key={1}>
                 <Lottie lottieRef={lottieRef}
                     style={!isXL ? { height: "100vh" } : null}
-                    loop={false}
+                    loop={true}
                     autoplay={false}
                     animationData={animationData}
                 />
