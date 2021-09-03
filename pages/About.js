@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Lottie from 'lottie-react'
 import animationData from '@public/About_Page1_ISA-Loop.json'
 import styled from 'styled-components'
@@ -16,6 +16,7 @@ const AboutRoot = styled(motion.div)`
     height: 100%;
     width: 100%;
     overflow-x: hidden;
+    overflow-y: scroll;
 `
 const StyledPage = styled(motion.div)`
     width: 100vw;
@@ -42,7 +43,7 @@ const BlackTypography = styled(Typography)`
 export default function About(props) {
     const lottieRef = useRef(null);
     const secondPageRef = useRef(null);
-    const [isSubwayDone, setIsSubwayDone] = useState(false);
+    const [releaseScroll, setReleaseScroll] = useState(false);
     const [lastScrollY, setLastScrollY] = useState(0);
     const theme = useTheme();
     const [isXL, setIsXL] = useState(false)
@@ -50,9 +51,11 @@ export default function About(props) {
     useEffect(() => {
         // Set a timer that delays the animation
         setTimeout(() => {
-            lottieRef.current.playSegments([[0,693], [693,883]], true)
+            lottieRef.current.playSegments([[0, 693], [693, 883]], true)
         }, 500);
-
+        setTimeout(() => {
+            setReleaseScroll(true)
+        }, 4000);
         try {
             if (window.matchMedia('(min-width: 3000px)').matches) {
                 setIsXL(true)
@@ -74,7 +77,7 @@ export default function About(props) {
                     animationData={animationData}
                 />
             </StyledPage>
-            <About2 />
+            {releaseScroll && <About2 />}
         </AboutRoot >
 
     );

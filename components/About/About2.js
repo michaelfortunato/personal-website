@@ -596,7 +596,6 @@ const StyledTimelineIntro = styled.div`
 	color: white;
 	display: block;
 	opacity: 0;
-	transform: scale(0);
 `
 const TimelineIntro = (props) => {
 	const [animationIsDone, setAnimationIsDone] = useState(false);
@@ -605,58 +604,59 @@ const TimelineIntro = (props) => {
 		const query = gsap.utils.selector(document.body);
 		const introElements = query(".tlIntro")
 		timeline.current = gsap.timeline({ onComplete: () => setAnimationIsDone(true) })
-		const stayTimes = [.7, 2, 2];
+		const stayTimes = [2, 2, 2];
 		const leaveAnimation = {}
 		introElements.forEach((elem, index) => {
 			let leaveAnimation = {};
 			if (index === introElements.length - 1) {
-				leaveAnimation = {opacity : 0, duration: .3}
+				leaveAnimation = { opacity: 0, duration: .3 }
 			}
 			else {
-				leaveAnimation = {opacity : 0, duration: .3}
+				leaveAnimation = { opacity: 0, duration: .3 }
 			}
 
 			timeline.current
-				.to(elem, { opacity: 1, duration: .7 }, `${index !== 0 ? ">0.2" : "<"}`)
-				.to(elem, {
-					scale: 1, duration: 1,
-					ease: "back.out(2)"
-				}, "<")
+				.to(elem, { opacity: 1, duration: .7 }, `${index !== 0 ? ">0.2" : "<0.2"}`)
 				.to(elem, leaveAnimation, `>${stayTimes[index]}`)
-})
-	props.setIntroAlreadyMounted(true)
+		})
+		props.setIntroAlreadyMounted(true)
 	}, [])
-return (
-	!animationIsDone &&
-	<>
-		<StyledTimelineIntro className="tlIntro">
-			<Grid container justifyContent="center">
-				<Grid item xs={12}>
-					<Typography variant="h4">
-						This is a timeline of my life.
-					</Typography>
+	return (
+		!animationIsDone &&
+		<>
+			<StyledTimelineIntro className="tlIntro">
+				<Grid container justifyContent="center">
+					<Grid item xs={12}>
+						<Typography variant="h4">
+							This is a timeline of my life.
+						</Typography>
+					</Grid>
 				</Grid>
-			</Grid>
-		</StyledTimelineIntro>
-		<StyledTimelineIntro className="tlIntro">
-			<Grid container justifyContent="center">
-				<Grid item xs={12}>
-					<Typography variant="h4">
-						Red for the 1 train (the best train) which went through my childhood neighborhood, the Upper West Side.
-					</Typography>
+			</StyledTimelineIntro>
+			<StyledTimelineIntro className="tlIntro">
+				<Grid container justifyContent="center">
+					<Grid item xs={12}>
+						<Typography variant="h4">
+							Red for the 1 train (the best train).
+						</Typography>
+					</Grid>
 				</Grid>
-			</Grid>
-		</StyledTimelineIntro>
-		<StyledTimelineIntro className="tlIntro">
-			<Grid container justifyContent="center">
-				<Grid item xs={12}>
-					<Typography variant="h4">
-						Click on the subway stops to learn about me. Thanks for visiting!
-					</Typography>
+			</StyledTimelineIntro>
+			<StyledTimelineIntro className="tlIntro">
+				<Grid container justifyContent="center">
+					<Grid item xs={12}>
+						<Typography variant="h4">
+							Click on the subway stops to learn about me.
+						</Typography>
+					</Grid>
+					<Grid item xs={12}>
+						<Typography variant="h4">
+							Thanks for visiting!
+						</Typography>
+					</Grid>
 				</Grid>
-			</Grid>
-		</StyledTimelineIntro>
-	</>)
+			</StyledTimelineIntro>
+		</>)
 }
 const scaleFactor = 1;
 const VIEWBOX_WIDTH = scaleFactor * 3658.6;
@@ -693,7 +693,7 @@ export default function About2(props) {
 
 	const circleQuery = gsap.utils.selector(svgRef);
 	useEffect(() => {
-		const BulidTimeline = (lineId, circleClass, paused) => {
+		const BulidTimeline = (lineId, circleClass,  options) => {
 			let timeline = null;
 			const circles = circleQuery(circleClass);
 			if (circleClass !== ".Main-Circle") circles.reverse();
@@ -701,9 +701,9 @@ export default function About2(props) {
 			if (line !== null && circles.length !== 0) {
 				const lineLength = line.getTotalLength();
 				gsap.set(line, { strokeDasharray: lineLength, strokeDashoffset: lineLength })
-				timeline = gsap.timeline({ paused: paused })
-					.to(line, { strokeDashoffset: 0, duration: 5, ease: "none" })
-					.fromTo(circles, { scale: 0, opacity: 0 }, { scale: 1.3, opacity: 1, stagger: 0.4, duration: 0.5 }, "<10")
+				timeline = gsap.timeline({ paused: options.paused })
+					.to(line, options.lineAni)
+					.fromTo(circles, { scale: 0, opacity: 0 }, { scale: 1.3, opacity: 1, stagger: 0.4, duration: 0.5 }, `<${options.circleDelay}`)
 					.to(circles, { scale: 1, stagger: 0.4, duration: 0.5 }, "<0.5")
 
 			}
@@ -711,15 +711,16 @@ export default function About2(props) {
 		}
 		if (hasMounted) {
 			if (redTimeline.current === null) {
-				redTimeline.current = BulidTimeline("MainLine", ".Main-Circle", true)
+				redTimeline.current = BulidTimeline("MainLine", ".Main-Circle", { circleDelay: 6, paused: true, lineAni: { strokeDashoffset: 0, duration: 8, ease: "none" } })
 			}
 			if (orangeTimeline.current === null && blueTimeline.current === null
-				&& yellowTimeline.current === null && greenTimeline.current === null)
+				&& yellowTimeline.current === null && greenTimeline.current === null) {
 				otherTimelines.current = gsap.timeline({ paused: true })
-					.add(BulidTimeline("FL", ".FL-Circle", false))
-					.add(BulidTimeline("NL", ".NL-Circle", false), "<.2")
-					.add(BulidTimeline("NR", ".NR-Circle", false), "<.2")
-					.add(BulidTimeline("FR", ".FR-Circle", false), "<.2")
+					.add(BulidTimeline("FL", ".FL-Circle",  { circleDelay: 1, paused: false, lineAni: { strokeDashoffset: 0, duration: 3, ease: "none" } }))
+					.add(BulidTimeline("NL", ".NL-Circle",  { circleDelay: 1, paused: false, lineAni: { strokeDashoffset: 0, duration: 3, ease: "none" } }), "<1")
+					.add(BulidTimeline("NR", ".NR-Circle",  { circleDelay: 1, paused: false, lineAni: { strokeDashoffset: 0, duration: 3, ease: "none" } }), "<1")
+					.add(BulidTimeline("FR", ".FR-Circle",  { circleDelay: 1, paused: false, lineAni: { strokeDashoffset: 0, duration: 3, ease: "none" } }), "<1")
+			}
 		}
 	}, [hasMounted])
 
@@ -731,7 +732,7 @@ export default function About2(props) {
 	}, [otherLinesInView])
 	useEffect(() => { setHasMounted(true); }, [])
 
-	if (redLineInView && redTimeline.current !== null) setTimeout(()=>redTimeline.current.play(), 1000);
+	if (redLineInView && redTimeline.current !== null) setTimeout(() => redTimeline.current.play(), 1000);
 
 
 	const BtoAx = (x) => (VIEWBOX_WIDTH / 100 * x - VIEWBOX_SHIFT_X)
@@ -765,7 +766,7 @@ export default function About2(props) {
 				<g ref={svgRef} style={{ outline: "none" }} />
 			</svg>
 			<div ref={redLineAniRef} style={{ position: "absolute", opacity: 0, top: "50px", left: "90%" }} />
-			<div ref={otherLinesAniRef} style={{ position: "absolute", opacity: 0, top: "20%" }} />
+			<div ref={otherLinesAniRef} style={{ position: "absolute", opacity: 0, top: "50%" }} />
 			{(redLineInView || introAlreadyMounted) && <TimelineIntro setIntroAlreadyMounted={setIntroAlreadyMounted} />}
 		</StyledPage>);
 }
