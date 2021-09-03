@@ -128,10 +128,15 @@ export default function About(props) {
             smooth: true,
             spyThrottle: 0,
             ignoreCancelEvents: true
-        }), 4000);
+        }), 5200);
         if (window.matchMedia('(min-width: 3000px)').matches) {
             setIsXL(true)
         }
+    }, [])
+    useEffect(() => {
+        Events.scrollEvent.register('end', (to, element) => {
+            setTriggerTlIntro(true);
+        })
     }, [])
     /*
     useEffect(() => {

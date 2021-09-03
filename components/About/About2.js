@@ -609,19 +609,19 @@ const TimelineIntro = (props) => {
 				setAnimationIsDone(true)
 			}
 		})
-		const stayTimes = [1, 1.2, 3];
+		const stayTimes = [1.24, 1.24, 2];
 		const leaveAnimation = {}
 		introElements.forEach((elem, index) => {
 			let leaveAnimation = {};
 			if (index === introElements.length - 1) {
-				leaveAnimation = { opacity: 0, duration: .7 }
+				leaveAnimation = { opacity: 0, duration: .4 }
 			}
 			else {
-				leaveAnimation = { opacity: 0, duration: .7 }
+				leaveAnimation = { opacity: 0, duration: .4 }
 			}
 
 			timeline.current
-				.to(elem, { opacity: 1, duration: .7 }, `${index !== 0 ? ">0.2" : "<0.2"}`)
+				.fromTo(elem,  {transform: 'translateY(-10vh)'}, {transform:`translateY(0)`, opacity: 1, duration: .4 }, `${index !== 0 ? ">0.2" : "<0.2"}`)
 				.to(elem, leaveAnimation, `>${stayTimes[index]}`)
 		})
 		props.setIntroAlreadyMounted(true)
@@ -711,7 +711,7 @@ export default function About2(props) {
 		}
 		if (hasMounted) {
 			if (redTimeline.current === null) {
-				redTimeline.current = BulidTimeline("MainLine", ".Main-Circle", { circleDelay: 3, paused: true, lineAni: { strokeDashoffset: 0, duration: 1, ease: "none" } })
+				redTimeline.current = BulidTimeline("MainLine", ".Main-Circle", { circleDelay: 4, paused: true, lineAni: { strokeDashoffset: 0, duration: 1, ease: "none" } })
 			}
 			if (orangeTimeline.current === null && blueTimeline.current === null
 				&& yellowTimeline.current === null && greenTimeline.current === null) {
