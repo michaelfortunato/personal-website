@@ -12,10 +12,10 @@ const StyledGrid = styled(motion.div)`
     position: absolute;
     top: 0;
     left: 0;
-    overflow:hidden;
     width: 100vw;
     height: 100vh;
     z-index: 1;
+    overflow:hidden;
 
     &.fade-out-appear-active, &.fade-out-enter-active{
         opacity: 0;
@@ -62,7 +62,7 @@ export default function Grid(props) {
         setHeight(height);
         
         setTimeout(() => props.setTriggerNameEnter(true), gridEnterTimeout);
-        setTimeout(() => props.setTriggerGridExit(true), gridEnterTimeout + 2500);
+        setTimeout(() => props.setTriggerGridExit(true), gridEnterTimeout + 250);
     }, [])
     
     const numRowLines = props.numLines;
