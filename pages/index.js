@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Grid from '@components/Grid';
 import Hero from '@components/Hero';
 import { AnimatePresence, motion } from 'framer-motion'
-
 const defaultGridConfig = {
     random: true,
     numLines: 12,
@@ -19,6 +18,7 @@ export default function Home(props) {
     useEffect(() => {
         document.body.overflowY = "hidden"
     }, [])
+    console.log(props.ua)
     return (
         <motion.div
             style = {{height: "100vh", width: "100vw"}} 
@@ -36,3 +36,12 @@ export default function Home(props) {
         </motion.div>
     );
 }
+
+export async function getServerSideProps(context) {
+    //const parser = UAParser(context.req.headers['user-agent']);
+    return {
+      props: {
+      }
+    }
+  }
+  
