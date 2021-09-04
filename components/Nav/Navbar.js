@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import NavContent from './NavContent.js';
-import Navbutton from './Navbutton.js';
 import Link from "next/link";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
@@ -20,13 +18,14 @@ const Underline = styled(Divider)`
     ${({ theme }) => `background-color: #fff;`}
     height: 2px;
 `
+const MotionGrid = motion(Grid)
 
 export default function Navbar(props) {
     const [isVisible, setIsVisible] = useState(false);
-
+    const [isHovered, setIsHovered] = useState(null);
     const underlineAnimations = {
         "activePage": {
-            scaleX: 1
+            scaleX: 1,
         },
         "inactivePage": {
             scaleX: 0
@@ -36,7 +35,7 @@ export default function Navbar(props) {
     return (
         <StyledNavbar container>
             <Grid item xs={1}>
-                <Hamburger toggled={isVisible} toggle={() => setIsVisible(!isVisible)} />
+                <Hamburger duration={0.2} toggled={isVisible} toggle={() => setIsVisible(!isVisible)} />
             </Grid>
             <AnimatePresence initial={false}>
                 {isVisible && <Grid
@@ -46,21 +45,24 @@ export default function Navbar(props) {
                     xs={11}
                     component={motion.div}
                     initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
+                    animate={{ opacity: 1, transition: { duration: .25 } }}
+                    exit={{ opacity: 0,  transition: { duration: .25 }  }}
                 >
                     {Object.entries(props.routes).map(([url, { name }]) =>
-                        <Grid key={url} item container xs={12} md={1} alignItems="center">
+                        <Grid key={url} item container xs={12} sm={1} justifyContent="center" alignItems="center">
                             <Grid item>
                                 <Link href={url}>
-                                    <a><Typography variant="h5">{name}</Typography></a>
+                                    <a>
+                                        <Typography variant="h5">{name}</Typography>
+                                    </a>
                                 </Link>
+                            </Grid>
+                            <Grid item xs={8}>
                                 <AnimatePresence initial={false}>
-                                <motion.div style={{ originX: 0 }}
-                                    variants={underlineAnimations}
-                                    animate={url === props.currentPage ? "activePage" : "inactivePage"}>
-                                    <Underline />
-                                </motion.div>
+                                    <motion.div style={{ originX: "50%" }}
+                                        animate={(url === props.currentPage) ? { scaleX: 1 } : { scaleX: 0 }}>
+                                        <Underline />
+                                    </motion.div>
                                 </AnimatePresence>
                             </Grid>
                         </Grid>

@@ -33,7 +33,8 @@
     "react-scroll": "^1.8.4",
     "react-scrolllock": "^5.0.1",
     "react-transition-group": "^4.4.2",
-    "styled-components": "^5.1.1"
+    "styled-components": "^5.1.1",
+    "ua-parser-js": "^0.7.28"
   },
   "devDependencies": {
     "@material-ui/codemod": "^4.5.0",
