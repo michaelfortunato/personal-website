@@ -6,38 +6,37 @@ const StyledGridline = styled.div`
     position: absolute;
     background: white;
     z-index: 0;
-    height: ${(props) => props.isRow ? `${props.circleSize}px` : '100%'};
-    width: ${(props) => props.isRow ? '100%' : `${props.circleSize}px`};
-    top: ${(props) => props.isRow ? `${props.fixedPos}vh` : 'initial'};
-    left: ${(props) => props.isRow ? 'initial' : `${props.fixedPos}vh`};
-    
-    transform: ${(props => props.isRow ? 'scaleX(1) scaleY(.125)' : 'scaleY(1) scaleX(.125)')};
-    
+    top: ${(props) => props.isRow ? `${props.fixedPos}%` : `${props.floatingPos}%`};
+    left: ${(props) => props.isRow ? `${props.floatingPos}%`  : `${props.fixedPos}%`};
+    height: 10px;
+    width: 10px;
+    transform-origin: ${props => props.isRow ? `${props.floatingPos}%` : `${props.fixedPos}%`} ${props => props.isRow ? `${props.fixedPos}%` : `${props.floatingPos}%`};
+    border-radius: 50%;
     &.line-appear, &.line-enter {
-        transform-origin: ${(props) => props.isRow ? `${props.floatingPos}vh` : '50%'}
-                        ${(props) => props.isRow ? '50%' : `${props.floatingPos}vh`};
-        transform: ${(props) => props.isRow ? `scaleX(${props.circleXScaling})` : `scaleY(${props.circleYScaling})`};    
+        transform-origin: ${props => props.isRow ? `${props.floatingPos}%` : `${props.fixedPos}%`} ${props => props.isRow ? `${props.fixedPos}%` : `${props.floatingPos}%`};
         border-radius: 50%;
-        -moz-border-radius: 50%;
+        -webkit-border-radius: 50%;
     }
     &.line-appear-active, &.line-enter-active {
-        
-        transform: ${(props) => props.isRow ? `scaleX(1) scaleY(.125)` : `scaleY(1) scaleX(.125)`};  
+        transform-origin: ${props => props.isRow ? `${props.floatingPos}%` : `${props.fixedPos}%`} ${props => props.isRow ? `${props.fixedPos}%` : `${props.floatingPos}%`};
+        transform: ${(props) => props.isRow ? `scaleX(${props.circleXScaling})` : `scaleY(${props.circleYScaling})`} ${(props) => props.isRow ? `scaleY(${.125})` : `scaleX(${.125})`};    
         transition-duration: ${(props) => props.duration}ms; 
         transition-delay: ${(props) => props.delay}ms; 
         transition-property: all;
         will-change: transform;
     }
     &.line-appear-done, &.line-enter-done {
-        transform: ${(props => props.isRow ? 'scaleX(1) scaleY(.125)' : 'scaleY(1) scaleX(.125)')};
-        border-radius: 0%;
+        transform: ${(props) => props.isRow ? `scaleX(${props.circleXScaling})` : `scaleY(${props.circleYScaling})`} ${(props) => props.isRow ? `scaleY(${.125})` : `scaleX(${.125})`};    
+        transform-origin: ${props => props.isRow ? `${props.floatingPos}%` : `${props.fixedPos}%`} ${props => props.isRow ? `${props.fixedPos}%` : `${props.floatingPos}%`};
     }
 `;
 
 const Gridline = React.memo((props) => {
     const circleSize = 10; //in pixels
-    const circleXScaling = circleSize / props.width;
-    const circleYScaling = circleSize / props.height;
+    const circleXScaling = props.width/circleSize;
+    const circleYScaling = props.height/circleSize;
+    console.log(props.width)
+    console.log(props)
     const nodeRef = React.useRef(null)
     return (<CSSTransition
         in={true}
@@ -48,6 +47,8 @@ const Gridline = React.memo((props) => {
         >
         <StyledGridline ref = {nodeRef} {...props}
             circleSize={circleSize}
+            width = {props.width}
+            height = {props.height}
             circleXScaling={circleXScaling}
             circleYScaling={circleYScaling} />
     </CSSTransition>
