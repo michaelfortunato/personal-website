@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { CSSTransition } from 'react-transition-group';
 
-
 const StyledGridline = styled.div`
     position: absolute;
     background: white;
