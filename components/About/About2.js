@@ -4,7 +4,7 @@ import Grid from "@material-ui/core/Grid"
 import Paper from "@material-ui/core/Paper"
 import Typography from "@material-ui/core/Typography";
 import styled from "styled-components"
-import { motion, useViewportScroll, useTransform } from "framer-motion"
+import { motion, useViewportScroll, useTransform, AnimatePresence } from "framer-motion"
 import Divider from "@material-ui/core/Divider"
 import React from "react";
 import { darken } from "@material-ui/core";
@@ -12,7 +12,7 @@ import { useResizeDetector } from 'react-resize-detector';
 import { gsap } from "gsap"
 import { MotionPathPlugin } from "gsap/dist/MotionPathPlugin";
 import { useInView } from "react-intersection-observer";
-import ScrollLock, { TouchScrollable } from 'react-scrolllock';
+import Tooltip from '@material-ui/core/Tooltip';
 gsap.registerPlugin(MotionPathPlugin);
 const MainContentBoxes = [
 	{
@@ -21,7 +21,7 @@ const MainContentBoxes = [
 		body: "My parents met in 1994. My Dad is a tax attorney and my mother was a media executive and is now starting her own consulting business, Tupelo (check it out!)."
 			+ " My Dad grew up in the Bronx and my Mom grew up in New Orleans. I am proud of my parents for what they have accomplished and who they are. Both live up to the challenges they face in their lives."
 			+ " ",
-		x: 4,
+		x: 3,
 		y: 4,
 		cd: "M1677.9,228.7c0,9.4-7.3,17-16.3,17c-9,0-16.3-7.6-16.3-17s7.3-17,16.3-17l0,0C1670.6,211.7,1677.9,219.4,1677.9,228.7z",
 		ld: "M1659.5,228.7 1399.8,228.7 1250,343.2 913,339.9 			",
@@ -30,7 +30,11 @@ const MainContentBoxes = [
 	},
 	{
 		key: "Main-1",
-		title: "Upper West Side, IPS, and Spanish Lessons",
+		title: "Upper West Side",
+		body: "My childhood neighborhood, The Upper West Side, was really established only within the first part of the 20th century. The building I grew up in (named the Doorset haha), was built in "
+			+ "1910! Our building has old photos of the neighborhood from that period. It was completely empty! Very cool to feel the history of an area all around you."
+			+ " This neigborhood of course has a special place in my heart. It where I spent the majority of my life so far. My particular area was between 79ST (my house) and 81ST"
+			+ "(my school).",
 		x: 68,
 		y: 3,
 		ld: "M1658.8,417 1930.7,239.2 2338.8,242.7 			",
@@ -39,7 +43,11 @@ const MainContentBoxes = [
 	},
 	{
 		key: "Main-2",
-		title: "PreK",
+		title: "PreK/IPS",
+		body: "I grew up on the Upper West Side in the same apartment for all of my childhood. I went to an preschool for international students"
+			+ "I am not sure why my parents sent me to such a school, but I am glad they did. I met some wonderful people there."
+			+ "There is not much to learn in preschool except the fundamentals--community and participation, but I was exposed to music there, and "
+			+ "everyone was so kind. I am lucky to have gone there.",
 		x: 1,
 		y: 7,
 		ld: "M1658.8,605.3 1259.5,605.3 1155.4,487.3 818.2,487.3 ",
@@ -48,17 +56,32 @@ const MainContentBoxes = [
 	},
 	{
 		key: "Main-3",
+		x: 65,
+		y: 7,
+		title: "Kindgarden & Calhoun",
+		body: "What is a kindergarden entrance examination? Good question: A quick google search reveals a number of concepts tested, things like, Name Writing, Capital letters"
+			+ "Number Recognition, etc... Anyhow, I do not remember the test, but I do know that I failed it massively. Apparently, and this is from my Dad so its a good source:"
+			+ ":\" You just refused to do any of it. You threw the blocks in a fit. I was startling \". Out of frustration I am sure. However, The Calhoun School seemed to appreciate the "
+			+ "the block throwing, so I ended up there, and it was story there on.",
 		cd: "M1675.9,778.1c0,9.8-7.6,17.7-17,17.7s-17-7.9-17-17.7s7.6-17.7,17-17.7l0,0C1668.3,760.4,1675.9,768.3,1675.9,778.1z",
 		ld: "M1658.8,779 2107.8,785.8 2239.8,605.3 2741,605.3 			",
 		ad: "M2804.8,605.3c-30,11.6-67.2,31.4-90.2,52.3l18.1-52.3l-18.1-52.3C2737.6,573.9,2774.8,593.7,2804.8,605.3z"
 	},
 	{
+		x: 2,
+		y: 15,
+		title: "Legos",
+		body: "Something about legos!",
 		key: "Main-4",
 		cd: "M1770.3,949.4c0,9.4-7.6,17-17,17s-17-7.6-17-17s7.6-17,17-17l0,0C1762.7,932.4,1770.3,940.1,1770.3,949.4z",
 		ld: "M1750.6,949.4 1478.7,1127.2 1070.6,1123.7 			",
 		ad: "M1006.8,1123.2c30-11.3,67.4-30.8,90.6-51.6l-18.5,52.2l17.8,52.5C1073.8,1155.1,1036.7,1135,1006.8,1123.2z"
 	},
 	{
+		x: 65,
+		y: 15,
+		title: "Middle School",
+		body: "Good time!",
 		key: "Main-5",
 		cd: "M1831.3,1165.2c0,10-7.7,18-17.3,18c-9.6,0-17.3-8.1-17.3-18c0-10,7.7-18,17.3-18C1823.5,1147.2,1831.3,1155.3,1831.3,1165.2L1831.3,1165.2z",
 		ld: "M1814.3,1164.9 2263.2,1171.7 2395.3,991.1 2896.6,991.1 			",
@@ -621,7 +644,7 @@ const TimelineIntro = (props) => {
 			}
 
 			timeline.current
-				.fromTo(elem,  {transform: 'translateY(-10vh)'}, {transform:`translateY(0)`, opacity: 1, duration: .4 }, `${index !== 0 ? ">0.2" : "<0.2"}`)
+				.fromTo(elem, { transform: 'translateY(-10vh)' }, { transform: `translateY(0)`, opacity: 1, duration: .4 }, `${index !== 0 ? ">0.2" : "<0.2"}`)
 				.to(elem, leaveAnimation, `>${stayTimes[index]}`)
 		})
 		props.setIntroAlreadyMounted(true)
@@ -668,10 +691,21 @@ const VIEWBOX_WIDTH = scaleFactor * 3658.6;
 const VIEWBOX_HEIGHT = scaleFactor * 6486.5;
 const VIEWBOX_SHIFT_X = scaleFactor !== 1 ? VIEWBOX_WIDTH / (scaleFactor * 2 * 2) : 0;
 
+const ToolTip = (props) => {
+	return (<AnimatePresence>
+		{props.tooltipConfig &&
+			<motion.div initial={{ opacity: 0 }}
+				animate={{ opacity: 1, scale: 1.1 }}
+				exit={{ opacity: 0, scale: 0 }}
+				style={{ zIndex: 0, position: "absolute", left: props.tooltipConfig.x, top: props.tooltipConfig.y }}>
+				<Typography style = {{color: "white"}} variant="body1">{props.tooltipConfig.description}</Typography>
+			</motion.div>}
+	</AnimatePresence>)
+}
 export default function About2(props) {
 	const [hasMounted, setHasMounted] = useState(false);
 	const [introAlreadyMounted, setIntroAlreadyMounted] = useState(false);
-
+	const [tooltipConfig, setTooltipConfig] = useState(null);
 	const svgRef = useRef(null);
 	const redTimeline = useRef(null)
 	const orangeTimeline = useRef(null)
@@ -689,7 +723,12 @@ export default function About2(props) {
 
 	const [redLineAniRef, redLineInView] = useInView();
 	const [otherLinesAniRef, otherLinesInView] = useInView();
-
+	const renderTooltip = (e, description) => {
+		const bounds = pageRef.current.getBoundingClientRect();
+		const x = e.clientX - bounds.left - 120; //shift x by alot to the left
+		const y = e.clientY - bounds.top;
+		setTooltipConfig({ x: x, y: y, description: description })
+	}
 
 	const circleQuery = gsap.utils.selector(svgRef);
 	useEffect(() => {
@@ -711,20 +750,19 @@ export default function About2(props) {
 		}
 		if (hasMounted) {
 			if (redTimeline.current === null) {
-				redTimeline.current = BulidTimeline("MainLine", ".Main-Circle", { circleDelay: 4, paused: true, lineAni: { strokeDashoffset: 0, duration: 1, ease: "none" } })
+				redTimeline.current = BulidTimeline("MainLine", ".Main-Circle", { circleDelay: 6.2, paused: true, lineAni: { strokeDashoffset: 0, duration: 1, ease: "none" } })
 			}
 			if (orangeTimeline.current === null && blueTimeline.current === null
 				&& yellowTimeline.current === null && greenTimeline.current === null) {
 				otherTimelines.current = gsap.timeline({ paused: true })
 					.add(BulidTimeline("FL", ".FL-Circle", { circleDelay: 1, paused: false, lineAni: { strokeDashoffset: 0, duration: 3, ease: "none" } }))
-					.add(BulidTimeline("NL", ".NL-Circle", { circleDelay: 1, paused: false, lineAni: { strokeDashoffset: 0, duration: 3, ease: "none" } }), "<1")
-					.add(BulidTimeline("NR", ".NR-Circle", { circleDelay: 1, paused: false, lineAni: { strokeDashoffset: 0, duration: 3, ease: "none" } }), "<1")
-					.add(BulidTimeline("FR", ".FR-Circle", { circleDelay: 1, paused: false, lineAni: { strokeDashoffset: 0, duration: 3, ease: "none" } }), "<1")
+					.add(BulidTimeline("NL", ".NL-Circle", { circleDelay: 1, paused: false, lineAni: { strokeDashoffset: 0, duration: 3, ease: "none" } }), "<2")
+					.add(BulidTimeline("NR", ".NR-Circle", { circleDelay: 1, paused: false, lineAni: { strokeDashoffset: 0, duration: 3, ease: "none" } }), "<2")
+					.add(BulidTimeline("FR", ".FR-Circle", { circleDelay: 1, paused: false, lineAni: { strokeDashoffset: 0, duration: 3, ease: "none" } }), "<2")
 			}
 		}
 	}, [hasMounted])
-
-
+	const foo = useRef()
 	useEffect(() => {
 		if (otherLinesInView) {
 			otherTimelines.current.play();
@@ -762,11 +800,12 @@ export default function About2(props) {
 				<StyledLine id="NL" color="#0039A6" d="M1814.1,2976.3l-503.4,210.9l4.3,3299.2" />
 				<StyledLine id="NR" color="#FCCC0A" d="M1814.7,2974.9l489.4,210.9l3.7,3300.7" />
 				<StyledLine id="FR" color="#00933C" d="M1807,2976.3l1571.9,266.9l-2.6,3243.2" />
-				<StyledLine id="MainLine" color="#EE352E" d="M1728.4,0v101.8l-66.8,43.2v4.1V809l150,224.6l2.6,1964.4" />
+				<StyledLine onMouseOver={(e) => renderTooltip(e, "Main timeline")} onMouseOut={() => setTooltipConfig(null)}
+					id="MainLine" color="#EE352E" d="M1728.4,0v101.8l-66.8,43.2v4.1V809l150,224.6l2.6,1964.4" />
 				<g ref={svgRef} style={{ outline: "none" }} />
 			</svg>
-			<div ref={redLineAniRef} style={{ position: "absolute", opacity: 0, top: "50px", left: "90%" }} />
 			<div ref={otherLinesAniRef} style={{ position: "absolute", opacity: 0, top: "50%" }} />
 			{(props.triggerTlIntro || introAlreadyMounted) && <TimelineIntro setReleaseScroll={props.setReleaseScroll} setIntroAlreadyMounted={setIntroAlreadyMounted} />}
+			<ToolTip tooltipConfig={tooltipConfig} />
 		</StyledPage>);
 }
