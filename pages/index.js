@@ -36,12 +36,3 @@ export default function Home(props) {
         </motion.div>
     );
 }
-
-export async function getServerSideProps(context) {
-    //const parser = UAParser(context.req.headers['user-agent']);
-    return {
-      props: {
-      }
-    }
-  }
-  
