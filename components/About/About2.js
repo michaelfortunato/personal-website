@@ -806,6 +806,5 @@ export default function About2(props) {
 			</svg>
 			<div ref={otherLinesAniRef} style={{ position: "absolute", opacity: 0, top: "50%" }} />
 			{(props.triggerTlIntro || introAlreadyMounted) && <TimelineIntro setReleaseScroll={props.setReleaseScroll} setIntroAlreadyMounted={setIntroAlreadyMounted} />}
-			<ToolTip tooltipConfig={tooltipConfig} />
 		</StyledPage>);
 }
