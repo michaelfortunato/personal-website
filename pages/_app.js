@@ -74,7 +74,7 @@ export default function App({ Component, pageProps }) {
               <StyledComponentsThemeProvider theme={routes[pathname].theme}>
                 <Navbar routes={routes} currentPage={pathname} />
                 <AnimatePresence initial={false}>
-                  <StyledRoot animate={routes[pathname].transition}>
+                  <StyledRoot animate={{...routes[pathname].transition, transition: {duration: .3}}}>
                     <AnimatePresence exitBeforeEnter>
                       <Component key={pathname} 
                         {...pageProps} />

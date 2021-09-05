@@ -88,8 +88,8 @@ export default function Grid(props) {
         setWidth(width)
         setHeight(height);
 
-        setTimeout(() => props.setTriggerNameEnter(true), gridEnterTimeout);
-        setTimeout(() => props.setTriggerGridExit(true), gridEnterTimeout + 250);
+        setTimeout(() => props.setTriggerNameEnter(true), gridEnterTimeout + 300);
+        setTimeout(() => props.setTriggerGridExit(true), gridEnterTimeout + 300 + 250);
     }, [])
 
     return (
