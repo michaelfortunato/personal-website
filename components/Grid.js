@@ -6,7 +6,7 @@ import useDeviceSize from './useDeviceSize.js';
 import { motion } from "framer-motion";
 import UAParser from 'ua-parser-js';
 const MIN_DURATION = 250;
-const MIN_DELAY = 1000;
+const MIN_DELAY = 300 + 1000;
 
 const StyledGrid = styled(motion.div)`
     position: absolute;
@@ -88,8 +88,8 @@ export default function Grid(props) {
         setWidth(width)
         setHeight(height);
 
-        setTimeout(() => props.setTriggerNameEnter(true), gridEnterTimeout + 300);
-        setTimeout(() => props.setTriggerGridExit(true), gridEnterTimeout + 300 + 250);
+        setTimeout(() => props.setTriggerNameEnter(true), gridEnterTimeout);
+        setTimeout(() => props.setTriggerGridExit(true), gridEnterTimeout + 250);
     }, [])
 
     return (

@@ -18,7 +18,8 @@ const Underline = styled(Divider)`
     ${({ theme }) => `background-color: #fff;`}
     height: 2px;
 `
-const MotionGrid = motion(Grid)
+const MotionGrid = motion(Grid);
+const MotionTypography = motion(Typography);
 
 export default function Navbar(props) {
     const [isVisible, setIsVisible] = useState(false);
@@ -46,25 +47,24 @@ export default function Navbar(props) {
                     component={motion.div}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1, transition: { duration: .25 } }}
-                    exit={{ opacity: 0,  transition: { duration: .25 }  }}
+                    exit={{ opacity: 0, transition: { duration: .25 } }}
                 >
                     {Object.entries(props.routes).map(([url, { name }]) =>
                         <Grid key={url} item container xs={12} sm={1} justifyContent="center" alignItems="center">
-                            <Grid item>
-                                <Link href={url}>
-                                    <a>
-                                        <Typography variant="h5">{name}</Typography>
-                                    </a>
-                                </Link>
-                            </Grid>
-                            <Grid item xs={8}>
-                                <AnimatePresence initial={false}>
-                                    <motion.div style={{ originX: "50%" }}
-                                        animate={(url === props.currentPage) ? { scaleX: 1 } : { scaleX: 0 }}>
-                                        <Underline />
-                                    </motion.div>
-                                </AnimatePresence>
-                            </Grid>
+                            <div>
+                                    <Link href={url}>
+                                        <a>
+                                            <Typography variant="h5">{name}</Typography>
+                                        </a>
+                                    </Link>
+                                    <AnimatePresence initial={false}>
+                                        <motion.div
+                                            style = {{transformOrigin: "50%"}}
+                                            animate={(url === props.currentPage) ? { scaleX: 1.1 } : { scaleX: 0 }}>
+                                            <Underline />
+                                        </motion.div>
+                                    </AnimatePresence>
+                                    </div>
                         </Grid>
                     )}
                 </Grid>
