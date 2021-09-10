@@ -79,10 +79,10 @@ const StyledCloseButton = styled.div`
     top: 5%;
     cursor: pointer;
 `
-const StyledCircle = styled.ellipse`
+const StyledCircle = styled(motion.ellipse)`
     fill:none;
     stroke:#fff;
-    stroke-width:3;
+    stroke-width:4;
 `
 const StyledLine = styled.line`
     fill:none;
@@ -91,15 +91,27 @@ const StyledLine = styled.line`
     stroke-miterlimit:10;
 `
 const CloseButton = (props) => {
+    const circleRef = useRef(null);
+    const leftLineRef = useRef(null);
+    const rightLineRef = useRef(null);
+    const tl = useRef(null);
+    useEffect(() => {
+		const circleLength = circleRef.current.getTotalLength();
+		const lineLength = leftLineRef.current.getTotalLength();
+        tl.current = gsap.timeline()
+        .fromTo(leftLineRef.current, { strokeDasharray: lineLength, strokeDashoffset: lineLength }, {strokeDashoffset:0}, "<.5")
+        .fromTo(rightLineRef.current, { strokeDasharray: lineLength, strokeDashoffset: lineLength }, {strokeDashoffset:0}, "<.2")
+        .fromTo(circleRef.current, { strokeDasharray: circleLength, strokeDashoffset: circleLength }, {strokeDashoffset:0}, "<.2")
+    }, [])
     return (
         <StyledCloseButton onClick={() => props.setIsVisible(false)}>
             <svg version="1.1" id="Layer_1"
-                width="100px"
+                width="80px"
                 height="100px"
-                viewBox="-10 0 200.9 200.3">
-                <StyledCircle cx="91.5" cy="90.1" rx="91" ry="89.6" />
-                <StyledLine x1="56.1" y1="125.6" x2="126.8" y2="54.9" />
-                <StyledLine x1="56.2" y1="54.8" x2="126.9" y2="125.5" />
+                viewBox="-10 0 201 201">
+                <StyledCircle ref={circleRef} cx="91" cy="91" rx="91" ry="91" />
+                <StyledLine ref = {leftLineRef} x1="56.1" y1="125.6" x2="126.8" y2="54.9" />
+                <StyledLine ref = {rightLineRef} x1="56.2" y1="54.8" x2="126.8" y2="125.5" />
             </svg>
         </StyledCloseButton>
     )
@@ -109,8 +121,8 @@ const DesktopNav = (props) => {
     const linksQuery = gsap.utils.selector(desktopRef);
     useEffect(() => {
         const links = linksQuery(".links");
-        console.log(links);
-    }, [props.previewUrl])
+        gsap.fromTo(links, {x: -200, y: -200, rotation: 30}, {x: 0, y:0, rotation: 0, stagger:.2})
+    }, [])
     return (
         <Grid ref={desktopRef} container style={{ height: "100%" }}>
             <Grid item xs={4} container direction="column" justifyContent="center" alignItems="center" style={{ height: "100%" }} spacing={4}>
