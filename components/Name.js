@@ -2,9 +2,9 @@ import React from 'react'
 import { CSSTransition } from 'react-transition-group';
 import styled from 'styled-components';
 import Letter from './Letter.js'
+import Grid from "@material-ui/core/Grid"
 
-
-const StyledName = styled.div`
+const StyledName = styled(Grid)`
     font-size: 56px;
     overflow: visible;
     display: flex;
@@ -16,11 +16,11 @@ const StyledName = styled.div`
 }
 
 `;
-const StyledFirstName = styled.div`
+const StyledFirstName = styled(Grid)`
     display: inline-block;
     margin-right: 10px
 `
-const StyledLastName = styled.div`
+const StyledLastName = styled(Grid)`
     display: inline-block; 
     margin-left: 10px;
 `
@@ -72,8 +72,8 @@ class Name extends React.Component {
     render() {
         let animateNameOut = false //(this.props.location != '/') && (this.props.nameEntered == true)
         return (
-            <StyledName>
-                <StyledFirstName>
+            <StyledName container>
+                <StyledFirstName item>
                     {this.props.firstName.split('').map((_, index) => (
                         <Letter
                             key={index}
@@ -84,7 +84,7 @@ class Name extends React.Component {
                         />)
                     )}
                 </StyledFirstName>
-                <StyledLastName>
+                <StyledLastName item>
                     {this.props.lastName.split('').map((_, index) =>
                     (
                         <Letter

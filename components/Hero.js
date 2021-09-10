@@ -21,7 +21,7 @@ class Hero extends React.Component {
     render() {
         return (
             <Grid container style={{ "height": "90vh" }} justifyContent = "center" alignItems="center">
-                <Grid item>
+                <Grid item style = {{maxWidth:700}}>
                     <StyledBanner>
                         <Name firstName='Michael'
                             lastName='Fortunato'
