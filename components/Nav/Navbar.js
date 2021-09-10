@@ -10,6 +10,7 @@ import Divider from "@material-ui/core/Divider"
 import useTheme from "@material-ui/core/styles/useTheme"
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { withTheme } from '@material-ui/core';
+import { gsap } from "gsap";
 
 const StyledNavbar = styled(Grid)`
     ${({ theme }) => `color: #fff;`}
@@ -19,8 +20,8 @@ const StyledNavbar = styled(Grid)`
 `;
 
 const Underline = styled(Divider)`
-    ${({ theme }) => `background-color: #fff;`}
     height: 2px;
+    background-color: white;
 `
 const MotionGrid = motion(Grid);
 const MotionTypography = motion(Typography);
@@ -70,7 +71,6 @@ width: 30%;
 
 `
 const StyledTypography = styled(motion(Typography))`
-    color: white;
 `
 
 const StyledCloseButton = styled.div`
@@ -106,23 +106,24 @@ const CloseButton = (props) => {
 }
 const DesktopNav = (props) => {
     const desktopRef = useRef(null);
-    const linksQuery = gsap.utils.selector(desktopRef); 
+    const linksQuery = gsap.utils.selector(desktopRef);
     useEffect(() => {
         const links = linksQuery(".links");
         console.log(links);
     }, [props.previewUrl])
     return (
-        <Grid ref= {desktopRef} container style={{ height: "100%" }}>
+        <Grid ref={desktopRef} container style={{ height: "100%" }}>
             <Grid item xs={4} container direction="column" justifyContent="center" alignItems="center" style={{ height: "100%" }} spacing={4}>
                 {Object.entries(props.routes).map(([url, { name }]) =>
-                    <Grid className = "links" key={url} item>
+                    <Grid className="links" key={url} item>
                         <motion.div
                             animate={{
-                                color: props.previewUrl !== null ? props.routes[props.previewUrl].previewTextColor : "white",
+                                color: props.previewUrl !== null ? props.routes[props.previewUrl].previewTextColor : "#FFFFFF",
                             }}
-                            onMouseOver={() => props.setPreviewUrl(url)} 
-                            onMouseLeave={() => props.setPreviewUrl(null)} 
-                            onClick={() => props.setIsVisible(false)} 
+                            transition={{ color: { duration: 1 } }}
+                            onMouseOver={() => props.setPreviewUrl(url)}
+                            onMouseLeave={() => props.setPreviewUrl(null)}
+                            onClick={() => props.setIsVisible(false)}
                             style={{ display: "inline-block" }}>
                             <Link href={url}>
                                 <a>
@@ -130,14 +131,17 @@ const DesktopNav = (props) => {
                                         scale: (url === props.previewUrl) ? 1 : 1,
                                         translateX: (url === props.previewUrl) ? "10px" : 0,
                                         translateY: (url === props.previewUrl) ? "-10px" : 0,
-                                        }}
+                                    }}
                                         variant="h2">{name}</StyledTypography>
                                 </a>
                             </Link>
                             <AnimatePresence initial={false}>
                                 <motion.div
                                     style={{ transformOrigin: "50%" }}
-                                    animate={(url === props.previewUrl) ? { scaleX: 1.1 } : { scaleX: 0 }}>
+                                    animate={{
+                                        scaleX: (url === props.previewUrl) ? 1.1 : 0,
+                                    }}
+                                    >
                                     <Underline />
                                 </motion.div>
                             </AnimatePresence></motion.div></Grid>)}
