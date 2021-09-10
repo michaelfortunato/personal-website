@@ -28,7 +28,7 @@ const routes = {
         }, 
       },
     }),
-    previewColor: "#e6af4b",
+    previewColor: "rgba(230, 175, 75, 1)",
     previewTextColor: "#264653",
     transition: { backgroundColor: "#e6af4b" }
   },
@@ -47,7 +47,7 @@ const routes = {
         },
       },
     }),
-    previewColor: "#14213D",
+    previewColor: "rgba(20, 33, 61, 1)",
     previewTextColor: "#e6af4b",
     transition: { backgroundColor: "#14213D" },
      

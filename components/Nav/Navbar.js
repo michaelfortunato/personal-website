@@ -12,11 +12,12 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { withTheme } from '@material-ui/core';
 import { gsap } from "gsap";
 
-const StyledNavbar = styled(Grid)`
+const StyledNavbar = styled.div`
     ${({ theme }) => `color: #fff;`}
     padding: 1.5rem;
     position: fixed;
-    z-index: 10000;
+    z-index: 1;
+    display: inline-block;
 `;
 
 const Underline = styled(Divider)`
@@ -43,9 +44,9 @@ export default function Navbar(props) {
         <StyledNavContainer>
             <NavPage routes={props.routes} isVisible={isVisible} setIsVisible={setIsVisible} />
             <StyledNavbar container>
-                <Grid item xs={1}>
+                <div>
                     <Hamburger duration={0.2} toggled={isVisible} toggle={() => setIsVisible(!isVisible)} />
-                </Grid>
+                </div>
             </StyledNavbar>
         </StyledNavContainer>
     );
@@ -95,42 +96,72 @@ const CloseButton = (props) => {
     const leftLineRef = useRef(null);
     const rightLineRef = useRef(null);
     const tl = useRef(null);
+    const [mouseOver, setMouseOver] = useState(null);
+    const [mouseDown, setMouseDown] = useState(null);
     useEffect(() => {
-		const circleLength = circleRef.current.getTotalLength();
-		const lineLength = leftLineRef.current.getTotalLength();
+        const circleLength = circleRef.current.getTotalLength();
+        const lineLength = leftLineRef.current.getTotalLength();
         tl.current = gsap.timeline()
-        .fromTo(leftLineRef.current, { strokeDasharray: lineLength, strokeDashoffset: lineLength }, {strokeDashoffset:0}, "<.5")
-        .fromTo(rightLineRef.current, { strokeDasharray: lineLength, strokeDashoffset: lineLength }, {strokeDashoffset:0}, "<.2")
-        .fromTo(circleRef.current, { strokeDasharray: circleLength, strokeDashoffset: circleLength }, {strokeDashoffset:0}, "<.2")
+            .fromTo(leftLineRef.current, { strokeDasharray: lineLength, strokeDashoffset: lineLength }, { strokeDashoffset: 0, duration: .2 }, "<.8")
+            .fromTo(rightLineRef.current, { strokeDasharray: lineLength, strokeDashoffset: lineLength }, { strokeDashoffset: 0, duration: .2 }, "<.2")
+            .fromTo(circleRef.current, { strokeDasharray: circleLength, strokeDashoffset: circleLength }, { strokeDashoffset: 0 }, "<.4")
     }, [])
+    useEffect(() => {
+        if (mouseDown) {
+            gsap.to(leftLineRef.current, { scale: .9, transformOrigin: "50% 50%" })
+            gsap.to(rightLineRef.current, { scale: .9, transformOrigin: "50% 50%" })
+        }
+        if (!mouseDown && mouseDown !== null) {
+            console.log("ok")
+            gsap.to(leftLineRef.current, { scale: 1, transformOrigin: "50% 50%" })
+            gsap.to(rightLineRef.current, { scale: 1, transformOrigin: "50% 50%" })
+        }
+    }, [mouseDown])
+
+    useEffect(() => {
+        if (mouseOver) {
+            gsap.to(leftLineRef.current, { scale: 1.2, transformOrigin: "50% 50%" })
+            gsap.to(rightLineRef.current, { scale: 1.2, transformOrigin: "50% 50%" })
+        }
+        if (!mouseOver && mouseOver !== null) {
+            gsap.to(leftLineRef.current, { scale: 1, transformOrigin: "50% 50%" })
+            gsap.to(rightLineRef.current, { scale: 1, transformOrigin: "50% 50%" })
+        }
+    }, [mouseOver])
     return (
-        <StyledCloseButton onClick={() => props.setIsVisible(false)}>
+        <StyledCloseButton onMouseOver={() => setMouseOver(true)}
+            onMouseLeave={() => setMouseOver(false)}
+            onMouseDown={() => setMouseDown(true)}
+            onMouseUp={() => setMouseDown(false)}
+            onClick={() => props.setIsVisible(false)}>
             <svg version="1.1" id="Layer_1"
                 width="80px"
                 height="100px"
                 viewBox="-10 0 201 201">
                 <StyledCircle ref={circleRef} cx="91" cy="91" rx="91" ry="91" />
-                <StyledLine ref = {leftLineRef} x1="56.1" y1="125.6" x2="126.8" y2="54.9" />
-                <StyledLine ref = {rightLineRef} x1="56.2" y1="54.8" x2="126.8" y2="125.5" />
+                <StyledLine ref={leftLineRef} x1="56.1" y1="125.6" x2="126.8" y2="54.9" />
+                <StyledLine ref={rightLineRef} x1="56.2" y1="54.8" x2="126.8" y2="125.5" />
             </svg>
         </StyledCloseButton>
     )
 }
-const DesktopNav = (props) => {
-    const desktopRef = useRef(null);
-    const linksQuery = gsap.utils.selector(desktopRef);
+const NavContent = (props) => {
+    const theme = useTheme();
+    const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+    const navContentRef = useRef(null);
+    const linksQuery = gsap.utils.selector(navContentRef);
     useEffect(() => {
         const links = linksQuery(".links");
-        gsap.fromTo(links, {x: -200, y: -200, rotation: 30}, {x: 0, y:0, rotation: 0, stagger:.2})
+        gsap.fromTo(links, { x: -200, y: -200, rotation: 30 }, { x: 0, y: 0, rotation: 0, duration: .3, stagger: .2 })
     }, [])
     return (
-        <Grid ref={desktopRef} container style={{ height: "100%" }}>
-            <Grid item xs={4} container direction="column" justifyContent="center" alignItems="center" style={{ height: "100%" }} spacing={4}>
+        <Grid ref={navContentRef} container style={{ height: "100%" }}>
+            <Grid item xs={12} md={4} container direction="column" justifyContent="center" alignItems="center" style={{ height: "100%" }} spacing={4}>
                 {Object.entries(props.routes).map(([url, { name }]) =>
                     <Grid className="links" key={url} item>
                         <motion.div
                             animate={{
-                                color: props.previewUrl !== null ? props.routes[props.previewUrl].previewTextColor : "#FFFFFF",
+                                color: props.previewUrl !== null && url === -1 ? props.routes[props.previewUrl].previewTextColor : "#FFFFFF",
                             }}
                             transition={{ color: { duration: 1 } }}
                             onMouseOver={() => props.setPreviewUrl(url)}
@@ -153,14 +184,15 @@ const DesktopNav = (props) => {
                                     animate={{
                                         scaleX: (url === props.previewUrl) ? 1.1 : 0,
                                     }}
-                                    >
+                                >
                                     <Underline />
                                 </motion.div>
                             </AnimatePresence></motion.div></Grid>)}
             </Grid>
-            <Grid item xs={8} >
-                <StyledTypography></StyledTypography>
-            </Grid>
+            {isDesktop &&
+                <Grid item md={8}>
+                    <StyledTypography></StyledTypography>
+                </Grid>}
         </Grid >
     )
 }
@@ -174,24 +206,16 @@ const NavPage = (props) => {
                     style={{ originY: 0 }}
                     initial={{ translateY: "-100%" }}
                     animate={{
-                        backgroundColor: previewUrl !== null ? props.routes[previewUrl].previewColor : "#49474D",
+                        backgroundColor: previewUrl !== null ? props.routes[previewUrl].previewColor : "rgba(73, 71, 77, 1)",
                         translateY: 0,
                         transition: { duration: .5 }
                     }}
-                    exit={{ scaleY: 0, transition: { duration: .5 } }}
+                    exit={{ translateY: "-100%", transition: { duration: .5 } }}
                 >
                     <NavContent routes={props.routes} setIsVisible={props.setIsVisible} previewUrl={previewUrl} setPreviewUrl={setPreviewUrl} />
                     <CloseButton setIsVisible={props.setIsVisible} />
                 </StyledNavPage>}
         </AnimatePresence>);
-}
-const NavContent = (props) => {
-    const theme = useTheme();
-    const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
-
-    return (<>
-        {isDesktop ? <DesktopNav routes={props.routes} setIsVisible={props.setIsVisible} previewUrl={props.previewUrl} setPreviewUrl={props.setPreviewUrl} /> : null}
-    </>)
 }
 /*
 class Navbar extends React.Component {
