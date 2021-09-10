@@ -28,6 +28,8 @@ const routes = {
         }, 
       },
     }),
+    previewColor: "#e6af4b",
+    previewTextColor: "#264653",
     transition: { backgroundColor: "#e6af4b" }
   },
   "/about": {
@@ -45,10 +47,41 @@ const routes = {
         },
       },
     }),
-    transition: { backgroundColor: "#14213D" }, 
-  }, 
+    previewColor: "#14213D",
+    previewTextColor: "#e6af4b",
+    transition: { backgroundColor: "#14213D" },
+     
+  },"/projects": {
+    name: "Projects",
+    theme: createTheme({
+      palette: {
+        primary: {
+          main: "#14213D",
+        },
+        secondary: {
+          main: "#fafafa"
+        },
+        text: {
+          primary: "#fff"
+        },
+      },
+    }),
+    previewColor: "#14213D",
+    previewTextColor: "#e6af4b",
+    transition: { backgroundColor: "#14213D" },
+  }, "/_error": {
+    name: "/_error",
+    theme: createTheme({}),
+  }, "/404": {
+    name: "/404",
+    theme: createTheme({}),
+  },"/504": {
+    name: "/504",
+    theme: createTheme({}),
+  }
 }
 export default function App({ Component, pageProps }) {
+  const mainRef = useRef(null);
   const router = useRouter();
   const pathname = router.pathname
   console.log(pathname)
@@ -60,6 +93,12 @@ export default function App({ Component, pageProps }) {
     }
   }, []);
 
+  let userRoutes = {};
+  Object.entries(routes).forEach(([url, obj]) => {
+    if ((url !== "/_error") && (url !== "/404") && (url !== "/504")) {
+      userRoutes[url] = obj
+    }
+  })
   return (
     <div>
       <Head>
@@ -67,14 +106,14 @@ export default function App({ Component, pageProps }) {
         <meta name="description" content="Michael Fortunato Website" />
         <link rel="icon" href="" />
       </Head>
-      <main>
+      <main ref = {mainRef}>
         <div>
           <StylesProvider injectFirst>
             <MuiThemeProvider theme={routes[pathname].theme}>
               <StyledComponentsThemeProvider theme={routes[pathname].theme}>
-                <Navbar routes={routes} currentPage={pathname} />
+                <Navbar routes={userRoutes} currentPage={pathname} mainRef = {mainRef}/>
                 <AnimatePresence initial={false}>
-                  <StyledRoot animate={{...routes[pathname].transition, transition: {duration: .3}}}>
+                  <StyledRoot animate={{...routes[pathname].transition, transition: {delay: .6, duration: .3}}}>
                     <AnimatePresence exitBeforeEnter>
                       <Component key={pathname} 
                         {...pageProps} />

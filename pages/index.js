@@ -24,7 +24,7 @@ export default function Home(props) {
             style = {{height: "100vh", width: "100vw"}} 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, transition: {duration: 0.3} }}
-            exit={{ opacity: 0, transition: {duration: 0.3} }} >
+            exit={{ opacity: 0, transition: { delay: .6, duration: 0.3} }} >
             <AnimatePresence>
                 {!triggerGridExit &&
                     <motion.div exit={{ opacity: 0 }}>
