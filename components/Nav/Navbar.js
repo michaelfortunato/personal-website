@@ -42,12 +42,12 @@ export default function Navbar(props) {
     }, [])
     return (
         <StyledNavContainer>
-            <NavPage routes={props.routes} isVisible={isVisible} setIsVisible={setIsVisible} />
             <StyledNavbar container>
                 <div>
                     <Hamburger duration={0.2} toggled={isVisible} toggle={() => setIsVisible(!isVisible)} />
                 </div>
             </StyledNavbar>
+            <NavPage routes={props.routes} isVisible={isVisible} setIsVisible={setIsVisible} />
         </StyledNavContainer>
     );
 }
@@ -102,7 +102,7 @@ const CloseButton = (props) => {
         const circleLength = circleRef.current.getTotalLength();
         const lineLength = leftLineRef.current.getTotalLength();
         tl.current = gsap.timeline()
-            .fromTo(leftLineRef.current, { strokeDasharray: lineLength, strokeDashoffset: lineLength }, { strokeDashoffset: 0, duration: .2 }, "<.8")
+            .fromTo(leftLineRef.current, { strokeDasharray: lineLength, strokeDashoffset: lineLength }, { strokeDashoffset: 0, duration: .2 }, "<1.1")
             .fromTo(rightLineRef.current, { strokeDasharray: lineLength, strokeDashoffset: lineLength }, { strokeDashoffset: 0, duration: .2 }, "<.2")
             .fromTo(circleRef.current, { strokeDasharray: circleLength, strokeDashoffset: circleLength }, { strokeDashoffset: 0 }, "<.4")
     }, [])
@@ -152,7 +152,7 @@ const NavContent = (props) => {
     const linksQuery = gsap.utils.selector(navContentRef);
     useEffect(() => {
         const links = linksQuery(".links");
-        gsap.fromTo(links, { x: -200, y: -200, rotation: 30 }, { x: 0, y: 0, rotation: 0, duration: .3, stagger: .2 })
+        gsap.fromTo(links, { x: -400, y: -200, rotation: 30 }, { x: 0, y: 0, rotation: 0, delay: .3, duration: .3, stagger: .1 })
     }, [])
     return (
         <Grid ref={navContentRef} container style={{ height: "100%" }}>
