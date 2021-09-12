@@ -72,7 +72,7 @@ const Gridline = (props) => {
         circleXScaling = props.width / circleSize;
         circleYScaling = props.height / circleSize;
     }
-    console.log(...props)
+    console.log(props)
     const nodeRef = React.useRef(null)
     return (<CSSTransition
         in={true}
