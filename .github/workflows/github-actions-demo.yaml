@@ -26,6 +26,8 @@ jobs:
         
       - name: Run tests
         run: npm test
-      
+
+      - name: Configure serverless
+        run : npx serverless --component=serverless-next config credentials --provider aws --key ${{ secrets.AWS_ACCESS_KEY_ID }} --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - name: Deploy to AWS via serverless
-        run: npx sls
+        run: npx serverless
