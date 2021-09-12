@@ -12,8 +12,6 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
 
     steps:
-      - name: testy
-        run: echo "${{secrets.AWS_ACCESS_KEY_ID}}" 
       - name: get repo
         uses: actions/checkout@v2
 

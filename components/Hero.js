@@ -23,7 +23,7 @@ class Hero extends React.Component {
             <Grid container style={{ "height": "90vh" }} justifyContent = "center" alignItems="center">
                 <Grid item style = {{maxWidth:700}}>
                     <StyledBanner>
-                        <Name firstName='Mike'
+                        <Name firstName='Michael'
                             lastName='Fortunato'
                             triggerNameEnter={this.props.triggerNameEnter}
                             nameEntered={this.state.nameEntered}
