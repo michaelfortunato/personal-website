@@ -1,0 +1,17 @@
+{
+  "name": "eob9t2-xe3aqae",
+  "hash": "QVVto/B0sseW+KVauQDAFtSIfu2ltAZKhBRFSrwxQYE=",
+  "description": "Default Lambda@Edge for Next CloudFront distribution",
+  "memory": 512,
+  "timeout": 10,
+  "code": "/Users/michaelfortunato/website-nextjs/.serverless_nextjs/default-lambda",
+  "shims": [],
+  "handler": "index.handler",
+  "runtime": "nodejs12.x",
+  "env": {},
+  "role": {
+    "arn": "arn:aws:iam::207385250759:role/eob9t2-b47nsk"
+  },
+  "arn": "arn:aws:lambda:us-east-1:207385250759:function:eob9t2-xe3aqae",
+  "region": "us-east-1"
+}

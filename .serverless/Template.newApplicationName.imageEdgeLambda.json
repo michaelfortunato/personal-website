@@ -1,0 +1,17 @@
+{
+  "name": "eob9t2-951mgi3m",
+  "hash": "lJJVNKCqQ7z5rJlzgBJHaVB08SN249twq2lm2xyE6mM=",
+  "description": "Image Lambda@Edge for Next CloudFront distribution",
+  "memory": 512,
+  "timeout": 10,
+  "code": "/Users/michaelfortunato/website-nextjs/.serverless_nextjs/image-lambda",
+  "shims": [],
+  "handler": "index.handler",
+  "runtime": "nodejs12.x",
+  "env": {},
+  "role": {
+    "arn": "arn:aws:iam::207385250759:role/eob9t2-u03zxr"
+  },
+  "arn": "arn:aws:lambda:us-east-1:207385250759:function:eob9t2-951mgi3m",
+  "region": "us-east-1"
+}
