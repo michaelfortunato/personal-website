@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { CSSTransition } from 'react-transition-group';
+import gsap from 'gsap'
+import { CustomEase } from "gsap/dist/CustomEase";
+gsap.registerPlugin(CustomEase);
 
 const StyledGridline = styled.div`
     position: absolute;
@@ -10,25 +13,7 @@ const StyledGridline = styled.div`
     width: ${(props) => props.isRow ? '100%' : `${props.circleSize}px`};
     top: ${(props) => props.isRow ? `${props.fixedPos}vh` : 'initial'};
     left: ${(props) => props.isRow ? 'initial' : `${props.fixedPos}vh`};
-    
-    transform: ${(props => props.isRow ? 'scaleX(1) scaleY(.125)' : 'scaleY(1) scaleX(.125)')};
     border-radius: 50%;
-    &.line-appear, &.line-enter {
-    browser-radius: 50%;
-        transform-origin: ${(props) => props.isRow ? `${props.floatingPos}vh` : '50%'}
-                        ${(props) => props.isRow ? '50%' : `${props.floatingPos}vh`};
-        transform: ${(props) => props.isRow ? `scaleX(${props.circleXScaling})` : `scaleY(${props.circleYScaling})`};    
-    }
-    &.line-appear-active, &.line-enter-active {
-        transform: ${(props) => props.isRow ? `scaleX(1) scaleY(.125)` : `scaleY(1) scaleX(.125)`};  
-        transition-duration: ${(props) => props.duration}ms; 
-        transition-delay: ${(props) => props.delay}ms; 
-        transition-property: all;
-        will-change: transform;
-    }
-    &.line-appear-done, &.line-enter-done {
-        transform: ${(props => props.isRow ? 'scaleX(1) scaleY(.125)' : 'scaleY(1) scaleX(.125)')};
-    }
 `;
 
 const StyledGridlineFirefox = styled.div`
@@ -72,15 +57,23 @@ const Gridline = (props) => {
         circleXScaling = props.width / circleSize;
         circleYScaling = props.height / circleSize;
     }
-    console.log(props)
+
+    useEffect(() => {
+        console.log(props.circleXScaling)
+        gsap.set(nodeRef.current, {
+            transformOrigin: props.isRow ? `${props.floatingPos}vh 50%` : `50% ${props.floatingPos}vh`,
+            transform: props.isRow ? `scaleX(${circleXScaling})` : `scaleY(${circleYScaling})`
+        })
+        gsap.to(nodeRef.current, {
+            scaleX: props.isRow ? 1 : .125, 
+            scaleY: props.isRow ? .125 : 1,
+            duration: `${props.duration/1000}`,
+            delay: `${props.delay/1000}`,
+            ease: CustomEase.create("custom", "M0,0 C0.25,0.1 0.25,1 1,1 ")
+        })
+    }, [])
     const nodeRef = React.useRef(null)
-    return (<CSSTransition
-        in={true}
-        appear={true}
-        classNames="line"
-        timeout={props.duration + props.delay}
-        nodeRef={nodeRef}
-    >
+    return (<>
         {
             (props.browser.name.toLowerCase() !== "firefox") ?
                 <StyledGridline ref={nodeRef} {...props}
@@ -93,7 +86,7 @@ const Gridline = (props) => {
                     circleXScaling={circleXScaling}
                     circleYScaling={circleYScaling} />
         }
-    </CSSTransition>
+    </>
     );
 }
 
