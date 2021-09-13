@@ -21,7 +21,7 @@ export default function Home(props) {
     console.log(props.ua)
     return (
         <motion.div
-            style = {{height: "100vh", width: "100vw"}} 
+            style = {{overflow:"hidden", height: "100vh", width: "100vw"}} 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, transition: {duration: 0.3} }}
             exit={{ opacity: 0, transition: { delay: .6, duration: 0.3} }} >

@@ -16,18 +16,6 @@ const StyledGrid = styled(motion.div)`
     height: 100vh;
     z-index: 1;
     overflow:hidden;
-
-    &.fade-out-appear-active, &.fade-out-enter-active{
-        opacity: 0;
-        transition: opacity;
-        transition-duration: ${(props) => props.duration}ms;
-        transition-delay: ${(props) => props.delay}ms;
-    }
-    &.fade-out-appear-done, &.fade-out-enter-done{
-        opacity: 0;
-    }
-
-
 `
 
 const resizeDelta = 200;
@@ -95,10 +83,7 @@ export default function Grid(props) {
     return (
         <>
             {(width !== 0 && height !== 0) &&
-                <StyledGrid
-                    onAnimationComplete={() => {
-                    }}
-                    duration={props.duration}>
+                <StyledGrid>
                     {[...Array(numRowLines)].map((_, i) => {
                         return (
                             <Gridline key={i} browser={browser} isRow={true} width={width} height={height} {...rowConfigs[i + 1]} />);

@@ -25,7 +25,7 @@ const routes = {
         },
         secondary: {
           main: "#264653"
-        }, 
+        },
       },
     }),
     previewColor: "rgba(230, 175, 75, 1)",
@@ -50,9 +50,27 @@ const routes = {
     previewColor: "rgba(20, 33, 61, 1)",
     previewTextColor: "#e6af4b",
     transition: { backgroundColor: "#14213D" },
-     
-  },"/projects": {
+
+  }, "/projects": {
     name: "Projects",
+    theme: createTheme({
+      palette: {
+        primary: {
+          main: "#14213D",
+        },
+        secondary: {
+          main: "#fafafa"
+        },
+        text: {
+          primary: "#fff"
+        },
+      },
+    }),
+    previewColor: "#14213D",
+    previewTextColor: "#e6af4b",
+    transition: { backgroundColor: "#14213D" },
+  }, "/blog": {
+    name: "Blog",
     theme: createTheme({
       palette: {
         primary: {
@@ -75,16 +93,22 @@ const routes = {
   }, "/404": {
     name: "/404",
     theme: createTheme({}),
-  },"/504": {
+  }, "/504": {
     name: "/504",
     theme: createTheme({}),
   }
 }
+
+const userRoutes = {};
+Object.entries(routes).forEach(([url, obj]) => {
+  if ((url !== "/_error") && (url !== "/404") && (url !== "/504")) {
+    userRoutes[url] = obj
+  }
+})
 export default function App({ Component, pageProps }) {
   const mainRef = useRef(null);
   const router = useRouter();
-  const pathname = router.pathname
-  console.log(pathname)
+  const pathname = "/" + router.pathname.split("/")[1]
   useEffect(() => {
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector("#jss-server-side");
@@ -93,12 +117,7 @@ export default function App({ Component, pageProps }) {
     }
   }, []);
 
-  let userRoutes = {};
-  Object.entries(routes).forEach(([url, obj]) => {
-    if ((url !== "/_error") && (url !== "/404") && (url !== "/504")) {
-      userRoutes[url] = obj
-    }
-  })
+  console.log(pathname)
   return (
     <div>
       <Head>
@@ -106,16 +125,16 @@ export default function App({ Component, pageProps }) {
         <meta name="description" content="Michael Fortunato Website" />
         <link rel="icon" href="" />
       </Head>
-      <main ref = {mainRef}>
+      <main ref={mainRef}>
         <div>
           <StylesProvider injectFirst>
             <MuiThemeProvider theme={routes[pathname].theme}>
               <StyledComponentsThemeProvider theme={routes[pathname].theme}>
-                <Navbar routes={userRoutes} currentPage={pathname} mainRef = {mainRef}/>
+                <Navbar routes={userRoutes} currentPage={pathname} mainRef={mainRef} />
                 <AnimatePresence initial={false}>
-                  <StyledRoot animate={{...routes[pathname].transition, transition: {delay: .6, duration: .3}}}>
+                  <StyledRoot animate={{ ...routes[pathname].transition, transition: { delay: .6, duration: .3 } }}>
                     <AnimatePresence exitBeforeEnter>
-                      <Component key={pathname} 
+                      <Component key={pathname}
                         {...pageProps} />
                     </AnimatePresence>
                   </StyledRoot>

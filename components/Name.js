@@ -10,6 +10,7 @@ const StyledName = styled(Grid)`
     display: flex;
     justify-content: center;
     position: relative;
+    text-align: center;
     color: #264653;
     padding-top: 2%;
     margin-bottom: 0px;
@@ -72,7 +73,7 @@ class Name extends React.Component {
     render() {
         let animateNameOut = false //(this.props.location != '/') && (this.props.nameEntered == true)
         return (
-            <StyledName container>
+            <StyledName container justifyContent = "center">
                 <StyledFirstName item>
                     {this.props.firstName.split('').map((_, index) => (
                         <Letter
