@@ -4,7 +4,10 @@ import Hero from '@components/Hero';
 import { AnimatePresence, motion } from 'framer-motion'
 import fs from "fs"
 import Typography from '@material-ui/core/Typography';
-import ReactMarkdown from 'react-markdown/react-markdown.min'
+import ReactMarkdown from 'react-markdown'
+import rehypeKatex from 'rehype-katex'
+import remarkMath from 'remark-math'
+import 'katex/dist/katex.min.css'
 const defaultGridConfig = {
     random: true,
     numLines: 12,
@@ -17,9 +20,14 @@ const defaultGridConfig = {
 export default function Blog(props) {
     return <div>
         <Typography variant="h2">{props.bid}</Typography>
-        <ReactMarkdown>{props.content}</ReactMarkdown>
+        <ReactMarkdown
+            remarkPlugins={[remarkMath]}
+            rehypePlugins={[rehypeKatex]}
+        >{props.content}
+        </ReactMarkdown>
     </div>
 }
+
 export async function getStaticProps({ params }) {
     const content = fs.readFileSync("/Users/michaelfortunato/website-nextjs/_blogs/" + params.bid, "utf-8");
     return {
