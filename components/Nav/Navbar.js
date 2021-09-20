@@ -152,7 +152,7 @@ const NavContent = (props) => {
     const linksQuery = gsap.utils.selector(navContentRef);
     useEffect(() => {
         const links = linksQuery(".links");
-        gsap.fromTo(links, { x: -400, y: -200, rotation: 30 }, { x: 0, y: 0, rotation: 0, delay: .3, duration: .3, stagger: .1 })
+        gsap.fromTo(links, { x: -400, y: -200, rotation: 30 }, { x: 0, y: 0, rotation: 0, delay: .2, duration: 0.3, stagger: 0.08 })
     }, [])
     return (
         <Grid ref={navContentRef} container style={{ height: "100%" }}>
