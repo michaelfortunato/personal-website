@@ -8,15 +8,9 @@ import ReactMarkdown from 'react-markdown'
 import rehypeKatex from 'rehype-katex'
 import remarkMath from 'remark-math'
 import 'katex/dist/katex.min.css'
-const defaultGridConfig = {
-    random: true,
-    numLines: 12,
-    offset: 0,
-    avgDuration: 150,
-    avgDelay: 1500,
-    duration: 750,
-    isDot: true
-};
+import path from 'path';
+
+const blogsDir = process.cwd() + path.sep + "_blogs"
 export default function Blog(props) {
     return <div>
         <Typography variant="h2">{props.bid}</Typography>
@@ -29,7 +23,7 @@ export default function Blog(props) {
 }
 
 export async function getStaticProps({ params }) {
-    const content = fs.readFileSync("/Users/michaelfortunato/website-nextjs/_blogs/" + params.bid, "utf-8");
+    const content = fs.readFileSync(blogsDir + path.sep + params.bid, "utf-8");
     return {
         props: {
             bid: params.bid,
@@ -38,10 +32,7 @@ export async function getStaticProps({ params }) {
     }
 }
 export async function getStaticPaths() {
-    let paths = []
-    fs.readdirSync("/Users/michaelfortunato/website-nextjs/_blogs").forEach(file => {
-        paths.push({ params: { bid: file } })
-    })
+    const paths = fs.readdirSync(blogsDir).map(file => ({ params: { bid: file } }));
     return {
         paths: paths,
         fallback: false // 'blocking' // See the "fallback" section below
