@@ -7,6 +7,7 @@ import ReactMarkdown from "react-markdown";
 import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 import "katex/dist/katex.min.css";
+import { compileSync } from "@mdx-js/mdx";
 import fs from "fs";
 import path from "path";
 import axios from "axios";
@@ -14,13 +15,12 @@ import parser from "fast-xml-parser";
 import { assetsURL } from "@utils/configurations";
 
 export default function Blog(props) {
-  return (
-    <div style={{ backgroundColor: "white" }}>
-      <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
-        {props.content}
-      </ReactMarkdown>
-    </div>
-  );
+  const Component = compileSync("#Hello world", {
+    remarkPlugins: [remarkMath],
+    rehypePlugins: [rehypeKatex],
+  });
+  console.log(Component);
+  return <div style={{ backgroundColor: "white" }}></div>;
 }
 
 export async function getStaticProps({ params }) {
@@ -38,10 +38,10 @@ export async function getStaticProps({ params }) {
       process.cwd(),
       "..",
       assetsURL,
-      `${params.bid}.md`
+      `${params.bid}.mdx`
     );
     const data = fs.readFileSync(blogPath, "utf-8");
-
+    console.log("here");
     return {
       props: {
         bid: params.bid,
@@ -80,7 +80,7 @@ export async function getStaticPaths() {
     const localBlogsFodler = path.join(process.cwd(), "..", assetsURL);
     const blogs = fs.readdirSync(localBlogsFodler);
     const paths = blogs.map((blog) => ({
-      params: { bid: blog.replace(".md", "") },
+      params: { bid: blog.replace(".mdx", "") },
     }));
     return {
       paths,
