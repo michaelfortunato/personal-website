@@ -12,13 +12,13 @@ import path from "path";
 import axios from "axios";
 import parser from "fast-xml-parser";
 import { assetsURL } from "@utils/configurations";
-
-export default function Blog(props) {
+import markdown from "remark-parse";
+import { serialize } from "next-mdx-remote/serialize";
+import { MDXRemote } from "next-mdx-remote";
+export default function Blog({ mdxSource }) {
   return (
     <div style={{ backgroundColor: "white" }}>
-      <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
-        {props.content}
-      </ReactMarkdown>
+      <MDXRemote {...mdxSource} />
     </div>
   );
 }
@@ -38,14 +38,19 @@ export async function getStaticProps({ params }) {
       process.cwd(),
       "..",
       assetsURL,
-      `${params.bid}.md`
+      `${params.bid}.mdx`
     );
     const data = fs.readFileSync(blogPath, "utf-8");
 
+    const mdxSource = await serialize(data, {
+      mdxOptions: {
+        remarkPlugins: [remarkMath],
+        rehypePlugins: [rehypeKatex],
+      },
+    });
     return {
       props: {
-        bid: params.bid,
-        content: data,
+        mdxSource,
       },
     };
   }
@@ -80,7 +85,7 @@ export async function getStaticPaths() {
     const localBlogsFodler = path.join(process.cwd(), "..", assetsURL);
     const blogs = fs.readdirSync(localBlogsFodler);
     const paths = blogs.map((blog) => ({
-      params: { bid: blog.replace(".md", "") },
+      params: { bid: blog.replace(".mdx", "") },
     }));
     return {
       paths,
