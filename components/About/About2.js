@@ -326,52 +326,6 @@ const ContentBox = props => {
 	[b_1`]A = (VIEWBOX_WIDTH/pageWidth, 0)
 	[b_2`]A = (0, VIEWBOX_HEIGHT)
 	*/
-/*
-const BtoAx = x => (VIEWBOX_WIDTH / 100) * x - VIEWBOX_SHIFT_X;
-const BtoAy = y => (VIEWBOX_HEIGHT / 100) * y;
-const BPrimeToAx = (x, pageWidth) => (VIEWBOX_WIDTH / pageWidth) * x;
-const BPrimeToAy = (y, pageHeight) => (VIEWBOX_HEIGHT / pageHeight) * y;
-const useBoxPosition = ({
-	pageWidth,
-	pageHeight,
-	isOpen,
-	isLoaded,
-	isLeft,
-	boxPixelPosX,
-	boxPixelPosY,
-	boxRef
-}) => {
-	const [boxPosX, setBoxPosX] = useState(0);
-	const [boxPosY, setBoxPosY] = useState(0);
-	useEffect(() => {
-		if (boxRef.current !== null && isOpen) {
-			const newBoxPosX = isLeft
-				? BtoAx(boxPixelPosX) +
-				  BPrimeToAx(boxRef.current.offsetWidth, pageWidth)
-				: BtoAx(boxPixelPosX);
-			const newBoxPosY =
-				BtoAy(boxPixelPosY) +
-				BPrimeToAy(boxRef.current.offsetHeight / 2, pageHeight);
-			//debugger;
-			setBoxPosX(newBoxPosX);
-			setBoxPosY(newBoxPosY);
-		} else {
-			setBoxPosX(0);
-			setBoxPosY(0);
-		}
-	}, [pageWidth, pageHeight, isOpen]);
-	return [boxPosX, boxPosY];
-};
-*/
-const useSyncedRef = ref => {
-	const syncedRef = useRef(null);
-	useEffect(() => {
-		if (!ref) return;
-		if (typeof ref === "function") ref(syncedRef);
-		else ref.current = syncedRef.current;
-	});
-	return syncedRef;
-};
 
 const StyledCircle = styled(motion.path)`
 	cursor: pointer;
@@ -452,13 +406,93 @@ const SVGArrow = props => {
 	);
 };
 
+// generate curving line
+function generateSmoothLine(
+	{ x0, y0 },
+	{ xn, yn },
+	ptsBetween,
+	initYDirection
+) {
+	if (initYDirection !== -1 && initYDirection !== 1) {
+		throw "Give a valid initial y direction.";
+	}
+	if (ptsBetween < 1) {
+		throw "Could not generate smooth line.";
+	}
+
+	spacing = 0.15; //spacing !== null ? spacing : 1/(ptsBetween + 1)
+	let deltaX = Math.abs(xn - x0);
+	let deltaY = yn - y0;
+
+	const xDirection = xn - x0 < 0 ? -1 : 1;
+	let prevYDirection = [];
+	let pts = [];
+	new Int8Array(ptsBetween + 1).forEach((val, i) => {
+		console.log(i);
+		if (i === 0) {
+			prevYDirection.push(initYDirection);
+			pts.push({ xi: x0, yi: y0, dir: 0 });
+		} else {
+			console.log(prevYDirection[i - 1]);
+			const xi =
+				pts[i - 1].xi + xDirection * (1 / (ptsBetween + 1)) * deltaX;
+			const yScale =
+				prevYDirection[i - 1] * deltaY < 0
+					? Math.random() * (0.5 + 0.15)
+					: Math.random() + 0.7;
+			const yi = y0 + prevYDirection[i - 1] * Math.abs(deltaY) * yScale;
+
+			const yDirection = Math.random() < 0.5 ? -1 : 1;
+			prevYDirection.push(yDirection);
+			const dir = yi - pts[i - 1].yi < 0 ? -1 : 1;
+			pts.push({ xi, yi, dir: dir });
+		}
+	});
+	console.log(pts);
+	pts[ptsBetween].yi = yn;
+	pts.push({ xn, yn });
+	return pts;
+}
+
+// All credits to francois romain for teaching me this
+//https://francoisromain.medium.com/smooth-a-svg-path-with-cubic-bezier-curves-e37b49d46c74
+const line = ({ x0, y0 }, { x1, y1 }) => {
+	const lenghtX = x1 - x0;
+	const lengthY = y1 - y0;
+	return {
+		length: Math.sqrt(Math.pow(lengthX, 2) + Math.pow(lengthY, 2)),
+		angle: Math.atan2(lengthY, lengthX)
+	};
+};
+const controlPoint = (currentAnchor, previousAnchor, nextAnchor, direction) => {
+	const previousAnchor = previousAnchor || currentAnchor;
+	const nextAnchor = nextAnchor || currentAnchor;
+	const properties = line(previousAnchor, nextAnchor);
+
+	// Ratio of A to O A:O => cotan(angle) * O = A
+	const smoothing = 0.2;
+	const angle = (properties.angle = direction === "reverse" ? Math.PI : 0);
+	const length = properties.length * smoothing;
+	const x = currentAnchor.x + Math.cos(angle) * length * smoothing;
+	const y = currentAnchor.y + Math.sin(angle) * length * smoothing;
+	return [x, y];
+};
+
+const bezierCommand = (point, i, a) => {
+	// start control point
+	const [cpsX, cpsY] = controlPoint(a[i - 1], a[i - 2], point);
+	// end control point
+	const [cpeX, cpeY] = controlPoint(point, a[i - 1], a[i + 1], true);
+	return `C ${cpsX},${cpsY} ${cpeX},${cpeY} ${point[0]},${point[1]}`;
+};
+
 const SVGLine = props => {
 	const mountable =
 		props.boxPosX !== 0 && props.boxPosY !== 0 && props.arrowWidth !== 0;
 	useEffect(() => {
 		if (mountable) {
-			//const pathLength = props.lineRef.current.getTotalLength();
-			//gsap.set(props.lineRef.current, { strokeDasharray: pathLength });
+			const pathLength = props.lineRef.current.getTotalLength();
+			gsap.set(props.lineRef.current, { strokeDasharray: pathLength });
 		}
 	}, [props.boxPosX, props.boxPosY, props.arrowWidth]);
 
