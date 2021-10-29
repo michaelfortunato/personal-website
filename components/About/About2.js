@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
@@ -62,25 +62,100 @@ const ContentBoxContainer = styled.div`
 	overflow-wrap: break-word; // breaks the word if it overflows
 	opacity: 0;
 `;
+const createContentMachineTimeline = ({
+	lineRef,
+	arrowRef,
+	boxRef,
+	setIsClosing,
+	setIsOpen,
+	setRender,
+	isLeft
+}) => {
+	if (
+		boxRef.current === null ||
+		lineRef.current === null ||
+		arrowRef.current === null
+	) {
+		return null;
+	} else {
+		const pathLength = lineRef.current.getTotalLength();
+		const arrowDuration = 0.5;
+		gsap.set(lineRef.current, {
+			strokeDasharray: pathLength
+		});
+		gsap.set(lineRef.current, { opacity: 1 });
 
+		return (
+			gsap
+				.timeline({
+					onReverseComplete: () => {
+						setIsClosing(false);
+						setRender(false);
+						setIsOpen(false);
+					},
+					onComplete: () => {
+						setIsOpen(true);
+					}
+				})
+				//arrow appearing
+				.to(arrowRef.current, {
+					opacity: 1,
+					duration: 0.2
+				})
+				//arrow moving out
+				.to(
+					arrowRef.current,
+					{
+						motionPath: {
+							path: lineRef.current.getAttribute("d"),
+							align: lineRef.current,
+							autoRotate: true,
+							alignOrigin: [0.5, 0.5],
+							autoRotate: isLeft ? 180 : 0
+						},
+						duration: arrowDuration
+					},
+					"<"
+				)
+				//line moving out
+				.fromTo(
+					lineRef.current,
+					{
+						strokeDashoffset: pathLength
+					},
+					{
+						strokeDashoffset: 0,
+						duration: arrowDuration
+					},
+					"<"
+				)
+				// Box moving up
+				.fromTo(
+					boxRef.current,
+					{ yPercent: -10 },
+					{ yPercent: 0, opacity: 1, duration: 0.5 },
+					">-0.5"
+				)
+		);
+	}
+};
 const BtoAx = x => (VIEWBOX_WIDTH / 100) * x - VIEWBOX_SHIFT_X;
 const BtoAy = y => (VIEWBOX_HEIGHT / 100) * y;
 const BPrimeToAx = (x, pageWidth) => (VIEWBOX_WIDTH / pageWidth) * x;
 const BPrimeToAy = (y, pageHeight) => (VIEWBOX_HEIGHT / pageHeight) * y;
 const useBoxPosition = ({
+	boxRef,
 	pageWidth,
 	pageHeight,
-	isOpen,
-	isLoaded,
 	isLeft,
 	boxPixelPosX,
-	boxPixelPosY,
-	boxRef
+	boxPixelPosY
 }) => {
 	const [boxPosX, setBoxPosX] = useState(0);
 	const [boxPosY, setBoxPosY] = useState(0);
 	useEffect(() => {
-		if (boxRef.current !== null && isOpen) {
+		if (boxRef.current !== null) {
+			//debugger;
 			const newBoxPosX = isLeft
 				? BtoAx(boxPixelPosX) +
 				  BPrimeToAx(boxRef.current.offsetWidth, pageWidth)
@@ -95,20 +170,13 @@ const useBoxPosition = ({
 			setBoxPosX(0);
 			setBoxPosY(0);
 		}
-	}, [pageWidth, pageHeight, isOpen, isLoaded]);
+	});
 	return [boxPosX, boxPosY];
 };
-const useArrowPosition = ({
-	pageWidth,
-	pageHeight,
-	isOpen,
-	hasLoaded,
-	isLeft,
-	arrowRef
-}) => {
+const useArrowPosition = ({ arrowRef, pageWidth }) => {
 	const [arrowWidth, setArrowWidth] = useState(0);
 	useEffect(() => {
-		if (arrowRef.current !== null && isOpen) {
+		if (arrowRef.current !== null) {
 			const newArrowWidth = BPrimeToAx(
 				arrowRef.current.getBoundingClientRect().width / 2,
 				pageWidth
@@ -118,64 +186,84 @@ const useArrowPosition = ({
 		} else {
 			setArrowWidth(0);
 		}
-	}, [pageWidth, pageHeight, isOpen, arrowRef]);
+	});
 	return [arrowWidth];
 };
-
 const ContentBoxMachine = props => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isClosing, setIsClosing] = useState(false);
-	const [isLoaded, setIsLoaded] = useState(false);
+
 	const lineRef = useRef(null);
-	const boxRef = useRef(null);
 	const arrowRef = useRef(null);
+	const boxRef = useRef(null);
 
 	const isLeft =
 		(props.boxId.includes("Main") && props.x < 50) ||
 		props.boxId.includes("NR") ||
 		props.boxId.includes("FR");
+	const timeline = useRef(null);
+	const [svgMountedOrUpdated, setSVGMountedOrUpdated] = useState(false);
+	const [render, setRender] = useState(false);
+
 	const [boxPosX, boxPosY] = useBoxPosition({
+		boxRef,
 		pageWidth: props.pageWidth,
 		pageHeight: props.pageHeight,
-		isOpen,
-		isLoaded,
-		isLeft,
+		isLeft: isLeft,
 		boxPixelPosX: props.x,
-		boxPixelPosY: props.y,
-		boxRef
+		boxPixelPosY: props.y
 	});
-	const [arrowWidth] = useArrowPosition({
-		pageWidth: props.pageWidth,
-		pageHeight: props.pageHeight,
-		isOpen,
-		isLoaded,
-		isLeft,
-		arrowRef
-	});
-	console.log(boxPosX);
-	console.log(boxPosY);
+	useEffect(() => {
+		if (svgMountedOrUpdated && !isOpen) {
+			timeline.current = createContentMachineTimeline({
+				lineRef,
+				arrowRef,
+				boxRef,
+				setIsClosing,
+				setIsOpen,
+				setRender,
+				isLeft
+			});
+		}
+	}, [svgMountedOrUpdated, isOpen]);
+	useEffect(() => {
+		if (isClosing) {
+			if (svgMountedOrUpdated) {
+				timeline.current.kill();
+				timeline.current = createContentMachineTimeline({
+					lineRef,
+					arrowRef,
+					boxRef,
+					setIsClosing,
+					setIsOpen,
+					setRender,
+					isLeft
+				}).reverse();
+			} else {
+				timeline.current.reverse();
+			}
+		}
+	}, [isClosing]);
 	return (
 		<>
 			{ReactDOM.createPortal(
-				<ContentBox boxRef={boxRef} isOpen={isOpen} {...props} />,
+				<ContentBox boxRef={boxRef} render={render} {...props} />,
 				props.pageRef
 			)}
 			{ReactDOM.createPortal(
 				<SVGComponent
-					lineRef={lineRef}
-					arrowRef={arrowRef}
-					isOpen={isOpen}
-					setIsOpen={setIsOpen}
-					isClosing={isClosing}
+					render={render}
+					setRender={setRender}
 					setIsClosing={setIsClosing}
 					isLeft={isLeft}
 					boxPosX={boxPosX}
 					boxPosY={boxPosY}
+					lineRef={lineRef}
 					boxRef={boxRef}
-					arrowWidth={arrowWidth}
-					//setBoxPosX={setBoxPosX}
-					//setBoxPosY={setBoxPosY}
-					//setArrowWidth={setArrowWidth}
+					arrowRef={arrowRef}
+					setSVGMountedOrUpdated={setSVGMountedOrUpdated}
+					pageWidth={props.pageWidth}
+					pageHeight={props.pageHeight}
 					{...props}
 				/>,
 				props.svgRef
@@ -183,9 +271,8 @@ const ContentBoxMachine = props => {
 		</>
 	);
 };
-
 const ContentBox = props => {
-	return props.isOpen ? (
+	return props.render ? (
 		<ContentBoxContainer ref={props.boxRef} x={props.x} y={props.y}>
 			<Paper style={{ padding: 20 }}>
 				<Grid container justifyContent="center">
@@ -235,6 +322,52 @@ const ContentBox = props => {
 	[b_1`]A = (VIEWBOX_WIDTH/pageWidth, 0)
 	[b_2`]A = (0, VIEWBOX_HEIGHT)
 	*/
+/*
+const BtoAx = x => (VIEWBOX_WIDTH / 100) * x - VIEWBOX_SHIFT_X;
+const BtoAy = y => (VIEWBOX_HEIGHT / 100) * y;
+const BPrimeToAx = (x, pageWidth) => (VIEWBOX_WIDTH / pageWidth) * x;
+const BPrimeToAy = (y, pageHeight) => (VIEWBOX_HEIGHT / pageHeight) * y;
+const useBoxPosition = ({
+	pageWidth,
+	pageHeight,
+	isOpen,
+	isLoaded,
+	isLeft,
+	boxPixelPosX,
+	boxPixelPosY,
+	boxRef
+}) => {
+	const [boxPosX, setBoxPosX] = useState(0);
+	const [boxPosY, setBoxPosY] = useState(0);
+	useEffect(() => {
+		if (boxRef.current !== null && isOpen) {
+			const newBoxPosX = isLeft
+				? BtoAx(boxPixelPosX) +
+				  BPrimeToAx(boxRef.current.offsetWidth, pageWidth)
+				: BtoAx(boxPixelPosX);
+			const newBoxPosY =
+				BtoAy(boxPixelPosY) +
+				BPrimeToAy(boxRef.current.offsetHeight / 2, pageHeight);
+			//debugger;
+			setBoxPosX(newBoxPosX);
+			setBoxPosY(newBoxPosY);
+		} else {
+			setBoxPosX(0);
+			setBoxPosY(0);
+		}
+	}, [pageWidth, pageHeight, isOpen]);
+	return [boxPosX, boxPosY];
+};
+*/
+const useSyncedRef = ref => {
+	const syncedRef = useRef(null);
+	useEffect(() => {
+		if (!ref) return;
+		if (typeof ref === "function") ref(syncedRef);
+		else ref.current = syncedRef.current;
+	});
+	return syncedRef;
+};
 
 const StyledCircle = styled(motion.path)`
 	cursor: pointer;
@@ -243,8 +376,18 @@ const StyledCircle = styled(motion.path)`
 	stroke-width: 5;
 `;
 const SVGComponent = props => {
-	// The first thing we need to do is place the arrow in the correct position. Get the move position of the arrow
-	// Now get the svg coordinate position of the middle of the box. Right side for x < 50. left side for x > 50
+	const [arrowWidth] = useArrowPosition({
+		arrowRef: props.arrowRef,
+		pageWidth: props.pageWidth,
+		pageHeight: props.pageHeight
+	});
+	useEffect(() => {
+		if (props.boxPosX !== 0 && props.boxPosY !== 0 && arrowWidth !== 0) {
+			props.setSVGMountedOrUpdated(true);
+		} else {
+			props.setSVGMountedOrUpdated(false);
+		}
+	}, [props.boxPosX, props.boxPosY, arrowWidth]);
 	const className =
 		props.boxId.substring(0, props.boxId.indexOf("-")) + "-Circle";
 	return (
@@ -257,43 +400,28 @@ const SVGComponent = props => {
 				}}
 				whileTap={{ scale: 1.5 }}
 				onClick={() => {
-					if (!props.isOpen) {
-						props.setIsOpen(true);
+					if (!props.render) {
+						props.setRender(true);
 					} else {
 						props.setIsClosing(true);
 					}
 				}}
 			/>
-			{props.isOpen && (
+			{props.render && (
 				<>
-					{props.boxPosX !== 0 &&
-						props.boxPosY !== 0 &&
-						props.arrowWidth !== 0 && (
-							<SVGLine
-								lineRef={props.lineRef}
-								isOpen={props.isOpen}
-								setIsOpen={props.setIsOpen}
-								isClosing={props.isClosing}
-								setIsClosing={props.setIsClosing}
-								boxPosX={props.boxPosX}
-								boxPosY={props.boxPosY}
-								//setBoxPosX={props.setBoxPosX}
-								//setBoxPosY={props.setBoxPosY}
-								//setArrowWidth={props.setArrowWidth}
-								isLeft={props.isLeft}
-								boxRef={props.boxRef}
-								arrowRef={props.arrowRef}
-								arrowWidth={props.arrowWidth}
-								timeline={props.timeline}
-								ld={props.ld}
-							/>
-						)}
+					<SVGLine
+						lineRef={props.lineRef}
+						boxPosX={props.boxPosX}
+						boxPosY={props.boxPosY}
+						arrowWidth={arrowWidth}
+						isLeft={props.isLeft}
+						ld={props.ld}
+					/>
 					<SVGArrow
 						arrowRef={props.arrowRef}
 						boxPosX={props.boxPosX}
 						boxPosY={props.boxPosY}
 						ad={props.ad}
-						BPrimeToAx={props.BPrimeToAx}
 					/>
 				</>
 			)}
@@ -302,6 +430,9 @@ const SVGComponent = props => {
 };
 
 const SVGArrow = props => {
+	const mountable = props.boxPosX !== 0 && props.boxPosY !== 0;
+	if (!mountable) return null;
+
 	const adArray = props.ad.split(",");
 	const arrowShiftX = adArray[0].substring(1); //M<number>
 	const arrowShiftY = adArray[1].substring(0, adArray[1].indexOf("c")); //<number>c<number>
@@ -318,74 +449,17 @@ const SVGArrow = props => {
 };
 
 const SVGLine = props => {
-	const timeline = useRef(null);
+	const mountable =
+		props.boxPosX !== 0 && props.boxPosY !== 0 && props.arrowWidth !== 0;
 	useEffect(() => {
-		const pathLength = props.lineRef.current.getTotalLength();
-		const arrowDuration = 0.5;
-		gsap.set(props.lineRef.current, {
-			strokeDasharray: pathLength
-		});
-		gsap.set(props.lineRef.current, { opacity: 1 });
-		timeline.current = gsap
-			.timeline({
-				onReverseComplete: () => {
-					/*
-					props.setArrowWidth(0);
-					props.setBoxPosX(0);
-					props.setBoxPosY(0);
-                                        */
-					props.setIsClosing(false);
-					props.setIsOpen(false);
-				}
-			})
-			.to(props.arrowRef.current, {
-				opacity: 1,
-				duration: 0.2
-			})
-			.to(
-				props.arrowRef.current,
-				{
-					motionPath: {
-						path: props.lineRef.current.getAttribute("d"),
-						align: props.lineRef.current,
-						autoRotate: true,
-						alignOrigin: [0.5, 0.5],
-						autoRotate: props.isLeft ? 180 : 0
-					},
-					duration: arrowDuration
-				},
-				"<"
-			)
-			.fromTo(
-				props.lineRef.current,
-				{ strokeDashoffset: pathLength },
-				{
-					strokeDashoffset: 0,
-					duration: arrowDuration
-				},
-				"<"
-			)
-			.fromTo(
-				props.boxRef.current,
-				{ yPercent: -10 },
-				{ yPercent: 0, opacity: 1, duration: 0.5 },
-				">-0.5"
-			);
-		return () => {
-			timeline.current.kill();
-		};
-	}, []);
-	useEffect(() => {
-		if (props.isClosing) {
-			timeline.current.reverse();
+		if (mountable) {
+			//const pathLength = props.lineRef.current.getTotalLength();
+			//gsap.set(props.lineRef.current, { strokeDasharray: pathLength });
 		}
-	}, [props.isClosing]);
-	useEffect(() => {
-		const pathLength = props.lineRef.current.getTotalLength();
-		gsap.set(props.lineRef.current, {
-			strokeDasharray: pathLength
-		});
-	});
+	}, [props.boxPosX, props.boxPosY, props.arrowWidth]);
+
+	if (!mountable) return null;
+
 	const ldPointsToSVGStringReducer = (svgString, tuple, index) =>
 		index === 0
 			? svgString + `M${tuple[0]},${tuple[1]}`
@@ -423,7 +497,6 @@ const SVGLine = props => {
 			: props.boxPosX - props.arrowWidth,
 		props.boxPosY
 	];
-	debugger;
 	ldPoints.push(finalPos);
 	return (
 		<motion.path
