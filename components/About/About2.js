@@ -98,10 +98,14 @@ const createContentMachineTimeline = ({
 					}
 				})
 				//arrow appearing
-				.to(arrowRef.current, {
-					opacity: 1,
-					duration: 0.2
-				})
+				.fromTo(
+					arrowRef.current,
+					{ opacity: 0 },
+					{
+						opacity: 1,
+						duration: 0.2
+					}
+				)
 				//arrow moving out
 				.to(
 					arrowRef.current,
@@ -132,7 +136,7 @@ const createContentMachineTimeline = ({
 				// Box moving up
 				.fromTo(
 					boxRef.current,
-					{ yPercent: -10 },
+					{ yPercent: -10, opacity: 0 },
 					{ yPercent: 0, opacity: 1, duration: 0.5 },
 					">-0.5"
 				)
@@ -238,7 +242,7 @@ const ContentBoxMachine = props => {
 					setIsOpen,
 					setRender,
 					isLeft
-				}).reverse();
+				}).reverse(0);
 			} else {
 				timeline.current.reverse();
 			}
