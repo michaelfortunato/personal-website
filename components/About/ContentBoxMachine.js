@@ -120,7 +120,7 @@ function generateSmoothLine(
 		throw "Could not generate smooth line.";
 	}
 
-	spacing = 0.15; //spacing !== null ? spacing : 1/(ptsBetween + 1)
+	let spacing = 0.15; //spacing !== null ? spacing : 1/(ptsBetween + 1)
 	let deltaX = Math.abs(xn - x0);
 	let deltaY = yn - y0;
 
@@ -131,11 +131,10 @@ function generateSmoothLine(
 		console.log(i);
 		if (i === 0) {
 			prevYDirection.push(initYDirection);
-			pts.push({ xi: x0, yi: y0, dir: 0 });
+			pts.push([x0, y0]);
 		} else {
-			console.log(prevYDirection[i - 1]);
 			const xi =
-				pts[i - 1].xi + xDirection * (1 / (ptsBetween + 1)) * deltaX;
+				pts[i - 1][0] + xDirection * (1 / (ptsBetween + 1)) * deltaX;
 			const yScale =
 				prevYDirection[i - 1] * deltaY < 0
 					? Math.random() * (0.5 + 0.15)
@@ -144,13 +143,11 @@ function generateSmoothLine(
 
 			const yDirection = Math.random() < 0.5 ? -1 : 1;
 			prevYDirection.push(yDirection);
-			const dir = yi - pts[i - 1].yi < 0 ? -1 : 1;
-			pts.push({ xi, yi, dir: dir });
+			pts.push([xi, yi]);
 		}
 	});
-	console.log(pts);
-	pts[ptsBetween].yi = yn;
-	pts.push({ xn, yn });
+	pts[ptsBetween][1] = yn;
+	pts.push([xn, yn]);
 	return pts;
 }
 // All credits to francois romain for teaching me this
@@ -243,7 +240,7 @@ const SVGLine = props => {
 		ldPoints[ldPoints.length - 1][0] - ldPoints[0][0]
 	);
 	const desiredLength = Math.abs(ldPoints[0][0] - props.boxPosX);
-	const scaleFactor = (desiredLength / originalLength) * 0.7;
+	const scaleFactor = (desiredLength / originalLength) * 0.6;
 	const shiftFactor = ldPoints[0][0];
 
 	ldPoints.forEach((pair, index) => {
@@ -261,9 +258,8 @@ const SVGLine = props => {
 			: props.boxPosX - props.arrowWidth,
 		props.boxPosY
 	];
-
-	const d =
-		smoothPoints(ldPoints, 0.2) + " L" + finalPos[0] + "," + finalPos[1];
+	ldPoints.push(finalPos);
+	const d = smoothPoints(ldPoints, 0.2);
 	//	ldPoints.push(finalPos);
 
 	return <motion.path ref={props.lineRef} className="st6" d={d} />;
