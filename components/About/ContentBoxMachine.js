@@ -155,36 +155,63 @@ function generateSmoothLine(
 }
 // All credits to francois romain for teaching me this
 //https://francoisromain.medium.com/smooth-a-svg-path-with-cubic-bezier-curves-e37b49d46c74
-const line = ({ x0, y0 }, { x1, y1 }) => {
-	const lenghtX = x1 - x0;
-	const lengthY = y1 - y0;
+const line = (previous, next) => {
+	const lengthX = next[0] - previous[0];
+	const lengthY = next[1] - previous[1];
 	return {
 		length: Math.sqrt(Math.pow(lengthX, 2) + Math.pow(lengthY, 2)),
 		angle: Math.atan2(lengthY, lengthX)
 	};
 };
-/*
-const controlPoint = (currentAnchor, previousAnchor, nextAnchor, direction) => {
-	let previous = previousAnchor || currentAnchor;
-	let next = nextAnchor || currentAnchor;
-	const properties = line(previousAnchor, nextAnchor);
+const controlPoint =
+	smoothing => (currentAnchor, previousAnchor, nextAnchor, direction) => {
+		let previous = previousAnchor || currentAnchor;
+		let next = nextAnchor || currentAnchor;
+		const lineProperties = line(previous, next);
 
-	// Ratio of A to O A:O => cotan(angle) * O = A
-	const smoothing = 0.2;
-	const angle = (properties.angle = direction === "reverse" ? Math.PI : 0);
-	const length = properties.length * smoothing;
-	const x = currentAnchor.x + Math.cos(angle) * length * smoothing;
-	const y = currentAnchor.y + Math.sin(angle) * length * smoothing;
-	return [x, y];
-};
-*/
+		// Ratio of A to O A:O => cotan(angle) * O = A
+		const angle =
+			lineProperties.angle + (direction === "reverse" ? Math.PI : 0);
+		const length = lineProperties.length * smoothing;
+		const x = currentAnchor[0] + Math.cos(angle) * length;
+		const y = currentAnchor[1] + Math.sin(angle) * length;
+		return [x, y];
+	};
 
-const bezierCommand = (point, i, a) => {
+const bezierCommand = createControlPoint => (point, index, points) => {
 	// start control point
-	const [cpsX, cpsY] = controlPoint(a[i - 1], a[i - 2], point);
+	const [cpsX, cpsY] = createControlPoint(
+		points[index - 1],
+		points[index - 2],
+		point,
+		"forwards"
+	);
 	// end control point
-	const [cpeX, cpeY] = controlPoint(point, a[i - 1], a[i + 1], true);
+	const [cpeX, cpeY] = createControlPoint(
+		point,
+		points[index - 1],
+		points[index + 1],
+		"reverse"
+	);
 	return `C ${cpsX},${cpsY} ${cpeX},${cpeY} ${point[0]},${point[1]}`;
+};
+
+const smoothPoints = (points, smoothing = 0.15) => {
+	const createControlPoint = controlPoint(smoothing);
+	const smoothCommand = bezierCommand(createControlPoint);
+	const d = points.reduce(
+		(svgString, point, index, points) =>
+			index === 0
+				? `M ${point[0]},${point[1]}`
+				: `${svgString} ${smoothCommand(
+						point,
+						index,
+						points,
+						createControlPoint
+				  )}`,
+		""
+	);
+	return d;
 };
 const SVGLine = props => {
 	useEffect(() => {
@@ -234,14 +261,12 @@ const SVGLine = props => {
 			: props.boxPosX - props.arrowWidth,
 		props.boxPosY
 	];
-	ldPoints.push(finalPos);
-	return (
-		<motion.path
-			ref={props.lineRef}
-			className="st6"
-			d={ldPoints.reduce(ldPointsToSVGStringReducer, "")}
-		/>
-	);
+
+	const d =
+		smoothPoints(ldPoints, 0.2) + " L" + finalPos[0] + "," + finalPos[1];
+	//	ldPoints.push(finalPos);
+
+	return <motion.path ref={props.lineRef} className="st6" d={d} />;
 };
 
 /* 
