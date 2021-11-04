@@ -13,6 +13,10 @@ import { assetsURL } from "../../utils/configurations";
 import useSWR, { mutate } from "swr";
 import matter from "gray-matter";
 import axios from "axios";
+import ReactMarkdown from "react-markdown";
+import "katex/dist/katex.min.css";
+import rehypeKatex from "rehype-katex";
+import remarkMath from "remark-math";
 
 gsap.registerPlugin(MotionPathPlugin);
 
@@ -215,58 +219,62 @@ const smoothPoints = (points, smoothing = 0.15) => {
 	return d;
 };
 const SVGLine = props => {
+	const mountable =
+		props.boxPosX !== 0 && props.boxPosY !== 0 && props.arrowWidth !== 0;
 	useEffect(() => {
 		if (mountable) {
 			const pathLength = props.lineRef.current.getTotalLength();
 			gsap.set(props.lineRef.current, { strokeDasharray: pathLength });
 		}
 	}, [props.boxPosX, props.boxPosY, props.arrowWidth]);
-	const mountable =
-		props.boxPosX !== 0 && props.boxPosY !== 0 && props.arrowWidth !== 0;
-	if (!mountable) return null;
+	const d = useMemo(() => {
+		const mountable =
+			props.boxPosX !== 0 &&
+			props.boxPosY !== 0 &&
+			props.arrowWidth !== 0;
+		if (!mountable) return null;
+		// Get lds to transform them
+		let ldPoints = [];
+		let temp = [];
+		props.ld.split(",").forEach((point, index) => {
+			point = parseInt(point.replace("M", ""));
+			if (index % 2 !== 0) {
+				ldPoints.push([temp.pop(), point]);
+			} else {
+				temp.push(point);
+			}
+		});
+		const originalLength = Math.abs(
+			ldPoints[ldPoints.length - 1][0] - ldPoints[0][0]
+		);
+		const desiredLength = Math.abs(ldPoints[0][0] - props.boxPosX);
+		const scaleFactor = (desiredLength / originalLength) * 0.6;
+		const shiftFactor = ldPoints[0][0];
 
-	const ldPointsToSVGStringReducer = (svgString, tuple, index) =>
-		index === 0
-			? svgString + `M${tuple[0]},${tuple[1]}`
-			: svgString + " " + `${tuple[0]},${tuple[1]}`;
-	// Get lds to transform them
-	let ldPoints = [];
-	let temp = [];
-	props.ld.split(",").forEach((point, index) => {
-		point = parseInt(point.replace("M", ""));
-		if (index % 2 !== 0) {
-			ldPoints.push([temp.pop(), point]);
-		} else {
-			temp.push(point);
-		}
-	});
-	const originalLength = Math.abs(
-		ldPoints[ldPoints.length - 1][0] - ldPoints[0][0]
+		ldPoints.forEach((pair, index) => {
+			if (index !== 0) {
+				ldPoints[index][0] =
+					(ldPoints[index][0] - shiftFactor) * scaleFactor +
+					shiftFactor;
+			}
+		});
+		// Next set the y val
+		ldPoints[ldPoints.length - 1][1] = props.boxPosY;
+
+		const finalPos = [
+			props.isLeft
+				? props.boxPosX + props.arrowWidth
+				: props.boxPosX - props.arrowWidth,
+			props.boxPosY
+		];
+		ldPoints.push(finalPos);
+		const d = smoothPoints(ldPoints, 0.2);
+		return d;
+	}, [props.boxPosX, props.boxPosY, props.arrowWidth, props.ld]);
+	if (d !== null) console.log(d);
+	return (
+		mountable && <motion.path ref={props.lineRef} className="st6" d={d} />
 	);
-	const desiredLength = Math.abs(ldPoints[0][0] - props.boxPosX);
-	const scaleFactor = (desiredLength / originalLength) * 0.6;
-	const shiftFactor = ldPoints[0][0];
-
-	ldPoints.forEach((pair, index) => {
-		if (index !== 0) {
-			ldPoints[index][0] =
-				(ldPoints[index][0] - shiftFactor) * scaleFactor + shiftFactor;
-		}
-	});
-	// Next set the y val
-	ldPoints[ldPoints.length - 1][1] = props.boxPosY;
-
-	const finalPos = [
-		props.isLeft
-			? props.boxPosX + props.arrowWidth
-			: props.boxPosX - props.arrowWidth,
-		props.boxPosY
-	];
-	ldPoints.push(finalPos);
-	const d = smoothPoints(ldPoints, 0.2);
-	//	ldPoints.push(finalPos);
-
-	return <motion.path ref={props.lineRef} className="st6" d={d} />;
 };
 
 /* 
@@ -357,36 +365,16 @@ const ContentBoxContainer = styled.div`
 	opacity: 0;
 `;
 const ContentBox = props => {
+	//nice text color #4d4d4d
 	return props.render ? (
 		<ContentBoxContainer ref={props.boxRef} x={props.x} y={props.y}>
 			<Paper style={{ padding: 20 }}>
-				<Grid container justifyContent="center">
-					<Grid item xs={12}>
-						<BlackTypography
-							style={{
-								textAlign: "center"
-							}}
-							variant={"h4"}
-						>
-							{props.title}
-						</BlackTypography>
-					</Grid>
-					<Grid
-						item
-						xs={12}
-						style={{
-							marginTop: 4,
-							marginBottom: 2
-						}}
-					>
-						<Divider />
-					</Grid>
-					<Grid style={{ marginTop: 10 }} item xs={10}>
-						<BlackTypography variant="body1">
-							{props.body}
-						</BlackTypography>
-					</Grid>
-				</Grid>
+				<ReactMarkdown
+					remarkPlugins={[remarkMath]}
+					rehypePlugins={[rehypeKatex]}
+				>
+					{props.content}
+				</ReactMarkdown>
 			</Paper>
 		</ContentBoxContainer>
 	) : null;
@@ -561,7 +549,7 @@ export default function ContentBoxMachine({
 					x={x}
 					y={y}
 					title={title}
-					body={content}
+					content={content}
 				/>,
 				pageRef
 			)}

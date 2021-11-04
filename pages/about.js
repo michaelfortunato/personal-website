@@ -217,6 +217,28 @@ export default function About(props) {
 	);
 }
 
+const loadFilesFromS3Directory = async prefix => {
+	const { data } = await axios.get(`${assetsURL}/`, {
+		params: {
+			"list-type": 2,
+			prefix: prefix,
+			delimiter: "/",
+			Bucket: "assets.michaelfortunato.org"
+		}
+	});
+	const {
+		ListBucketResult: { Contents: unNormalizedContents }
+	} = parser.parse(data);
+	const Contents = !Array.isArray(unNormalizedContents)
+		? [unNormalizedContents]
+		: unNormalizedContents;
+
+	const promises = Contents.map(({ Key }) =>
+		axios.get(`${assetsURL}/${Key}`)
+	);
+	return Promise.all(promises);
+};
+
 export async function getStaticProps() {
 	let blurbs = null;
 
@@ -229,24 +251,31 @@ export async function getStaticProps() {
 				Bucket: "assets.michaelfortunato.org"
 			}
 		});
-		let {
-			ListBucketResult: { Contents }
+
+		const {
+			ListBucketResult: { CommonPrefixes: unNormalizedPrefixes }
 		} = parser.parse(data);
-		if (!Array.isArray(Contents)) {
-			Contents = [Contents];
-		}
-		const promises = Contents.map(({ Key }) => {
-			console.log(Key);
-			return axios.get(`${assetsURL}/${Key}`);
-		});
-		const responses = await Promise.allSettled(promises);
-		blurbs = {};
-		responses.forEach(({ status, value: { data: rawContent } }) => {
-			if (status !== "fulfilled")
-				throw "Could not build about page. Blurbs are not loading.";
-			const { data: metadata, content } = matter(rawContent);
-			blurbs[metadata.id] = { metadata, content };
-		});
+		const CommonPrefixes = !Array.isArray(unNormalizedPrefixes)
+			? [unNormalizedPrefixes]
+			: unNormalizedPrefixes;
+
+		// Get the subfolders (prefixes)
+		const promises = CommonPrefixes.map(({ Prefix }) =>
+			loadFilesFromS3Directory(Prefix)
+		);
+		const responses = await Promise.all(promises);
+		blurbs = responses
+			.map(blurbGroup => {
+				return blurbGroup.map(({ data: rawContent }) => {
+					const { data: metadata, content } = matter(rawContent);
+					return { metadata, content };
+				});
+			})
+			.reduce(
+				(previousValue, currentValue) =>
+					previousValue.concat(currentValue),
+				[]
+			);
 	} else {
 		const rootBlurbPath = path.join(
 			process.cwd(),
@@ -270,11 +299,9 @@ export async function getStaticProps() {
 					previousValue.concat(currentValue),
 				[]
 			);
-		console.log(blurbFiles);
 		const promises = blurbFiles.map(file =>
 			fs.promises.readFile(file, "utf-8")
 		);
-		console.log(promises);
 		const responses = await Promise.allSettled(promises);
 		blurbs = responses.map(({ status, value: rawContent }) => {
 			if (status !== "fulfilled")
