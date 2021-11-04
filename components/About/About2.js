@@ -313,18 +313,19 @@ export default function About2(props) {
 			{pageRef.current !== null &&
 				svgRef.current !== null &&
 				ListOfContentBoxes.map((ContentBoxGroup, i) =>
-					ContentBoxGroup.map((props, i) => (
+					ContentBoxGroup.map((config, i) => (
 						<ContentBoxMachine
-							key={props.key}
+							key={config.key}
+							blurb={props.blurbs[config.key]}
 							pageRef={pageRef.current}
 							svgRef={svgRef.current}
-							boxId={props.key}
+							boxId={config.key}
 							pageWidth={pageWidth}
 							pageHeight={pageHeight}
-							cd={props.cd}
-							ld={props.ld}
-							ad={props.ad}
-							{...props}
+							cd={config.cd}
+							ld={config.ld}
+							ad={config.ad}
+							{...config}
 						/>
 					))
 				)}

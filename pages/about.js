@@ -1,45 +1,51 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import Lottie from 'lottie-react'
-import animationData from '@public/About_Page1_ISA-Loop.json'
-import styled from 'styled-components'
-import Grid from '@material-ui/core/Grid'
-import Typography from '@material-ui/core/Typography'
-import { motion } from "framer-motion"
-import { useTheme } from '@material-ui/core/styles'
-import useMediaQuery from '@material-ui/core/useMediaQuery'
-import Paper from '@material-ui/core/Paper'
-import Divider from '@material-ui/core/Divider'
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import Lottie from "lottie-react";
+import animationData from "@public/About_Page1_ISA-Loop.json";
+import styled from "styled-components";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import { motion } from "framer-motion";
+import { useTheme } from "@material-ui/core/styles";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import Paper from "@material-ui/core/Paper";
+import Divider from "@material-ui/core/Divider";
 import { useInView } from "react-intersection-observer";
-import About2 from '@components/About/About2'
-import { Element, Events, scroller } from "react-scroll"
-import { useScrollPosition } from '@n8tb1t/use-scroll-position'
-import ScrollLock, { TouchScrollable } from 'react-scrolllock';
+import About2 from "@components/About/About2";
+import { Element, Events, scroller } from "react-scroll";
+import { useScrollPosition } from "@n8tb1t/use-scroll-position";
+import ScrollLock, { TouchScrollable } from "react-scrolllock";
+import { assetsURL } from "@utils/configurations";
+import fs from "fs";
+import matter from "gray-matter";
+import path from "path";
+import axios from "axios";
+import parser from "fast-xml-parser";
 const AboutRoot = styled(motion.div)`
-    width: 100%;
-    overflow-x: hidden;
-`
+	width: 100%;
+	overflow-x: hidden;
+`;
 const StyledPage = styled(motion.div)`
-    width: 100vw;
-    overflow-x: hidden;
-    height: 100vh;
-    position: relative;
-`
+	width: 100vw;
+	overflow-x: hidden;
+	height: 100vh;
+	position: relative;
+`;
 const TitleContainer = styled.div`
-    position: absolute; 
-    top: 50%;
-    text-align: center;
-    width: 100%;
-    color: #fff;
-`
+	position: absolute;
+	top: 50%;
+	text-align: center;
+	width: 100%;
+	color: #fff;
+`;
 const PageFooter = styled(Grid)`
-    position: absolute;
-    top: 85vh;
-    color: white;
-`
+	position: absolute;
+	top: 85vh;
+	color: white;
+`;
 
 const BlackTypography = styled(Typography)`
-    color: black;
-`
+	color: black;
+`;
 /*
 
 const useScrollListener = (element, handleScroll, throttle = 5000) => {
@@ -80,24 +86,24 @@ const useScrollListener = (element, handleScroll, throttle = 5000) => {
     }, [listenToScroll, element]);
 };*/
 export default function About(props) {
-    const lottieRef = useRef(null);
-    const secondPageRef = useRef(null);
-    const [hasScrolledDown, setHasScrolledDown] = useState(false);
-    const [releaseScroll, setReleaseScroll] = useState(false);
-    const [lastScrollY, setLastScrollY] = useState(0);
-    const [isXL, setIsXL] = useState(false)
-    const [hasMounted, setHasMounted] = useState(false);
-    const [triggerTlIntro, setTriggerTlIntro] = useState(false);
-    const [triggerAniRef, isAniInView] = useInView({ initialInView: true });
-    const scrollTimer = useRef(null);
-    const About2Ref = useRef(null);
+	const lottieRef = useRef(null);
+	const secondPageRef = useRef(null);
+	const [hasScrolledDown, setHasScrolledDown] = useState(false);
+	const [releaseScroll, setReleaseScroll] = useState(false);
+	const [lastScrollY, setLastScrollY] = useState(0);
+	const [isXL, setIsXL] = useState(false);
+	const [hasMounted, setHasMounted] = useState(false);
+	const [triggerTlIntro, setTriggerTlIntro] = useState(false);
+	const [triggerAniRef, isAniInView] = useInView({ initialInView: true });
+	const scrollTimer = useRef(null);
+	const About2Ref = useRef(null);
 
-    const [scrollStarted, setScrollStarted] = useState(false);
-    useScrollPosition(({ prevPos, currPos }) => {
-        //if (!hasScrolledDown && (prevPos.y > currPos.y)) { setHasScrolledDown(true) }
-    })
+	const [scrollStarted, setScrollStarted] = useState(false);
+	useScrollPosition(({ prevPos, currPos }) => {
+		//if (!hasScrolledDown && (prevPos.y > currPos.y)) { setHasScrolledDown(true) }
+	});
 
-    /*
+	/*
     useEffect(() => {
         if (hasScrolledDown) {
             scroller.scrollTo("myScrollToElement", {
@@ -109,36 +115,45 @@ export default function About(props) {
         }
     }, [hasScrolledDown])*/
 
-    useEffect(() => {
-        if (hasMounted) {
-            if (isAniInView) lottieRef.current.play()
-            //if (!isAniInView) lottieRef.current.pause()
+	useEffect(() => {
+		if (hasMounted) {
+			if (isAniInView) lottieRef.current.play();
+			//if (!isAniInView) lottieRef.current.pause()
+		}
+	}, [isAniInView]);
 
-        }
-    }, [isAniInView])
-
-    useEffect(() => {
-        // Set a timer that delays the animation
-        setTimeout(() => {
-            lottieRef.current.playSegments([[0, 693], [693, 883]], true)
-        }, 500);
-        setTimeout(() => scroller.scrollTo("myScrollToElement", {
-            duration: 1000,
-            delay: 0,
-            smooth: true,
-            spyThrottle: 0,
-            ignoreCancelEvents: true
-        }), 5200);
-        if (window.matchMedia('(min-width: 3000px)').matches) {
-            setIsXL(true)
-        }
-    }, [])
-    useEffect(() => {
-        Events.scrollEvent.register('end', (to, element) => {
-            setTriggerTlIntro(true);
-        })
-    }, [])
-    /*
+	useEffect(() => {
+		// Set a timer that delays the animation
+		setTimeout(() => {
+			lottieRef.current.playSegments(
+				[
+					[0, 693],
+					[693, 883]
+				],
+				true
+			);
+		}, 500);
+		setTimeout(
+			() =>
+				scroller.scrollTo("myScrollToElement", {
+					duration: 1000,
+					delay: 0,
+					smooth: true,
+					spyThrottle: 0,
+					ignoreCancelEvents: true
+				}),
+			5200
+		);
+		if (window.matchMedia("(min-width: 3000px)").matches) {
+			setIsXL(true);
+		}
+	}, []);
+	useEffect(() => {
+		Events.scrollEvent.register("end", (to, element) => {
+			setTriggerTlIntro(true);
+		});
+	}, []);
+	/*
     useEffect(() => {
         //document.body.style.overflowY = "scroll";
         Events.scrollEvent.register('end', (to, element) => {
@@ -159,30 +174,113 @@ export default function About(props) {
     }, [])
     */
 
-    useEffect(() => {
-        setHasMounted(true);
-    }, [])
+	useEffect(() => {
+		setHasMounted(true);
+	}, []);
 
+	return (
+		<AboutRoot
+			initial={{ opacity: 0 }}
+			animate={{ opacity: 1, transition: { duration: 0.3 } }}
+			exit={{ opacity: 0, transition: { delay: 0.6, duration: 0.3 } }}
+		>
+			<StyledPage key={1}>
+				<Lottie
+					lottieRef={lottieRef}
+					style={!isXL ? { height: "100vh" } : null}
+					loop={true}
+					autoplay={false}
+					animationData={animationData}
+				/>
+				<div
+					ref={triggerAniRef}
+					style={{
+						opacity: 0,
+						position: "absolute",
+						left: "50%",
+						top: "20%"
+					}}
+				/>
+			</StyledPage>
+			<Element name="myScrollToElement">
+				<ScrollLock isActive={!releaseScroll} />
+				{
+					<About2
+						blurbs={props.blurbs}
+						triggerTlIntro={triggerTlIntro}
+						setReleaseScroll={setReleaseScroll}
+						key={2}
+					/>
+				}
+			</Element>
+		</AboutRoot>
+	);
+}
 
+export async function getStaticProps() {
+	let blurbs = null;
 
-    return (
-        <AboutRoot
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, transition: {duration: 0.3} }}
-            exit={{ opacity: 0, transition: {delay: .6, duration: 0.3} }} >
-            <StyledPage key={1}>
-                <Lottie lottieRef={lottieRef}
-                    style={!isXL ? { height: "100vh" } : null}
-                    loop={true}
-                    autoplay={false}
-                    animationData={animationData}
-                />
-                <div ref={triggerAniRef} style={{ opacity: 0, position: "absolute", "left": "50%", top: "20%" }} />
-            </StyledPage>
-            <Element name="myScrollToElement">
-                <ScrollLock isActive={!releaseScroll} />
-                {<About2 triggerTlIntro={triggerTlIntro} setReleaseScroll={setReleaseScroll} key={2} />}
-            </Element>
-        </AboutRoot >
-    );
+	if (process.env.NODE_ENV !== "development") {
+		const { data } = await axios.get(`${assetsURL}/`, {
+			params: {
+				"list-type": 2,
+				prefix: "about/blurbs/",
+				delimiter: "/",
+				Bucket: "assets.michaelfortunato.org"
+			}
+		});
+		let {
+			ListBucketResult: { Contents }
+		} = parser.parse(data);
+		if (!Array.isArray(Contents)) {
+			Contents = [Contents];
+		}
+		const promises = Contents.map(({ Key }) => {
+			console.log(Key);
+			return axios.get(`${assetsURL}/${Key}`);
+		});
+		const responses = await Promise.allSettled(promises);
+		blurbs = {};
+		responses.forEach(({ status, value: { data: rawContent } }) => {
+			if (status !== "fulfilled")
+				throw "Could not build about page. Blurbs are not loading.";
+			const { data: metadata, content } = matter(rawContent);
+			blurbs[metadata.id] = { metadata, content };
+		});
+	} else {
+		const blurbsPath = path.join(
+			process.cwd(),
+			"..",
+			assetsURL,
+			"about",
+			"blurbs"
+		);
+		const blurbFiles = fs.readdirSync(blurbsPath);
+
+		const promises = blurbFiles.map(blurbFileName => {
+			const blurbPath = path.join(blurbsPath, blurbFileName);
+			return fs.promises.readFile(blurbPath, "utf-8");
+		});
+		const responses = await Promise.allSettled(promises);
+		blurbs = {};
+		responses.forEach(({ status, value: rawContent }) => {
+			if (status !== "fulfilled")
+				throw "Could not build about page. Blurbs are not loading.";
+			const { data: metadata, content } = matter(rawContent, {
+				section: section => {
+					//section.data contains header
+					//section.content is content
+					//Function get called for each section
+					//console.log(section);
+				}
+			});
+			blurbs[metadata.id] = { metadata, content };
+		});
+	}
+
+	return {
+		props: {
+			blurbs
+		}
+	};
 }
