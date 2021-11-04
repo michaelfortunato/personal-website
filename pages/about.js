@@ -248,33 +248,39 @@ export async function getStaticProps() {
 			blurbs[metadata.id] = { metadata, content };
 		});
 	} else {
-		const blurbsPath = path.join(
+		const rootBlurbPath = path.join(
 			process.cwd(),
 			"..",
 			assetsURL,
 			"about",
 			"blurbs"
 		);
-		const blurbFiles = fs.readdirSync(blurbsPath);
-
-		const promises = blurbFiles.map(blurbFileName => {
-			const blurbPath = path.join(blurbsPath, blurbFileName);
-			return fs.promises.readFile(blurbPath, "utf-8");
-		});
+		const blurbFiles = fs
+			.readdirSync(rootBlurbPath, { withFileTypes: true })
+			.filter(dirFile => dirFile.isDirectory())
+			.map(({ name: groupDir }) =>
+				fs
+					.readdirSync(path.join(rootBlurbPath, groupDir))
+					.map(fileName =>
+						path.join(rootBlurbPath, groupDir, fileName)
+					)
+			)
+			.reduce(
+				(previousValue, currentValue) =>
+					previousValue.concat(currentValue),
+				[]
+			);
+		console.log(blurbFiles);
+		const promises = blurbFiles.map(file =>
+			fs.promises.readFile(file, "utf-8")
+		);
+		console.log(promises);
 		const responses = await Promise.allSettled(promises);
-		blurbs = {};
-		responses.forEach(({ status, value: rawContent }) => {
+		blurbs = responses.map(({ status, value: rawContent }) => {
 			if (status !== "fulfilled")
 				throw "Could not build about page. Blurbs are not loading.";
-			const { data: metadata, content } = matter(rawContent, {
-				section: section => {
-					//section.data contains header
-					//section.content is content
-					//Function get called for each section
-					//console.log(section);
-				}
-			});
-			blurbs[metadata.id] = { metadata, content };
+			const { data: metadata, content } = matter(rawContent);
+			return { metadata, content };
 		});
 	}
 

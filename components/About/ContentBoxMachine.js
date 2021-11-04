@@ -4,11 +4,15 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import styled from "styled-components";
-import { motion } from "framer-motion";
+import { motion, useViewportScroll } from "framer-motion";
 import Divider from "@material-ui/core/Divider";
 import React from "react";
 import { gsap } from "gsap";
 import { MotionPathPlugin } from "gsap/dist/MotionPathPlugin";
+import { assetsURL } from "../../utils/configurations";
+import useSWR, { mutate } from "swr";
+import matter from "gray-matter";
+import axios from "axios";
 
 gsap.registerPlugin(MotionPathPlugin);
 
@@ -226,16 +230,16 @@ const SVGLine = props => {
 			? svgString + `M${tuple[0]},${tuple[1]}`
 			: svgString + " " + `${tuple[0]},${tuple[1]}`;
 	// Get lds to transform them
-	let ldPoints = new Array();
-	props.ld.split(" ").forEach((pair, _) => {
-		let [x, y] = String(pair).replace("M", "").split(",");
-		x = Number(x);
-		y = Number(y);
-		if (!isNaN(x) && !isNaN(y)) {
-			ldPoints.push([x, y]);
+	let ldPoints = [];
+	let temp = [];
+	props.ld.split(",").forEach((point, index) => {
+		point = parseInt(point.replace("M", ""));
+		if (index % 2 !== 0) {
+			ldPoints.push([temp.pop(), point]);
+		} else {
+			temp.push(point);
 		}
 	});
-
 	const originalLength = Math.abs(
 		ldPoints[ldPoints.length - 1][0] - ldPoints[0][0]
 	);
@@ -469,19 +473,16 @@ const createContentMachineTimeline = ({
 		);
 	}
 };
-
+const prefetch = url => {
+	mutate(
+		url,
+		axios.get(url).then(res => res.json())
+	);
+};
 export default function ContentBoxMachine({
-	boxId,
-	x,
-	y,
-	pageWidth,
-	pageHeight,
-	pageRef,
-	svgRef,
-	cd,
-	ld,
-	ad,
-	...props
+	boxData: { boxId, content, title, x, y },
+	svgData: { cd, ld, ad, svgRef },
+	pageData: { pageWidth, pageHeight, pageRef }
 }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isClosing, setIsClosing] = useState(false);
@@ -537,6 +538,20 @@ export default function ContentBoxMachine({
 			}
 		}
 	}, [isClosing]);
+
+	/*
+	const url = `https://assets.michaelfortunato.org/${props.blurb.documentId}`;
+	const { data: content, error } = useSWR(
+		url,
+		axios.get(url).then(res => {
+			const { content } = matter(res.data);
+			return { data: content };
+		}),
+		{
+			fallbackData: props.blurb.content
+		}
+	);*/
+
 	return (
 		<>
 			{ReactDOM.createPortal(
@@ -545,7 +560,8 @@ export default function ContentBoxMachine({
 					render={render}
 					x={x}
 					y={y}
-					{...props}
+					title={title}
+					body={content}
 				/>,
 				pageRef
 			)}

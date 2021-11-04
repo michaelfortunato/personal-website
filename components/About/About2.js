@@ -312,23 +312,29 @@ export default function About2(props) {
 		<StyledPage ref={pageRef}>
 			{pageRef.current !== null &&
 				svgRef.current !== null &&
-				ListOfContentBoxes.map((ContentBoxGroup, i) =>
-					ContentBoxGroup.map((config, i) => (
-						<ContentBoxMachine
-							key={config.key}
-							blurb={props.blurbs[config.key]}
-							pageRef={pageRef.current}
-							svgRef={svgRef.current}
-							boxId={config.key}
-							pageWidth={pageWidth}
-							pageHeight={pageHeight}
-							cd={config.cd}
-							ld={config.ld}
-							ad={config.ad}
-							{...config}
-						/>
-					))
-				)}
+				props.blurbs.map(({ metadata, content }) => (
+					<ContentBoxMachine
+						key={metadata.key}
+						boxData={{
+							boxId: metadata.key,
+							content: content,
+							title: metadata.title,
+							x: metadata.x,
+							y: metadata.y
+						}}
+						svgData={{
+							cd: metadata.cd,
+							ld: metadata.ld,
+							ad: metadata.ad,
+							svgRef: svgRef.current
+						}}
+						pageData={{
+							pageWidth: pageWidth,
+							pageHeight: pageHeight,
+							pageRef: pageRef.current
+						}}
+					/>
+				))}
 			<svg
 				version="1.1"
 				className="SVGContainer"
