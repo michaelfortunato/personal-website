@@ -1,7 +1,6 @@
-import React from 'react'
+import React from "react";
 
-const CaroselKeyframe = (props) => {
-    return (keyframes`
+const CaroselKeyframe = (props) => keyframes`
     0% {
         opacity: 0;
         transform: translateY(-50px);
@@ -15,7 +14,6 @@ const CaroselKeyframe = (props) => {
         opacity:0;
         transform: translateY(50px);
     }
-`);
-}
+`;
 
 export default CaroselKeyframe;

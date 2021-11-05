@@ -1,0 +1,30 @@
+env:
+  browser: true
+  es2021: true
+  node: true
+extends:
+  - "plugin:react/recommended"
+  - airbnb
+  - prettier
+rules:
+  react/prefer-stateless-functon: off
+  #import/order: off
+  #no-unused-vars: off
+  #react/jsx-filename-extension: off
+parserOptions:
+  ecmaFeatures:
+    jsx: true
+  ecmaVersion: 12
+  sourceType: module
+plugins:
+  - react
+settings:
+  import/resolver:
+    alias:
+      map:
+        - - "@components"
+          - ./components
+        - - "@public"
+          - "./public"
+        - - "@utils"
+          - "./utils"

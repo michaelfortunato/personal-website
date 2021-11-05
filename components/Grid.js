@@ -1,104 +1,134 @@
-import React, { useState, useEffect } from 'react'
-import styled from 'styled-components';
-import { CSSTransition } from 'react-transition-group'
-import Gridline from './Gridline.js';
-import useDeviceSize from './useDeviceSize.js';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import { CSSTransition } from "react-transition-group";
 import { motion } from "framer-motion";
-import UAParser from 'ua-parser-js';
+import UAParser from "ua-parser-js";
+import Gridline from "./Gridline.js";
+import useDeviceSize from "./useDeviceSize.js";
+
 const MIN_DURATION = 250;
 const MIN_DELAY = 300 + 1000;
 
 const StyledGrid = styled(motion.div)`
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 1;
-    overflow:hidden;
-`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  overflow: hidden;
+`;
 
 const resizeDelta = 200;
 export default function Grid(props) {
-    const [rowConfigs, setRowConfigs] = useState({});
-    const [colConfigs, setColConfigs] = useState({});
-    const [numColLines, setNumColLines] = useState(1);
-    const [width, setWidth] = useState(0);
-    const [height, setHeight] = useState(0);
-    const [browser, setBrowser] = useState(null);
+  const [rowConfigs, setRowConfigs] = useState({});
+  const [colConfigs, setColConfigs] = useState({});
+  const [numColLines, setNumColLines] = useState(1);
+  const [width, setWidth] = useState(0);
+  const [height, setHeight] = useState(0);
+  const [browser, setBrowser] = useState(null);
 
-    const numRowLines = props.numLines;
-    const spacing = Math.floor(100 / numRowLines);
+  const numRowLines = props.numLines;
+  const spacing = Math.floor(100 / numRowLines);
 
-    const position = (i, isRow, broswerName, width, height) => {
-        let fixedPos = props.offset + spacing * i;
-        if (broswerName.toLowerCase() === "firefox" && !isRow) {
-            fixedPos = height / width * fixedPos
-        }
-        let floatingPos = 100 * (props.random ? Math.random() : 0);
-        return { fixedPos: fixedPos, floatingPos: floatingPos };
+  const position = (i, isRow, broswerName, width, height) => {
+    let fixedPos = props.offset + spacing * i;
+    if (broswerName.toLowerCase() === "firefox" && !isRow) {
+      fixedPos = (height / width) * fixedPos;
     }
-    const timing = () => {
-        let duration = MIN_DURATION + props.avgDuration * (false ? Math.random() : 1);
-        let delay = MIN_DELAY + props.avgDelay * (props.random ? Math.random() : 1); //avgDelay + 200 * randn_bm(); 
-        return { duration: duration, delay: delay };
+    const floatingPos = 100 * (props.random ? Math.random() : 0);
+    return { fixedPos, floatingPos };
+  };
+  const timing = () => {
+    const duration =
+      MIN_DURATION + props.avgDuration * (false ? Math.random() : 1);
+    const delay =
+      MIN_DELAY + props.avgDelay * (props.random ? Math.random() : 1); // avgDelay + 200 * randn_bm();
+    return { duration, delay };
+  };
+  const configuration = (i, isRow, browserName, width, height) => {
+    const pos_conf = position(i, isRow, browserName, width, height);
+    const time_conf = timing();
+    return { ...pos_conf, ...time_conf, isDot: true };
+  };
+
+  useEffect(() => {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const rconfigs = {};
+    const cconfigs = {};
+    const nrlines = props.numLines;
+    const nclines = Math.floor((width / height) * props.numLines + 1);
+    let gridEnterTimeout = 0;
+    const UAObject = UAParser(window.navigator.userAgent);
+    setBrowser(UAObject.browser);
+    for (let i = 1; i <= nrlines; ++i) {
+      rconfigs[i] = configuration(
+        i,
+        true,
+        UAObject.browser.name,
+        width,
+        height
+      );
+      gridEnterTimeout = Math.max(
+        gridEnterTimeout,
+        rconfigs[i].duration + rconfigs[i].delay
+      );
     }
-    const configuration = (i, isRow, browserName, width, height) => {
-        let pos_conf = position(i, isRow, browserName, width, height);
-        let time_conf = timing();
-        return { ...pos_conf, ...time_conf, isDot: true }
+    for (let i = 1; i <= nclines; ++i) {
+      cconfigs[i] = configuration(
+        i,
+        false,
+        UAObject.browser.name,
+        width,
+        height
+      );
+      gridEnterTimeout = Math.max(
+        gridEnterTimeout,
+        cconfigs[i].duration + cconfigs[i].delay
+      );
     }
 
-    useEffect(() => {
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-        let rconfigs = {};
-        let cconfigs = {};
-        const nrlines = props.numLines
-        const nclines = Math.floor(width / height * props.numLines + 1)
-        let gridEnterTimeout = 0;
-        const UAObject = UAParser(window.navigator.userAgent);
-        setBrowser(UAObject.browser)
-        for (let i = 1; i <= nrlines; ++i) {
-            rconfigs[i] = configuration(i, true, UAObject.browser.name, width, height)
-            gridEnterTimeout = Math.max(gridEnterTimeout, rconfigs[i].duration + rconfigs[i].delay);
+    setNumColLines(nclines);
+    setRowConfigs(rconfigs);
+    setColConfigs(cconfigs);
+    setWidth(width);
+    setHeight(height);
 
-        }
-        for (let i = 1; i <= nclines; ++i) {
-            cconfigs[i] = configuration(i, false, UAObject.browser.name, width, height)
-            gridEnterTimeout = Math.max(gridEnterTimeout, cconfigs[i].duration + cconfigs[i].delay);
-        }
+    setTimeout(() => props.setTriggerNameEnter(true), gridEnterTimeout);
+    setTimeout(() => props.setTriggerGridExit(true), gridEnterTimeout + 250);
+  }, []);
 
-
-        setNumColLines(nclines);
-        setRowConfigs(rconfigs);
-        setColConfigs(cconfigs);
-        setWidth(width)
-        setHeight(height);
-
-        setTimeout(() => props.setTriggerNameEnter(true), gridEnterTimeout);
-        setTimeout(() => props.setTriggerGridExit(true), gridEnterTimeout + 250);
-    }, [])
-
-    return (
-        <>
-            {(width !== 0 && height !== 0) &&
-                <StyledGrid>
-                    {[...Array(numRowLines)].map((_, i) => {
-                        return (
-                            <Gridline key={i} browser={browser} isRow={true} width={width} height={height} {...rowConfigs[i + 1]} />);
-                    }
-                    )}
-                    {[...Array(numColLines)].map((_, i) => {
-                        return (<Gridline key={i + props.numLines} browser={browser} isRow={false} width={width} height={height} {...colConfigs[i + 1]} />);
-                    }
-                    )}
-                </StyledGrid>
-            }
-        </>
-    );
+  return (
+    <>
+      {width !== 0 && height !== 0 && (
+        <StyledGrid>
+          {[...Array(numRowLines)].map((_, i) => (
+            <Gridline
+              key={i}
+              browser={browser}
+              isRow
+              width={width}
+              height={height}
+              {...rowConfigs[i + 1]}
+            />
+          ))}
+          {[...Array(numColLines)].map((_, i) => (
+            <Gridline
+              key={i + props.numLines}
+              browser={browser}
+              isRow={false}
+              width={width}
+              height={height}
+              {...colConfigs[i + 1]}
+            />
+          ))}
+        </StyledGrid>
+      )}
+    </>
+  );
 }
-/*class Grid extends React.Component {
+/* class Grid extends React.Component {
     static defaultProps = {
         random: true,
         numLines: 12,
@@ -174,4 +204,4 @@ export default function Grid(props) {
     }
 } */
 
-//export default Grid;
+// export default Grid;
