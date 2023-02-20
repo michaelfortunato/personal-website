@@ -73,9 +73,9 @@ const routes = {
         },
       },
     }),
-    previewColor: "#14213D",
+    previewColor: "#018786",
     previewTextColor: "#e6af4b",
-    transition: { backgroundColor: "#14213D" },
+    transition: { backgroundColor: "#018786" },
   },
   "/blog": {
     name: "Blog",
