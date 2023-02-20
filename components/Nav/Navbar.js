@@ -225,18 +225,18 @@ const NavContent = (props) => {
               style={{ display: "inline-block" }}
             >
               <Link href={url}>
-                <a>
-                  <StyledTypography
-                    animate={{
-                      scale: url === props.previewUrl ? 1 : 1,
-                      translateX: url === props.previewUrl ? "10px" : 0,
-                      translateY: url === props.previewUrl ? "-10px" : 0,
-                    }}
-                    variant="h2"
-                  >
-                    {name}
-                  </StyledTypography>
-                </a>
+
+                <StyledTypography
+                  animate={{
+                    scale: url === props.previewUrl ? 1 : 1,
+                    translateX: url === props.previewUrl ? "10px" : 0,
+                    translateY: url === props.previewUrl ? "-10px" : 0,
+                  }}
+                  variant="h2"
+                >
+                  {name}
+                </StyledTypography>
+
               </Link>
               <AnimatePresence initial={false}>
                 <motion.div
