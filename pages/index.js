@@ -21,7 +21,7 @@ export default function Home(props) {
   useEffect(() => {
     document.body.overflowY = "hidden";
   }, []);
-  console.log(props.ua);
+  console.log("I GOT RENDERED");
   return (
     <motion.div
       style={{ overflow: "hidden", height: "100vh", width: "100vw" }}

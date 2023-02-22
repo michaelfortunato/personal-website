@@ -127,8 +127,7 @@ export default function App({ Component, pageProps }) {
       jssStyles.parentElement.removeChild(jssStyles);
     }
   }, []);
-
-  console.log(pathname);
+  console.log(Component);
   return (
     <div>
       <Head>
@@ -156,14 +155,11 @@ export default function App({ Component, pageProps }) {
                       animate={{
                         ...routes[pathname].transition,
                         transition: {
-                          delay: 0.6,
                           duration: 0.3,
                         },
                       }}
                     >
-                      <AnimatePresence exitBeforeEnter>
-                        <Component key={pathname} {...pageProps} />
-                      </AnimatePresence>
+                      <Component key={pathname} {...pageProps} />
                     </StyledRoot>
                   </AnimatePresence>
                 </SWRConfig>
