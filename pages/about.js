@@ -15,7 +15,7 @@ import { Element, Events, scroller } from "react-scroll";
 import { useScrollPosition } from "@n8tb1t/use-scroll-position";
 import ScrollLock, { TouchScrollable } from "react-scrolllock";
 import { assetsURL } from "@utils/configurations";
-import fs from "fs";
+// import fs from "fs";
 import matter from "gray-matter";
 import path from "path";
 import axios from "axios";
@@ -237,8 +237,10 @@ const loadFilesFromS3Directory = async (prefix) => {
 };
 
 export async function getStaticProps() {
+  return { props: {} };
+  /*
   let blurbs = null;
-
+  
   if (process.env.NODE_ENV !== "development") {
     const { data } = await axios.get(`${assetsURL}/`, {
       params: {
@@ -309,4 +311,5 @@ export async function getStaticProps() {
       blurbs,
     },
   };
+  */
 }
