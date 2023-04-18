@@ -12,11 +12,15 @@ export default function Projects(props: any) {
         justifyContent="center"
         style={{ height: "100vh" }}
       >
-        <Grid component={Paper} container item xs={9}>
+        <Grid
+          component={Paper}
+          style={{ borderRadius: 24 }}
+          container
+          item
+          xs={9}
+        >
           <Grid item xs={6}>
-            <Typography variant="h1" style={{ color: "black" }}>
-              Personal Website
-            </Typography>
+            <Typography variant="h1">Personal Website</Typography>
           </Grid>
           <Grid item xs={6}>
             <Image
