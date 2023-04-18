@@ -2,18 +2,15 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import Lottie from "lottie-react";
 import animationData from "@public/About_Page1_ISA-Loop.json";
 import styled from "styled-components";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import { motion } from "framer-motion";
-import { useTheme } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import Paper from "@material-ui/core/Paper";
-import Divider from "@material-ui/core/Divider";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import Paper from "@mui/material/Paper";
+import Divider from "@mui/material/Divider";
 import { useInView } from "react-intersection-observer";
 import About2 from "@components/About/About2";
-import { Element, Events, scroller } from "react-scroll";
-import { useScrollPosition } from "@n8tb1t/use-scroll-position";
-import ScrollLock, { TouchScrollable } from "react-scrolllock";
 import { assetsURL } from "@utils/configurations";
 // import fs from "fs";
 import matter from "gray-matter";
@@ -89,8 +86,6 @@ const useScrollListener = (element, handleScroll, throttle = 5000) => {
 export default function About(props) {
   const lottieRef = useRef(null);
   const secondPageRef = useRef(null);
-  const [hasScrolledDown, setHasScrolledDown] = useState(false);
-  const [releaseScroll, setReleaseScroll] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isXL, setIsXL] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
@@ -100,9 +95,6 @@ export default function About(props) {
   const About2Ref = useRef(null);
 
   const [scrollStarted, setScrollStarted] = useState(false);
-  useScrollPosition(({ prevPos, currPos }) => {
-    // if (!hasScrolledDown && (prevPos.y > currPos.y)) { setHasScrolledDown(true) }
-  });
 
   /*
     useEffect(() => {
@@ -134,25 +126,9 @@ export default function About(props) {
         true
       );
     }, 500);
-    setTimeout(
-      () =>
-        scroller.scrollTo("myScrollToElement", {
-          duration: 1000,
-          delay: 0,
-          smooth: true,
-          spyThrottle: 0,
-          ignoreCancelEvents: true,
-        }),
-      5200
-    );
     if (window.matchMedia("(min-width: 3000px)").matches) {
       setIsXL(true);
     }
-  }, []);
-  useEffect(() => {
-    Events.scrollEvent.register("end", (to, element) => {
-      setTriggerTlIntro(true);
-    });
   }, []);
   /*
     useEffect(() => {
@@ -203,15 +179,7 @@ export default function About(props) {
           }}
         />
       </StyledPage>
-      <Element name="myScrollToElement">
-        <ScrollLock isActive={!releaseScroll} />
-        <About2
-          blurbs={props.blurbs}
-          triggerTlIntro={triggerTlIntro}
-          setReleaseScroll={setReleaseScroll}
-          key={2}
-        />
-      </Element>
+      <About2 blurbs={props.blurbs} triggerTlIntro={triggerTlIntro} key={2} />
     </AboutRoot>
   );
 }

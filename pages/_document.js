@@ -1,7 +1,7 @@
 /* eslint-disable react/display-name */
 import React from "react";
 import Document, { Html, Head, Main, NextScript } from "next/document";
-import { ServerStyleSheets as MaterialUIServerStyleSheets } from "@material-ui/core/styles";
+import MaterialUIServerStyleSheets from '@mui/styles/ServerStyleSheets';
 import { ServerStyleSheet as StyledComponentSheets } from "styled-components";
 
 export default class MyDocument extends Document {

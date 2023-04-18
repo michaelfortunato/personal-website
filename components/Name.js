@@ -2,7 +2,7 @@ import React from "react";
 import { CSSTransition } from "react-transition-group";
 import styled from "styled-components";
 import Letter from "./Letter.js";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 
 const StyledName = styled(Grid)`
     font-size: 56px;

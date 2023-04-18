@@ -5,15 +5,15 @@ import React, {
   useRef,
   useMemo,
 } from "react";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { useResizeDetector } from "react-resize-detector";
 import { gsap } from "gsap";
 import { MotionPathPlugin } from "gsap/dist/MotionPathPlugin";
 import { useInView } from "react-intersection-observer";
-import Tooltip from "@material-ui/core/Tooltip";
+import Tooltip from "@mui/material/Tooltip";
 import {
   MainContentBoxes,
   FLContentBoxes,
@@ -62,7 +62,6 @@ const TimelineIntro = (props) => {
     const introElements = query(".tlIntro");
     timeline.current = gsap.timeline({
       onComplete: () => {
-        props.setReleaseScroll(true);
         setAnimationIsDone(true);
       },
     });

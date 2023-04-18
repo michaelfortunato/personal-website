@@ -2,14 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
 import Link from "next/link";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import { AnimatePresence, motion } from "framer-motion";
 import { Twirl as Hamburger } from "hamburger-react";
-import Divider from "@material-ui/core/Divider";
-import useTheme from "@material-ui/core/styles/useTheme";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { withTheme } from "@material-ui/core";
+import Divider from "@mui/material/Divider";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { gsap } from "gsap";
 
 const StyledNavbar = styled.div`
@@ -225,7 +224,6 @@ const NavContent = (props) => {
               style={{ display: "inline-block" }}
             >
               <Link href={url}>
-
                 <StyledTypography
                   animate={{
                     scale: url === props.previewUrl ? 1 : 1,
@@ -236,7 +234,6 @@ const NavContent = (props) => {
                 >
                   {name}
                 </StyledTypography>
-
               </Link>
               <AnimatePresence initial={false}>
                 <motion.div

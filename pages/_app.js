@@ -4,9 +4,10 @@ import React, { useState, useEffect, useRef } from "react";
 
 import {
   createTheme,
-  StylesProvider,
   ThemeProvider as MuiThemeProvider,
-} from "@material-ui/core/styles";
+  StyledEngineProvider,
+  adaptV4Theme,
+} from "@mui/material/styles";
 import styled, {
   ThemeProvider as StyledComponentsThemeProvider,
 } from "styled-components";
@@ -25,88 +26,96 @@ const StyledRoot = styled(motion.div)`
 const routes = {
   "/": {
     name: "Home",
-    theme: createTheme({
-      palette: {
-        primary: {
-          main: "#e6af4b",
+    theme: createTheme(
+      adaptV4Theme({
+        palette: {
+          primary: {
+            main: "#e6af4b",
+          },
+          secondary: {
+            main: "#264653",
+          },
         },
-        secondary: {
-          main: "#264653",
-        },
-      },
-    }),
+      })
+    ),
     previewColor: "rgba(230, 175, 75, 1)",
     previewTextColor: "#264653",
     transition: { backgroundColor: "#e6af4b" },
   },
   "/about": {
     name: "About",
-    theme: createTheme({
-      palette: {
-        primary: {
-          main: "#14213D",
+    theme: createTheme(
+      adaptV4Theme({
+        palette: {
+          primary: {
+            main: "#14213D",
+          },
+          secondary: {
+            main: "#fafafa",
+          },
+          text: {
+            primary: "#fff",
+          },
         },
-        secondary: {
-          main: "#fafafa",
-        },
-        text: {
-          primary: "#fff",
-        },
-      },
-    }),
+      })
+    ),
     previewColor: "rgba(20, 33, 61, 1)",
     previewTextColor: "#e6af4b",
     transition: { backgroundColor: "#14213D" },
   },
   "/projects": {
     name: "Projects",
-    theme: createTheme({
-      palette: {
-        primary: {
-          main: "#14213D",
+    theme: createTheme(
+      adaptV4Theme({
+        palette: {
+          primary: {
+            main: "#14213D",
+          },
+          secondary: {
+            main: "#fafafa",
+          },
+          text: {
+            primary: "#fff",
+          },
         },
-        secondary: {
-          main: "#fafafa",
-        },
-        text: {
-          primary: "#fff",
-        },
-      },
-    }),
+      })
+    ),
     previewColor: "#018786",
     previewTextColor: "#e6af4b",
     transition: { backgroundColor: "#018786" },
   },
   "/blog": {
     name: "Blog",
-    theme: createTheme({
-      palette: {
-        primary: {
-          main: "#14213D",
+    theme: createTheme(
+      adaptV4Theme({
+        palette: {
+          primary: {
+            main: "#14213D",
+          },
+          secondary: {
+            main: "#fafafa",
+          },
+          text: {
+            primary: "#fff",
+          },
         },
-        secondary: {
-          main: "#fafafa",
-        },
-        text: {
-          primary: "#fff",
-        },
-      },
-    }),
+      })
+    ),
     previewColor: "#14213D",
     previewTextColor: "#e6af4b",
     transition: { backgroundColor: "#14213D" },
   },
   "/_error": {
     name: "/_error",
-    theme: createTheme({}),
+    theme: createTheme(adaptV4Theme({})),
   },
   "/404": {
     name: "/404",
-    theme: createTheme({}),
+    theme: createTheme(adaptV4Theme({})),
   },
   "/504": {
     name: "/504",
-    theme: createTheme({}),
+    theme: createTheme(adaptV4Theme({})),
   },
 };
 
@@ -137,7 +146,7 @@ export default function App({ Component, pageProps }) {
       </Head>
       <main ref={mainRef}>
         <div>
-          <StylesProvider injectFirst>
+          <StyledEngineProvider injectFirst>
             <MuiThemeProvider theme={routes[pathname].theme}>
               <StyledComponentsThemeProvider theme={routes[pathname].theme}>
                 <SWRConfig
@@ -165,7 +174,7 @@ export default function App({ Component, pageProps }) {
                 </SWRConfig>
               </StyledComponentsThemeProvider>
             </MuiThemeProvider>
-          </StylesProvider>
+          </StyledEngineProvider>
         </div>
       </main>
     </div>

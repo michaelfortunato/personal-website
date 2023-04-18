@@ -1,6 +1,6 @@
 import React from "react";
 import Tile from "@components/Projects/Tile";
-import { Grid, Paper, Typography } from "@material-ui/core";
+import { Grid, Paper, Typography } from "@mui/material";
 import Image from "next/image";
 
 export default function Projects(props: any) {
@@ -22,8 +22,8 @@ export default function Projects(props: any) {
             <Image
               src="/projects/clay-iphone.svg"
               alt="placertexthere"
-              width={50}
-              height={50}
+              width={500}
+              height={500}
             />
           </Grid>
         </Grid>

@@ -6,12 +6,12 @@ import React, {
   useRef,
   useMemo,
 } from "react";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import styled from "styled-components";
 import { motion, useViewportScroll } from "framer-motion";
-import Divider from "@material-ui/core/Divider";
+import Divider from "@mui/material/Divider";
 import { gsap } from "gsap";
 import { MotionPathPlugin } from "gsap/dist/MotionPathPlugin";
 import { assetsURL } from "../../utils/configurations";
