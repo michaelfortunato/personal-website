@@ -1,5 +1,6 @@
-prettier.arrowParens: "avoid"
-prettier.trailingComma: "none"
-prettier.tabWidth: 2
-prettier.useTabs: true
+arrowParens: "avoid"
+trailingComma: "none"
+tabWidth: 2
+useTabs: true
+singleQuote: false
 editor.tabSize: 2

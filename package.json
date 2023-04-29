@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",
+    "@emotion/server": "^11.10.0",
     "@emotion/styled": "^11.10.6",
     "@fontsource/roboto": "^4.5.0",
     "@mui/icons-material": "^5.11.16",
@@ -39,6 +40,7 @@
   },
   "devDependencies": {
     "@types/node": "18.14.0",
+    "@types/styled-components": "^5.1.26",
     "babel-plugin-styled-components": "^1.13.2",
     "eslint": "^7.32.0",
     "eslint-config-airbnb": "^18.2.1",
