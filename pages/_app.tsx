@@ -29,7 +29,8 @@ import { ScopedCssBaseline } from "@mui/material";
 
 const StyledRoot = styled(motion.div)``;
 
-const routes = {
+// TODO: Properly type this
+const routes: any = {
 	"/": {
 		name: "Home",
 		theme: indexTheme,
@@ -72,7 +73,8 @@ const routes = {
 	}
 };
 
-const userRoutes = {};
+// TODO: Properly type this
+const userRoutes: any = {};
 Object.entries(routes).forEach(([url, obj]) => {
 	if (url !== "/_error" && url !== "/404" && url !== "/504") {
 		userRoutes[url] = obj;
@@ -98,7 +100,7 @@ export default function App({
 		// Remove the server-side injected CSS.
 		const jssStyles = document.querySelector("#jss-server-side");
 		if (jssStyles) {
-			jssStyles.parentElement.removeChild(jssStyles);
+			jssStyles?.parentElement?.removeChild(jssStyles);
 		}
 	}, []);
 	return (
