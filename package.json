@@ -39,6 +39,7 @@
   "devDependencies": {
     "@types/node": "18.14.0",
     "@types/styled-components": "^5.1.26",
+    "@types/ua-parser-js": "^0.7.36",
     "babel-plugin-styled-components": "^1.13.2",
     "eslint": "^7.32.0",
     "eslint-config-airbnb": "^18.2.1",

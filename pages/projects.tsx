@@ -6,7 +6,7 @@ import clayiPhone from "@public/projects/clay-iphone.svg";
 import clayMBP from "@public/projects/clay-mbp.svg";
 import technologies from "@public/projects/technologies.svg";
 
-export default function Projects(props: any) {
+export default function Projects() {
 	return (
 		<div style={{ height: "100vh", width: "100vw" }}>
 			<Grid
