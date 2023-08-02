@@ -12,4 +12,6 @@ I am a firm believer in the below policy from [MrIceman](https://github.com/MrIc
 > I encourage any contributor to follow the same principle, though I can't and don't want to put any restrictions on this.
 > Just like people stopped walking because they commute by cars and trains, which caused an increase in obesity and illness,
 > I believe that the massive usage of AI will cause people to stop thinking and using their minds and the resulting havoc is unthinkable.
-> [MrIceman](https://github.com/MrIceman/go-uml/blob/master/README.md).
+> [MrIceman][1]
+
+[1]: [https://github.com/MrIceman/go-uml/blob/master/README.md]
