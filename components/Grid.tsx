@@ -148,13 +148,15 @@ export default function Grid(props: any) {
 							height={height}
 							// We can assert this as non null because of the
 							// width and height guard above
-							{...(rowConfigs[i + 1] as {
-								isDot: boolean;
-								duration: number;
-								delay: number;
-								fixedPos: any;
-								floatingPos: number;
-							})}
+							{...(
+								rowConfigs as {
+									isDot: boolean;
+									duration: number;
+									delay: number;
+									fixedPos: any;
+									floatingPos: number;
+								}[]
+							)[i + 1]}
 						/>
 					))}
 					{[...Array(numColLines)].map((_, i) => (
@@ -164,7 +166,15 @@ export default function Grid(props: any) {
 							isRow={false}
 							width={width}
 							height={height}
-							{...colConfigs[i + 1]}
+							{...(
+								colConfigs as {
+									isDot: boolean;
+									duration: number;
+									delay: number;
+									fixedPos: any;
+									floatingPos: number;
+								}[]
+							)[i + 1]}
 						/>
 					))}
 				</StyledGrid>
