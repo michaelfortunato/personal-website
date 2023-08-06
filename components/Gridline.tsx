@@ -63,29 +63,6 @@ const StyledGridlineColumn = styled.div<any>`
 	animation-fill-mode: forwards;
 	animation-timing-function: ease-out;
 `;
-
-const StyledGridline = styled.div<any>`
-	position: absolute;
-	background: white;
-	z-index: 1;
-	height: ${props =>
-		props.isRow ? `${props.circleSize}px` : `${props.height}px`};
-	width: ${props =>
-		props.isRow ? `${props.width}px` : `${props.circleSize}px`};
-	left: ${props => (props.isRow ? `initial` : `${props.fixedPos}vh`)};
-	top: ${props => (props.isRow ? `${props.fixedPos}vh` : `initial`)};
-	border-radius: 50%;
-	transform: ${props =>
-		props.isRow
-			? `scaleX(${props.circleXScaling}) scaleY(1)`
-			: `scaleX(1) scaleY(${props.circleYScaling})`};
-	animation-name: ${props => props.animation};
-	animation-duration: ${props => props.duration / 1000}s;
-	animation-delay: ${props => props.delay / 1000}s;
-	animation-fill-mode: forwards;
-	animation-timing-function: ease-out;
-`;
-
 function Gridline(props: any) {
 	const circleSize = 10; // in pixels
 	let circleXScaling = (props.width / circleSize) * 2;

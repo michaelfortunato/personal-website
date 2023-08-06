@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Grid from "@components/Grid";
 import Hero from "@components/Hero";
 import { AnimatePresence, motion } from "framer-motion";
+import styled from "styled-components";
 
 const defaultGridConfig = {
 	random: true,
@@ -19,10 +20,13 @@ export default function Home() {
 	const [triggerNameEnter, setTriggerNameEnter] = useState(false);
 	const [triggerGridExit, setTriggerGridExit] = useState(false);
 	return (
-		<Grid
-			setTriggerGridExit={setTriggerGridExit}
-			setTriggerNameEnter={setTriggerNameEnter}
-			{...defaultGridConfig}
-		/>
+		<>
+			<Grid
+				setTriggerGridExit={setTriggerGridExit}
+				setTriggerNameEnter={setTriggerNameEnter}
+				{...defaultGridConfig}
+			/>
+			<Hero triggerNameEnter={triggerNameEnter} />
+		</>
 	);
 }

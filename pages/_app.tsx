@@ -25,7 +25,7 @@ import {
 	projectsTheme
 } from "@components/theme";
 import createEmotionCache from "@components/createEmotionCache";
-import { ScopedCssBaseline } from "@mui/material";
+import { ScopedCssBaseline, Theme } from "@mui/material";
 
 const StyledRoot = styled(motion.div)`
 	position: absolute;
@@ -34,7 +34,17 @@ const StyledRoot = styled(motion.div)`
 `;
 
 // TODO: Properly type this
-const routes: any = {
+// TODO: Move these into their respective components
+
+type RootConfig = {
+	name: string;
+	theme: Theme;
+	previewColor?: string; // TODO: REMOVE
+	previewTextColor?: string; // TODO: REMOVE
+	transition?: { backgroundColor: string }; // TODO: REMOVE
+};
+
+const pageConfigs: { [key: string]: RootConfig } = {
 	"/": {
 		name: "Home",
 		theme: indexTheme,
@@ -79,7 +89,7 @@ const routes: any = {
 
 // TODO: Properly type this
 const userRoutes: any = {};
-Object.entries(routes).forEach(([url, obj]) => {
+Object.entries(pageConfigs).forEach(([url, obj]) => {
 	if (url !== "/_error" && url !== "/404" && url !== "/504") {
 		userRoutes[url] = obj;
 	}
@@ -116,28 +126,26 @@ export default function App({
 				<link rel="icon" href="" />
 			</Head>
 			<main ref={mainRef}>
-				<div>
-					<MuiThemeProvider theme={routes[pathname].theme}>
-						<StyledComponentsThemeProvider theme={routes[pathname].theme}>
-							<Navbar
-								routes={userRoutes}
-								currentPage={pathname}
-								mainRef={mainRef}
-							/>
-							<StyledRoot
-								animate={{
-									...routes[pathname].transition,
-									transition: {
-										duration: 0.3
-									}
-								}}
-							>
-								<ScopedCssBaseline />
-								<Component key={pathname} {...pageProps} />
-							</StyledRoot>
-						</StyledComponentsThemeProvider>
-					</MuiThemeProvider>
-				</div>
+				<MuiThemeProvider theme={pageConfigs[pathname].theme}>
+					<StyledComponentsThemeProvider theme={pageConfigs[pathname].theme}>
+						<Navbar
+							routes={userRoutes}
+							currentPage={pathname}
+							mainRef={mainRef}
+						/>
+						<StyledRoot
+							animate={{
+								...pageConfigs[pathname].transition,
+								transition: {
+									duration: 0.3
+								}
+							}}
+						>
+							<ScopedCssBaseline />
+							<Component key={pathname} {...pageProps} />
+						</StyledRoot>
+					</StyledComponentsThemeProvider>
+				</MuiThemeProvider>
 			</main>
 		</CacheProvider>
 	);
