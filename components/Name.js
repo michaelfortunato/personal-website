@@ -1,6 +1,5 @@
 import React from "react";
-import { CSSTransition } from "react-transition-group";
-import styled from "styled-components";
+import styled from "@emotion/styled";
 import Letter from "./Letter";
 import Grid from "@mui/material/Grid";
 

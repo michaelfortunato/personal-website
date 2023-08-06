@@ -6,15 +6,10 @@ import { AppProps } from "next/app";
 
 import { CacheProvider, EmotionCache } from "@emotion/react";
 
-import {
-	createTheme,
-	ThemeProvider as MuiThemeProvider
-} from "@mui/material/styles";
-import styled, {
-	ThemeProvider as StyledComponentsThemeProvider
-} from "styled-components";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import styled from "@emotion/styled";
 import { useRouter } from "next/router";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import Navbar from "@components/Nav/Navbar";
 import axios from "axios";
 import { SWRConfig } from "swr";
@@ -126,26 +121,24 @@ export default function App({
 				<link rel="icon" href="" />
 			</Head>
 			<main ref={mainRef}>
-				<MuiThemeProvider theme={pageConfigs[pathname].theme}>
-					<StyledComponentsThemeProvider theme={pageConfigs[pathname].theme}>
-						<Navbar
-							routes={userRoutes}
-							currentPage={pathname}
-							mainRef={mainRef}
-						/>
-						<StyledRoot
-							animate={{
-								...pageConfigs[pathname].transition,
-								transition: {
-									duration: 0.3
-								}
-							}}
-						>
-							<ScopedCssBaseline />
-							<Component key={pathname} {...pageProps} />
-						</StyledRoot>
-					</StyledComponentsThemeProvider>
-				</MuiThemeProvider>
+				<ThemeProvider theme={pageConfigs[pathname].theme}>
+					<Navbar
+						routes={userRoutes}
+						currentPage={pathname}
+						mainRef={mainRef}
+					/>
+					<StyledRoot
+						animate={{
+							...pageConfigs[pathname].transition,
+							transition: {
+								duration: 0.3
+							}
+						}}
+					>
+						<ScopedCssBaseline />
+						<Component key={pathname} {...pageProps} />
+					</StyledRoot>
+				</ThemeProvider>
 			</main>
 		</CacheProvider>
 	);
