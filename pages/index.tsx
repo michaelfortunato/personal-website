@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Grid from "@components/Grid";
 import Hero from "@components/Hero";
 import { AnimatePresence, motion } from "framer-motion";
-import styled from "styled-components";
 
 const defaultGridConfig = {
 	random: true,

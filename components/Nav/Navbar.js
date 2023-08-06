@@ -282,7 +282,6 @@ const NavPage = props => {
 						previewUrl={previewUrl}
 						setPreviewUrl={setPreviewUrl}
 					/>
-					<CloseButton setIsVisible={props.setIsVisible} />
 				</StyledNavPage>
 			)}
 		</AnimatePresence>

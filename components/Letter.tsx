@@ -66,6 +66,7 @@ const StyledLetter = styled.span<any>`
 	display: inline-block;
 	animation-name: ${props => props.enterKeyframe};
 	animation-duration: ${props => props.durationEnter}ms;
+	animation-fill-mode: forwards;
 	transform: translate(
 		${props => props.XOffsetEnter}vw,
 		${props => props.YOffsetEnter}vh
