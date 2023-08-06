@@ -65,7 +65,8 @@ const StyledLetter = styled.span<any>`
 	position: relative;
 	display: inline-block;
 	animation-name: ${props => props.enterKeyframe};
-	animation-duration: ${props => props.durationEnter}ms;
+	animation-duration: ${props => props.enterDuration}ms;
+	animation-delay: ${props => props.enterDelay}ms;
 	animation-fill-mode: forwards;
 	transform: translate(
 		${props => props.XOffsetEnter}vw,
@@ -83,9 +84,11 @@ const enterKeyframe = (XOffsetEnter: number, YOffsetEnter: number) => keyframes`
 `;
 
 export default function Letter(props: {
+	key: number;
 	XOffsetEnter: number;
 	YOffsetEnter: number;
-	durationEnter: number;
+	enterDuration: number;
+	enterDelay: number;
 	char: string;
 }) {
 	const enterKF = enterKeyframe(props.XOffsetEnter, props.YOffsetEnter);
@@ -93,7 +96,8 @@ export default function Letter(props: {
 		<StyledLetter
 			XOffsetEnter={props.XOffsetEnter}
 			YOffsetEnter={props.YOffsetEnter}
-			durationEnter={props.durationEnter}
+			enterDuration={props.enterDuration}
+			enterDelay={props.enterDelay}
 			enterKeyframe={enterKF}
 		>
 			{props.char}

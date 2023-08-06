@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styled from "@emotion/styled";
 import Grid from "@mui/material/Grid";
 import Description from "./Description.js";
-import Name from "./Name.js";
+import Name from "./Name";
 
 const StyledBanner = styled.div`
 	position: relative;
