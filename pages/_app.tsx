@@ -27,7 +27,11 @@ import {
 import createEmotionCache from "@components/createEmotionCache";
 import { ScopedCssBaseline } from "@mui/material";
 
-const StyledRoot = styled(motion.div)``;
+const StyledRoot = styled(motion.div)`
+	position: absolute;
+	width: 100vw;
+	height: 100vh;
+`;
 
 // TODO: Properly type this
 const routes: any = {
@@ -115,30 +119,22 @@ export default function App({
 				<div>
 					<MuiThemeProvider theme={routes[pathname].theme}>
 						<StyledComponentsThemeProvider theme={routes[pathname].theme}>
-							<SWRConfig
-								value={{
-									fetcher: url => axios.get(url).then(res => res.data)
+							<Navbar
+								routes={userRoutes}
+								currentPage={pathname}
+								mainRef={mainRef}
+							/>
+							<StyledRoot
+								animate={{
+									...routes[pathname].transition,
+									transition: {
+										duration: 0.3
+									}
 								}}
 							>
-								<Navbar
-									routes={userRoutes}
-									currentPage={pathname}
-									mainRef={mainRef}
-								/>
-								<AnimatePresence initial={false}>
-									<StyledRoot
-										animate={{
-											...routes[pathname].transition,
-											transition: {
-												duration: 0.3
-											}
-										}}
-									>
-										<ScopedCssBaseline />
-										<Component key={pathname} {...pageProps} />
-									</StyledRoot>
-								</AnimatePresence>
-							</SWRConfig>
+								<ScopedCssBaseline />
+								<Component key={pathname} {...pageProps} />
+							</StyledRoot>
 						</StyledComponentsThemeProvider>
 					</MuiThemeProvider>
 				</div>

@@ -5,7 +5,7 @@ import UAParser from "ua-parser-js";
 import Gridline from "./Gridline";
 
 const MIN_DURATION = 250;
-const MIN_DELAY = 300 + 1000;
+const MIN_DELAY = 300 + 1000; //TODO: Change
 
 const StyledGrid = styled(motion.div)`
 	position: absolute;
@@ -64,9 +64,9 @@ export default function Grid(props: any) {
 		height: any
 	) => {
 		let fixedPos = props.offset + spacing * i;
-		if (broswerName.toLowerCase() === "firefox" && !isRow) {
-			fixedPos = (height / width) * fixedPos;
-		}
+		// if (broswerName.toLowerCase() === "firefox" && !isRow) {
+		// fixedPos = (height / width) * fixedPos;
+		// }
 		const floatingPos = 100 * (props.random ? Math.random() : 0);
 		return { fixedPos, floatingPos };
 	};
