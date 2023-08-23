@@ -20,11 +20,17 @@ export default function Home() {
 	const [triggerGridExit, setTriggerGridExit] = useState(false);
 	return (
 		<>
-			<Grid
-				setTriggerGridExit={setTriggerGridExit}
-				setTriggerNameEnter={setTriggerNameEnter}
-				{...defaultGridConfig}
-			/>
+			<AnimatePresence>
+				{!triggerGridExit && (
+					<motion.div exit={{ opacity: 0 }}>
+						<Grid
+							setTriggerGridExit={setTriggerGridExit}
+							setTriggerNameEnter={setTriggerNameEnter}
+							{...defaultGridConfig}
+						/>
+					</motion.div>
+				)}
+			</AnimatePresence>
 			<Hero triggerNameEnter={triggerNameEnter} />
 		</>
 	);
