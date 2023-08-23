@@ -61,7 +61,7 @@ export default function Name(props: any) {
 					<Letter
 						key={index}
 						// setIsNameDone={props.setNameEntered}
-						// triggerNameEnter={props.triggerNameEnter}
+						triggerNameEnter={props.triggerNameEnter}
 						{...firstNameConfigs.current[index]}
 					/>
 				))}
@@ -71,7 +71,7 @@ export default function Name(props: any) {
 					<Letter
 						key={index + 7}
 						// setIsNameDone={props.setNameEntered}
-						//triggerNameEnter={props.triggerNameEnter}
+						triggerNameEnter={props.triggerNameEnter}
 						{...lastNameConfigs.current[index]}
 					/>
 				))}

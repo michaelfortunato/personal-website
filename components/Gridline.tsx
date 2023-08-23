@@ -30,7 +30,7 @@ const StyledGridlineRow = styled.div<any>`
 	background: white;
 	height: ${props => `${props.circleSize}px`};
 	width: ${props => `${props.circleSize}px`};
-	left: ${props => `${props.floatingPos}vw`};
+	left: ${props => `${props.floatingPos}vh`};
 	top: ${props => `${props.fixedPos}vh`};
 	border-radius: 50%;
 
@@ -50,7 +50,7 @@ const StyledGridlineColumn = styled.div<any>`
 	background: white;
 	height: ${props => `${props.circleSize}px`};
 	width: ${props => `${props.circleSize}px`};
-	left: ${props => `${props.fixedPos}vw`};
+	left: ${props => `${props.fixedPos}vh`};
 	top: ${props => `${props.floatingPos}vh`};
 	border-radius: 50%;
 

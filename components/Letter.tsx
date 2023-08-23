@@ -88,6 +88,7 @@ export default function Letter(props: {
 	XOffsetEnter: number;
 	YOffsetEnter: number;
 	enterDuration: number;
+	triggerNameEnter: boolean;
 	enterDelay: number;
 	char: string;
 }) {
