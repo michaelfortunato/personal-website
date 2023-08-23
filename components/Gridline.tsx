@@ -30,13 +30,13 @@ const StyledGridlineRow = styled.div<any>`
 	background: white;
 	height: ${props => `${props.circleSize}px`};
 	width: ${props => `${props.circleSize}px`};
-	left: ${props => `${props.floatingPos}vh`};
+	left: ${props => `${props.floatingPos}vw`};
 	top: ${props => `${props.fixedPos}vh`};
 	border-radius: 50%;
 
-	/* TODO: Needed for Chrome? */
-	transform: scaleX(1) scaleY(1); /* TODO: Needed for Chrome? */
-	will-change: transform; /* TODO: Needed for Chrome? */
+	/* TODO: Needed for Chrome. Why? */
+	transform: scaleX(1) scaleY(1); /* TODO: Needed for Chrome. Why? */
+	will-change: transform; /* TODO: Needed for Chrome. Why? */
 
 	animation-name: ${props => props.animation};
 	animation-duration: ${props => props.duration / 1000}s;
@@ -50,13 +50,13 @@ const StyledGridlineColumn = styled.div<any>`
 	background: white;
 	height: ${props => `${props.circleSize}px`};
 	width: ${props => `${props.circleSize}px`};
-	left: ${props => `${props.fixedPos}vh`};
+	left: ${props => `${props.fixedPos}vw`};
 	top: ${props => `${props.floatingPos}vh`};
 	border-radius: 50%;
 
-	/* TODO: Needed for Chrome? */
-	transform: scaleX(1) scaleY(1); /* TODO: Needed for Chrome? */
-	will-change: transform; /* TODO: Needed for Chrome? */
+	/* TODO: Needed for Chrome. Why? */
+	transform: scaleX(1) scaleY(1); /* TODO: Needed for Chrome. Why? */
+	will-change: transform; /* TODO: Needed for Chrome. Why? */
 
 	animation-name: ${props => props.animation};
 	animation-duration: ${props => props.duration / 1000}s;

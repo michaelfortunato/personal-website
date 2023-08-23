@@ -52,10 +52,17 @@ export default function Grid(props: any) {
 	const [height, setHeight] = useState(0);
 
 	const numRowLines = props.numLines;
-	const spacing = Math.floor(100 / numRowLines);
+	const spacing = 100 / numRowLines;
 
-	const position = (i: any, isRow: any, width: any, height: any) => {
-		let fixedPos = props.offset + spacing * i;
+	const position = (
+		i: any,
+		isRow: any,
+		width: any,
+		height: any,
+		spacing: number
+	) => {
+		let new_spacing = isRow ? spacing : (height / width) * spacing;
+		let fixedPos = props.offset + new_spacing * i;
 		const floatingPos = 100 * (props.random ? Math.random() : 0);
 		return { fixedPos, floatingPos };
 	};
@@ -66,7 +73,7 @@ export default function Grid(props: any) {
 		width: number,
 		height: number
 	) => {
-		const pos_conf = position(i, isRow, width, height);
+		const pos_conf = position(i, isRow, width, height, spacing);
 		const time_conf = timing(props.avgDuration, props.avgDelay, props.random);
 		return { ...pos_conf, ...time_conf, isDot: true };
 	};
@@ -77,7 +84,7 @@ export default function Grid(props: any) {
 		const rconfigs: any = {};
 		const cconfigs: any = {};
 		const nrlines = props.numLines;
-		const nclines = Math.floor(width / height) * props.numLines + 1;
+		const nclines = Math.floor((width / height) * props.numLines) + 1;
 		let gridEnterTimeout = 0;
 		for (let i = 1; i <= nrlines; ++i) {
 			rconfigs[i] = configuration(i, true, width, height);
@@ -93,6 +100,14 @@ export default function Grid(props: any) {
 				cconfigs[i].duration + cconfigs[i].delay
 			);
 		}
+		const bingLiao = (width: number, height: number, numRows: number) => {
+			let deltaPx = height / numRows;
+			// 1px is equal to how many vh?
+			let deltaVh = (deltaPx * 100) / height;
+			// 1px is equal to how many vw?
+			let deltaVw = (deltaPx * 100) / width;
+			let numCols = Math.floor(width / deltaPx) + 1;
+		};
 
 		setNumColLines(nclines);
 		setRowConfigs(rconfigs);
@@ -103,6 +118,8 @@ export default function Grid(props: any) {
 		setTimeout(() => props.setTriggerNameEnter(true), gridEnterTimeout);
 		setTimeout(() => props.setTriggerGridExit(true), gridEnterTimeout + 250);
 	}, []);
+
+	console.log(width);
 
 	return (
 		<>
