@@ -25,6 +25,3 @@ jobs:
 
       - name: Run tests
         run: npm test
-
-      - name: Deploy to AWS via serverless
-        run: npx serverless
