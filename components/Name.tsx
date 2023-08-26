@@ -53,12 +53,11 @@ export default function Name(props: any) {
 	const firstNameConfigs = useRef(buildConfigs(props.firstName));
 	const lastNameConfigs = useRef(buildConfigs(props.lastName));
 	return (
-		<StyledName container justifyContent="center" columnGap={2.5}>
+		<StyledName container justifyContent="center" columnSpacing={2.5}>
 			<Grid item style={{ display: "inline-block" }}>
 				{props.firstName.split("").map((_: any, index: number) => (
 					<Letter
 						key={index}
-						// setIsNameDone={props.setNameEntered}
 						triggerNameEnter={props.triggerNameEnter}
 						{...(firstNameConfigs.current[index] as any)}
 					/>
@@ -68,7 +67,6 @@ export default function Name(props: any) {
 				{props.lastName.split("").map((_: any, index: number) => (
 					<Letter
 						key={index + 7}
-						// setIsNameDone={props.setNameEntered}
 						triggerNameEnter={props.triggerNameEnter}
 						{...(lastNameConfigs.current[index] as any)}
 					/>
