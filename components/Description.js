@@ -17,22 +17,6 @@ const StyledDescription = styled.div`
 	justify-content: center;
 	color: #264653;
 	font-size: 22px;
-
-	opacity: 0;
-	&.fade-in-appear,
-	&.fade-in-enter {
-		opactiy: 0;
-	}
-	&.fade-in-appear-active,
-	&.fade-in-enter-active {
-		opacity: 1;
-		transition-property: all;
-		transition-duration: 1500ms;
-	}
-	&.fade-in-appear-done,
-	&.fade-in-enter-done {
-		opacity: 1;
-	}
 `;
 
 const Description = props => {

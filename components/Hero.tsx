@@ -12,6 +12,8 @@ const StyledBanner = styled.div`
 export default function Hero(props: { triggerNameEnter: boolean }) {
 	let [nameEntered, setNameEntered] = useState(false);
 
+	console.log(`Animation status ${nameEntered}`);
+
 	return (
 		<Grid
 			container
@@ -24,10 +26,8 @@ export default function Hero(props: { triggerNameEnter: boolean }) {
 					<Name
 						firstName="Michael"
 						lastName="Fortunato"
-						triggerNameEnter={props.triggerNameEnter}
-						nameEntered={nameEntered}
-						setNameEntered={setNameEntered}
-						location="/"
+						startAnimation={props.triggerNameEnter}
+						onAnimationFinish={setNameEntered}
 					/>
 					{nameEntered ? <Description /> : null}
 				</StyledBanner>
