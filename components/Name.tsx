@@ -62,7 +62,7 @@ export default function Name(props: any) {
 						key={index}
 						// setIsNameDone={props.setNameEntered}
 						triggerNameEnter={props.triggerNameEnter}
-						{...firstNameConfigs.current[index]}
+						{...(firstNameConfigs.current[index] as any)}
 					/>
 				))}
 			</StyledFirstName>
@@ -72,7 +72,7 @@ export default function Name(props: any) {
 						key={index + 7}
 						// setIsNameDone={props.setNameEntered}
 						triggerNameEnter={props.triggerNameEnter}
-						{...lastNameConfigs.current[index]}
+						{...(lastNameConfigs.current[index] as any)}
 					/>
 				))}
 			</StyledLastName>
