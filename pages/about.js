@@ -44,45 +44,7 @@ const PageFooter = styled(Grid)`
 const BlackTypography = styled(Typography)`
 	color: black;
 `;
-/*
 
-const useScrollListener = (element, handleScroll, throttle = 5000) => {
-    const scrollingTimer = React.useRef();
-    const [scrollX, setScrollX] = useState(0);
-    const [scrollY, setScrollY] = useState(0);
-    const prevScrollX = useRef(0);
-    const prevScrollY = useRef(0);
-    const handleScroll = (e) => {
-        prevScrollX.current  = scrollX;
-        prevScrollY.current = scrollY;
-        setScrollX(document.body.pageYOffset);
-        setScrollY(document.body.pageYOffset);
-        return {x: scrollX, y: scrollY, prevX: prevScrollX.current, prevY: scrollY.current}
-    }
-    const listenToScroll = React.useCallback(
-        (e) => {
-            element.current?.removeEventListener('scroll', listenToScroll); // unregister the event
-            clearTimeout(scrollingTimer.current); // clear previous timeout instance
-            scrollingTimer.current = setTimeout(
-                () => element.current?.addEventListener('scroll', listenToScroll), // re-register the event after a certain time
-                throttle
-            );
-            return handleScroll(e); // call the handler logic (this is asyncchronous and will not wait for the setTimeout to run!) 
-        },
-        [throttle, element, handleScroll]
-    );
-
-    React.useEffect(() => {
-        const currentElement = element.current;
-        if (currentElement) {
-            currentElement.addEventListener('scroll', listenToScroll);
-        }
-        return () => {
-            currentElement?.removeEventListener('scroll', listenToScroll);
-            clearTimeout(scrollingTimer.current);
-        };
-    }, [listenToScroll, element]);
-}; */
 export default function About(props) {
 	const lottieRef = useRef(null);
 	const secondPageRef = useRef(null);
@@ -95,18 +57,6 @@ export default function About(props) {
 	const About2Ref = useRef(null);
 
 	const [scrollStarted, setScrollStarted] = useState(false);
-
-	/*
-    useEffect(() => {
-        if (hasScrolledDown) {
-            scroller.scrollTo("myScrollToElement", {
-                duration: 1000,
-                delay: 0,
-                smooth: true,
-                spyThrottle: 0
-            })
-        }
-    }, [hasScrolledDown]) */
 
 	useEffect(() => {
 		if (hasMounted) {
@@ -130,26 +80,6 @@ export default function About(props) {
 			setIsXL(true);
 		}
 	}, []);
-	/*
-    useEffect(() => {
-        //document.body.style.overflowY = "scroll";
-        Events.scrollEvent.register('end', (to, element) => {
-            const viewportOffset = element.getBoundingClientRect()
-            clearTimeout(scrollTimer.current)
-            if (viewportOffset.top !== 0) {
-                scrollTimer.current = setTimeout(() => scroller.scrollTo("myScrollToElement", {
-                    duration: 1000,
-                    delay: 0,
-                    smooth: true,
-                    spyThrottle: 0
-                }), 400)
-            } else {
-                setReleaseScroll(false)
-                setTriggerTlIntro(true);
-            }
-        })
-    }, [])
-    */
 
 	useEffect(() => {
 		setHasMounted(true);
@@ -179,7 +109,7 @@ export default function About(props) {
 					}}
 				/>
 			</StyledPage>
-			<About2 blurbs={props.blurbs} triggerTlIntro={triggerTlIntro} key={2} />
+			{/* <About2 blurbs={props.blurbs} triggerTlIntro={triggerTlIntro} key={2} /> */}
 		</AboutRoot>
 	);
 }
@@ -203,81 +133,3 @@ const loadFilesFromS3Directory = async prefix => {
 	const promises = Contents.map(({ Key }) => axios.get(`${assetsURL}/${Key}`));
 	return Promise.all(promises);
 };
-
-export async function getStaticProps() {
-	return { props: {} };
-	/*
-  let blurbs = null;
-  
-  if (process.env.NODE_ENV !== "development") {
-    const { data } = await axios.get(`${assetsURL}/`, {
-      params: {
-        "list-type": 2,
-        prefix: "about/blurbs/",
-        delimiter: "/",
-        Bucket: "assets.michaelfortunato.org",
-      },
-    });
-
-    const {
-      ListBucketResult: { CommonPrefixes: unNormalizedPrefixes },
-    } = parser.parse(data);
-    const CommonPrefixes = !Array.isArray(unNormalizedPrefixes)
-      ? [unNormalizedPrefixes]
-      : unNormalizedPrefixes;
-
-    // Get the subfolders (prefixes)
-    const promises = CommonPrefixes.map(({ Prefix }) =>
-      loadFilesFromS3Directory(Prefix)
-    );
-    const responses = await Promise.all(promises);
-    blurbs = responses
-      .map((blurbGroup) =>
-        blurbGroup.map(({ data: rawContent }) => {
-          const { data: metadata, content } = matter(rawContent);
-          return { metadata, content };
-        })
-      )
-      .reduce(
-        (previousValue, currentValue) => previousValue.concat(currentValue),
-        []
-      );
-  } else {
-    const rootBlurbPath = path.join(
-      process.cwd(),
-      "..",
-      assetsURL,
-      "about",
-      "blurbs"
-    );
-    const blurbFiles = fs
-      .readdirSync(rootBlurbPath, { withFileTypes: true })
-      .filter((dirFile) => dirFile.isDirectory())
-      .map(({ name: groupDir }) =>
-        fs
-          .readdirSync(path.join(rootBlurbPath, groupDir))
-          .map((fileName) => path.join(rootBlurbPath, groupDir, fileName))
-      )
-      .reduce(
-        (previousValue, currentValue) => previousValue.concat(currentValue),
-        []
-      );
-    const promises = blurbFiles.map((file) =>
-      fs.promises.readFile(file, "utf-8")
-    );
-    const responses = await Promise.allSettled(promises);
-    blurbs = responses.map(({ status, value: rawContent }) => {
-      if (status !== "fulfilled")
-        throw "Could not build about page. Blurbs are not loading.";
-      const { data: metadata, content } = matter(rawContent);
-      return { metadata, content };
-    });
-  }
-
-  return {
-    props: {
-      blurbs,
-    },
-  };
-  */
-}
