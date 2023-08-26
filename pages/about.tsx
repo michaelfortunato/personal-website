@@ -1,22 +1,14 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import Lottie from "lottie-react";
+import React, { useEffect, useRef, useState } from "react";
+import Lottie, { LottieRef } from "lottie-react";
 import animationData from "@public/About_Page1_ISA-Loop.json";
 import styled from "@emotion/styled";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { motion } from "framer-motion";
-import { useTheme } from "@mui/material/styles";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import Paper from "@mui/material/Paper";
-import Divider from "@mui/material/Divider";
 import { useInView } from "react-intersection-observer";
 import About2 from "@components/About/About2";
 import { assetsURL } from "@utils/configurations";
 // import fs from "fs";
-import matter from "gray-matter";
-import path from "path";
-import axios from "axios";
-import parser from "fast-xml-parser";
 
 const AboutRoot = styled(motion.div)`
 	width: 100%;
@@ -45,29 +37,32 @@ const BlackTypography = styled(Typography)`
 	color: black;
 `;
 
-export default function About(props) {
-	const lottieRef = useRef(null);
+export default function About() {
+	const lottieRef = useRef(null) as LottieRef;
 	const secondPageRef = useRef(null);
-	const [lastScrollY, setLastScrollY] = useState(0);
 	const [isXL, setIsXL] = useState(false);
 	const [hasMounted, setHasMounted] = useState(false);
-	const [triggerTlIntro, setTriggerTlIntro] = useState(false);
 	const [triggerAniRef, isAniInView] = useInView({ initialInView: true });
+	// What are these below?
+	const [lastScrollY, setLastScrollY] = useState(0);
+	const [triggerTlIntro, setTriggerTlIntro] = useState(false);
 	const scrollTimer = useRef(null);
 	const About2Ref = useRef(null);
 
 	const [scrollStarted, setScrollStarted] = useState(false);
 
 	useEffect(() => {
-		if (hasMounted) {
+		if (hasMounted && lottieRef.current) {
 			if (isAniInView) lottieRef.current.play();
-			// if (!isAniInView) lottieRef.current.pause()
 		}
 	}, [isAniInView]);
 
 	useEffect(() => {
 		// Set a timer that delays the animation
 		setTimeout(() => {
+			// Make sure reference is valid
+			if (!lottieRef.current) return;
+
 			lottieRef.current.playSegments(
 				[
 					[0, 693],
@@ -94,7 +89,7 @@ export default function About(props) {
 			<StyledPage key={1}>
 				<Lottie
 					lottieRef={lottieRef}
-					style={!isXL ? { height: "100vh" } : null}
+					style={!isXL ? { height: "100vh" } : {}}
 					loop
 					autoplay={false}
 					animationData={animationData}
@@ -113,23 +108,3 @@ export default function About(props) {
 		</AboutRoot>
 	);
 }
-
-const loadFilesFromS3Directory = async prefix => {
-	const { data } = await axios.get(`${assetsURL}/`, {
-		params: {
-			"list-type": 2,
-			prefix,
-			delimiter: "/",
-			Bucket: "assets.michaelfortunato.org"
-		}
-	});
-	const {
-		ListBucketResult: { Contents: unNormalizedContents }
-	} = parser.parse(data);
-	const Contents = !Array.isArray(unNormalizedContents)
-		? [unNormalizedContents]
-		: unNormalizedContents;
-
-	const promises = Contents.map(({ Key }) => axios.get(`${assetsURL}/${Key}`));
-	return Promise.all(promises);
-};
