@@ -11,7 +11,6 @@ const StyledBanner = styled.div`
 
 export default function Hero(props: { triggerNameEnter: boolean }) {
 	let [nameEntered, setNameEntered] = useState(false);
-	console.log(`Did name enter here? ${props.triggerNameEnter}`);
 
 	return (
 		<Grid
@@ -20,7 +19,7 @@ export default function Hero(props: { triggerNameEnter: boolean }) {
 			justifyContent="center"
 			alignItems="center"
 		>
-			<Grid item style={{ maxWidth: 700 }}>
+			<Grid item>
 				<StyledBanner>
 					<Name
 						firstName="Michael"

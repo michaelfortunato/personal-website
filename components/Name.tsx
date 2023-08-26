@@ -18,11 +18,9 @@ const StyledName = styled(Grid)`
 `;
 const StyledFirstName = styled(Grid)`
 	display: inline-block;
-	margin-right: 10px;
 `;
 const StyledLastName = styled(Grid)`
 	display: inline-block;
-	margin-left: 10px;
 `;
 function buildConfigs(name: string) {
 	let configsList = [];
@@ -55,8 +53,8 @@ export default function Name(props: any) {
 	const firstNameConfigs = useRef(buildConfigs(props.firstName));
 	const lastNameConfigs = useRef(buildConfigs(props.lastName));
 	return (
-		<StyledName container justifyContent="center">
-			<StyledFirstName item>
+		<StyledName container justifyContent="center" columnGap={2.5}>
+			<Grid item style={{ display: "inline-block" }}>
 				{props.firstName.split("").map((_: any, index: number) => (
 					<Letter
 						key={index}
@@ -65,8 +63,8 @@ export default function Name(props: any) {
 						{...(firstNameConfigs.current[index] as any)}
 					/>
 				))}
-			</StyledFirstName>
-			<StyledLastName item>
+			</Grid>
+			<Grid item style={{ display: "inline-block" }}>
 				{props.lastName.split("").map((_: any, index: number) => (
 					<Letter
 						key={index + 7}
@@ -75,7 +73,7 @@ export default function Name(props: any) {
 						{...(lastNameConfigs.current[index] as any)}
 					/>
 				))}
-			</StyledLastName>
+			</Grid>
 		</StyledName>
 	);
 }
