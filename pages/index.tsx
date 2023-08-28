@@ -15,7 +15,6 @@ const defaultGridConfig = {
 
 // Renders home page of a nextjs app (index.tsx)
 export default function Home() {
-	const [gridEntered, setGridEntered] = useState(false);
 	const [triggerNameEnter, setTriggerNameEnter] = useState(false);
 	const [triggerGridExit, setTriggerGridExit] = useState(false);
 	return (

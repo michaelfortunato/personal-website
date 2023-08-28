@@ -100,14 +100,6 @@ export default function Grid(props: any) {
 				cconfigs[i].duration + cconfigs[i].delay
 			);
 		}
-		const bingLiao = (width: number, height: number, numRows: number) => {
-			let deltaPx = height / numRows;
-			// 1px is equal to how many vh?
-			let deltaVh = (deltaPx * 100) / height;
-			// 1px is equal to how many vw?
-			let deltaVw = (deltaPx * 100) / width;
-			let numCols = Math.floor(width / deltaPx) + 1;
-		};
 
 		setNumColLines(nclines);
 		setRowConfigs(rconfigs);

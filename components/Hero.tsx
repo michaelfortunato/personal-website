@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
 import Grid from "@mui/material/Grid";
-import Description from "./Description.js";
+import Description from "./Description";
 import Name from "./Name";
 
 const StyledBanner = styled.div`
@@ -11,8 +11,6 @@ const StyledBanner = styled.div`
 
 export default function Hero(props: { triggerNameEnter: boolean }) {
 	let [nameEntered, setNameEntered] = useState(false);
-
-	console.log(`Animation status ${nameEntered}`);
 
 	return (
 		<Grid
