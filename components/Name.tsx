@@ -62,27 +62,29 @@ export default function Name(props: NameProps) {
 	}, []);
 
 	return (
-		isClient && (
-			<StyledName container justifyContent="center" columnSpacing={2.5}>
-				<Grid item style={{ display: "inline-block" }}>
-					{props.firstName.split("").map((_: any, index: number) => (
-						<Letter
-							key={index}
-							triggerNameEnter={props.startAnimation}
-							{...(firstNameConfigs.current[index] as any)}
-						/>
-					))}
-				</Grid>
-				<Grid item style={{ display: "inline-block" }}>
-					{props.lastName.split("").map((_: any, index: number) => (
-						<Letter
-							key={index + 7}
-							triggerNameEnter={props.startAnimation}
-							{...(lastNameConfigs.current[index] as any)}
-						/>
-					))}
-				</Grid>
-			</StyledName>
-		)
+		<>
+			{isClient && (
+				<StyledName container justifyContent="center" columnSpacing={2.5}>
+					<Grid item style={{ display: "inline-block" }}>
+						{props.firstName.split("").map((_: any, index: number) => (
+							<Letter
+								key={index}
+								triggerNameEnter={props.startAnimation}
+								{...(firstNameConfigs.current[index] as any)}
+							/>
+						))}
+					</Grid>
+					<Grid item style={{ display: "inline-block" }}>
+						{props.lastName.split("").map((_: any, index: number) => (
+							<Letter
+								key={index + 7}
+								triggerNameEnter={props.startAnimation}
+								{...(lastNameConfigs.current[index] as any)}
+							/>
+						))}
+					</Grid>
+				</StyledName>
+			)}
+		</>
 	);
 }
