@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 const StyledLetter = styled.span<any>`
 	position: relative;
 	display: inline-block;
+	will-change: transform;
 	animation-name: ${props =>
 		enterKeyframe(props.x_offset_enter, props.y_offset_enter)};
 	animation-duration: ${props => props.enter_duration}ms;
