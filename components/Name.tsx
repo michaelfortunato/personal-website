@@ -31,7 +31,7 @@ function configSetup(char: string, index: number) {
 		char: char,
 		XOffsetEnter: randomArcPoint(38).x, //((index % 2) == 0) ? 25 : -25;
 		YOffsetEnter: randomArcPoint(38).y, // ((index % 2) == 0) ? -75 : 75;
-		enterDuration: 300,
+		enterDuration: 450,
 		enterDelay: 3000
 	};
 }
@@ -56,9 +56,8 @@ export default function Name(props: NameProps) {
 	useEffect(() => {
 		setIsClient(true);
 		setTimeout(() => {
-			console.log("did I get hit");
 			props.onAnimationFinish(true);
-		}, 3000);
+		}, 3950);
 	}, []);
 
 	return (

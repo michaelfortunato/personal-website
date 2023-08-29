@@ -7,9 +7,8 @@ const defaultGridConfig = {
 	random: true,
 	numLines: 12,
 	offset: 0,
-	avgDuration: 150,
+	avgDuration: 200,
 	avgDelay: 1500,
-	duration: 750,
 	isDot: true
 };
 
@@ -21,7 +20,10 @@ export default function Home() {
 		<>
 			<AnimatePresence>
 				{!triggerGridExit && (
-					<motion.div exit={{ opacity: 0 }}>
+					<motion.div
+						exit={{ opacity: 0 }}
+						transition={{ type: "spring", duration: 2 }}
+					>
 						<Grid
 							setTriggerGridExit={setTriggerGridExit}
 							setTriggerNameEnter={setTriggerNameEnter}
