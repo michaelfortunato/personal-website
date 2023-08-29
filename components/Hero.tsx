@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
 import Grid from "@mui/material/Grid";
-import Description from "./Description.js";
+import Description from "./Description";
 import Name from "./Name";
 
 const StyledBanner = styled.div`
@@ -11,7 +11,6 @@ const StyledBanner = styled.div`
 
 export default function Hero(props: { triggerNameEnter: boolean }) {
 	let [nameEntered, setNameEntered] = useState(false);
-	console.log(`Did name enter here? ${props.triggerNameEnter}`);
 
 	return (
 		<Grid
@@ -20,15 +19,13 @@ export default function Hero(props: { triggerNameEnter: boolean }) {
 			justifyContent="center"
 			alignItems="center"
 		>
-			<Grid item style={{ maxWidth: 700 }}>
+			<Grid item>
 				<StyledBanner>
 					<Name
 						firstName="Michael"
 						lastName="Fortunato"
-						triggerNameEnter={props.triggerNameEnter}
-						nameEntered={nameEntered}
-						setNameEntered={setNameEntered}
-						location="/"
+						startAnimation={props.triggerNameEnter}
+						onAnimationFinish={setNameEntered}
 					/>
 					{nameEntered ? <Description /> : null}
 				</StyledBanner>

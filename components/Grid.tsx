@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Gridline from "./Gridline";
 
 const MIN_DURATION = 250;
-const MIN_DELAY = 300 + 1000;
+const MIN_DELAY = 1300;
 
 const StyledGrid = styled(motion.div)`
 	position: absolute;
@@ -16,6 +16,16 @@ const StyledGrid = styled(motion.div)`
 	overflow: hidden;
 `;
 
+function randn_bm(): number {
+	let u = 0,
+		v = 0;
+	while (u === 0) u = Math.random(); //Converting [0,1) to (0,1)
+	while (v === 0) v = Math.random();
+	let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+	num = num / 10.0 + 0.5; // Translate to 0 -> 1
+	if (num > 1 || num < 0) return randn_bm(); // resample between 0 and 1
+	return num;
+}
 function timing(
 	avgDuration: number,
 	avgDelay: number,
@@ -100,14 +110,6 @@ export default function Grid(props: any) {
 				cconfigs[i].duration + cconfigs[i].delay
 			);
 		}
-		const bingLiao = (width: number, height: number, numRows: number) => {
-			let deltaPx = height / numRows;
-			// 1px is equal to how many vh?
-			let deltaVh = (deltaPx * 100) / height;
-			// 1px is equal to how many vw?
-			let deltaVw = (deltaPx * 100) / width;
-			let numCols = Math.floor(width / deltaPx) + 1;
-		};
 
 		setNumColLines(nclines);
 		setRowConfigs(rconfigs);
@@ -115,11 +117,9 @@ export default function Grid(props: any) {
 		setWidth(width);
 		setHeight(height);
 
-		setTimeout(() => props.setTriggerNameEnter(true), gridEnterTimeout);
-		setTimeout(() => props.setTriggerGridExit(true), gridEnterTimeout + 250);
+		setTimeout(() => props.setTriggerNameEnter(true), gridEnterTimeout + 500);
+		setTimeout(() => props.setTriggerGridExit(true), gridEnterTimeout + 700);
 	}, []);
-
-	console.log(width);
 
 	return (
 		<>

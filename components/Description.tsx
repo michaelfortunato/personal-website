@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "@emotion/styled";
-import DescItem from "./DescItem.js";
+import DescItem from "./DescItem";
 
 const tags = [
 	"Software Engineering",
@@ -17,25 +17,9 @@ const StyledDescription = styled.div`
 	justify-content: center;
 	color: #264653;
 	font-size: 22px;
-
-	opacity: 0;
-	&.fade-in-appear,
-	&.fade-in-enter {
-		opactiy: 0;
-	}
-	&.fade-in-appear-active,
-	&.fade-in-enter-active {
-		opacity: 1;
-		transition-property: all;
-		transition-duration: 1500ms;
-	}
-	&.fade-in-appear-done,
-	&.fade-in-enter-done {
-		opacity: 1;
-	}
 `;
 
-const Description = props => {
+const Description = () => {
 	const n = tags.length;
 
 	const movePercentage = (1 / n) * 100;
@@ -45,17 +29,20 @@ const Description = props => {
 	const moveTime = 2000; /* in ms */
 	const totalTime = moveTime * n;
 	const waitTime = moveTime;
-	const aniTags = tags.map((tag, index) => (
-		<DescItem
-			key={index}
-			tag={tag}
-			movePercentage={movePercentage}
-			totalTime={totalTime}
-			delay={waitTime * index}
-		/>
-	));
 
-	return <StyledDescription>{aniTags}</StyledDescription>;
+	return (
+		<StyledDescription>
+			{tags.map((tag, index) => (
+				<DescItem
+					key={index}
+					tag={tag}
+					movePercentage={movePercentage}
+					totalTime={totalTime}
+					delay={waitTime * index}
+				/>
+			))}
+		</StyledDescription>
+	);
 };
 
 export default Description;

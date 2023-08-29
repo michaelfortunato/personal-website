@@ -7,22 +7,23 @@ const defaultGridConfig = {
 	random: true,
 	numLines: 12,
 	offset: 0,
-	avgDuration: 150,
+	avgDuration: 200,
 	avgDelay: 1500,
-	duration: 750,
 	isDot: true
 };
 
 // Renders home page of a nextjs app (index.tsx)
 export default function Home() {
-	const [gridEntered, setGridEntered] = useState(false);
 	const [triggerNameEnter, setTriggerNameEnter] = useState(false);
 	const [triggerGridExit, setTriggerGridExit] = useState(false);
 	return (
 		<>
 			<AnimatePresence>
 				{!triggerGridExit && (
-					<motion.div exit={{ opacity: 0 }}>
+					<motion.div
+						exit={{ opacity: 0 }}
+						transition={{ type: "spring", duration: 2 }}
+					>
 						<Grid
 							setTriggerGridExit={setTriggerGridExit}
 							setTriggerNameEnter={setTriggerNameEnter}

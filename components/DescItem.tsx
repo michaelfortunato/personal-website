@@ -2,26 +2,24 @@ import React from "react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 
-const CaroselKeyframe = movePercentage =>
+const CaroselKeyframe = (movePercentage: number) =>
 	keyframes`
         0% {
             opacity: 0;
-            transform: translateY(-30px);
+            transform: translateY(-20px);
         }
         
         ${movePercentage / 2}% {
             opacity:1;
-            transform: translateY(-10px);
+            transform: translateY(0px);
         }
         ${movePercentage}%, 100%{
             opacity:0;
-            transform: translateY(30px);
+            transform: translateY(40px);
         }
 `;
-const StyledDescItem = styled.div`
+const StyledDescItem = styled.div<any>`
 	position: absolute;
-	/*left: 50%;
-    top: 50%;*/
 	opacity: 0;
 	transform: translateY(-30px);
 
@@ -31,7 +29,7 @@ const StyledDescItem = styled.div`
 		${props => props.totalTime}ms ease-in-out ${props => props.delay}ms infinite;
 `;
 
-const DescItem = props => (
+const DescItem = (props: any) => (
 	<StyledDescItem
 		movePercentage={props.movePercentage}
 		totalTime={props.totalTime}
