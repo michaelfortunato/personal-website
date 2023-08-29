@@ -32,7 +32,7 @@ function configSetup(char: string, index: number) {
 		XOffsetEnter: randomArcPoint(38).x, //((index % 2) == 0) ? 25 : -25;
 		YOffsetEnter: randomArcPoint(38).y, // ((index % 2) == 0) ? -75 : 75;
 		enterDuration: 450,
-		enterDelay: 3000
+		enterDelay: 3500
 	};
 }
 
