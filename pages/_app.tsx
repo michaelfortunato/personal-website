@@ -24,8 +24,8 @@ import { ScopedCssBaseline, Theme } from "@mui/material";
 
 const StyledRoot = styled(motion.div)`
 	position: absolute;
-	width: 100vw;
-	height: 100vh;
+	min-width: 100vw;
+	min-height: 100vh;
 `;
 
 // TODO: Properly type this
@@ -112,7 +112,6 @@ export default function App({
 			jssStyles?.parentElement?.removeChild(jssStyles);
 		}
 	}, []);
-	console.log(pathname);
 	return (
 		<CacheProvider value={emotionCache}>
 			<Head>

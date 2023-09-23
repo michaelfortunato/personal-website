@@ -15,6 +15,12 @@ a {
   box-sizing: border-box;
 }
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
 .cls-1,
 .cls-3 {
   fill: none;

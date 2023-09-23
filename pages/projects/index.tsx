@@ -1,8 +1,12 @@
+/* eslint-disable react/react-in-jsx-scope -- Unaware of jsxImportSource */
+/** @jsxImportSource @emotion/react */
 import React, { ReactElement, PropsWithChildren, useState } from "react";
 import Tile from "@components/Projects/Tile";
+import { css } from "@emotion/react";
 import {
 	Backdrop,
 	Box,
+	Button,
 	Grid,
 	IconButton,
 	Paper,
@@ -13,9 +17,15 @@ import clayiPhone from "@public/projects/clay-iphone.svg";
 import clayMBP from "@public/projects/clay-mbp.svg";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import FlipIcon from "@mui/icons-material/Flip";
-import { motion } from "framer-motion";
+import {
+	LayoutGroup,
+	motion,
+	useMotionValueEvent,
+	useScroll
+} from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
 
 function TileFactory(
 	leftHandComponent: ReactElement,
@@ -42,7 +52,7 @@ function TileFactory(
 					>
 						<Grid container>
 							<Grid container item xs={12} justifyContent={"right"}>
-								<Grid xs="auto">
+								<Grid item xs="auto">
 									<Link
 										href={"personal-website"}
 										onClick={e => {
@@ -73,6 +83,29 @@ function TileFactory(
 	);
 }
 
+function TileFactory2(
+	leftHandComponent: ReactElement,
+	rightHandComponent: ReactElement
+) {
+	return (
+		<Paper className="p-4">
+			<div className="flex justify-end">
+				<div className="flex-initial">
+					<Link href={"personal-website"}>
+						<IconButton aria-label="View full">
+							<FlipIcon />
+						</IconButton>
+					</Link>
+				</div>
+			</div>
+			<div className="flex gap-4">
+				<div className="flex-1">{leftHandComponent}</div>
+				<div className="flex-1">{rightHandComponent}</div>
+			</div>
+		</Paper>
+	);
+}
+
 function WebsiteTile() {
 	const leftHandSize = () => (
 		<Box sx={{ paddingLeft: 4 }}>
@@ -95,44 +128,103 @@ function WebsiteTile() {
 		</Box>
 	);
 	const rightHandside = () => (
-		<>
-			<Grid item xs={3}>
+		<div className="flex">
+			<div className="flex-initial">
 				<Image src={clayiPhone} alt="clay-iphone.svgb" />
-			</Grid>
-			<Grid item xs={1} />
-			<Grid item xs={2}>
+			</div>
+			<div className="flex-initial">
 				<Image src={clayMBP} alt="clay-mbp.svgb" />
-			</Grid>
-		</>
+			</div>
+		</div>
 	);
-	return TileFactory(leftHandSize(), rightHandside());
+	return TileFactory2(leftHandSize(), rightHandside());
 }
 
 export function Layout({ children }: PropsWithChildren<{}>) {
-	return (
-		<div style={{ padding: "30px", overflowX: "hidden" }}>
-			<Paper
-				style={{ minHeight: "100vh" }}
-				component={motion.div}
-				layoutId="page"
-			>
-				{children}
-			</Paper>
-		</div>
-	);
-}
-
-export default function Projects() {
 	return (
 		<Grid
 			container
 			alignItems="center"
 			justifyContent="center"
-			style={{ height: "100vh" }}
+			style={{ height: "100vh", paddingLeft: 20, paddingRight: 20 }}
 		>
-			<Grid item lg={4} md={4} xs={12}>
-				{WebsiteTile()}
+			<Grid item xs={12}>
+				<Paper component={motion.div} layoutId="page" sx={{ padding: 10 }}>
+					{children}
+				</Paper>
 			</Grid>
 		</Grid>
+	);
+}
+
+export default function Projects() {
+	const [offset, setOffset] = useState(0);
+	const { scrollY } = useScroll();
+	useMotionValueEvent(scrollY, "change", latest => {
+		console.log("Page scroll: ", latest);
+	});
+	console.log(offset % 3);
+	console.log((offset + 1) % 3);
+	console.log((offset + 2) % 3);
+	const bing = [
+		<motion.div layout key={1} layoutId="1">
+			{WebsiteTile()}
+		</motion.div>,
+		<motion.div layoutId="2" layout key={2}>
+			{WebsiteTile()}
+		</motion.div>,
+		<motion.div layout layoutId="3" key={3}>
+			{WebsiteTile()}
+		</motion.div>
+	];
+	return (
+		<div className="flex">
+			<div className="flex-1" />
+			<div className="flex-initial container relative">
+				<div
+					className="absolute"
+					css={css`
+						transform: translateY(0vh);
+					`}
+				>
+					<div
+						css={css`
+							transform: translateY(-50%);
+						`}
+					>
+						<WebsiteTile />
+					</div>
+				</div>
+				<div
+					className="absolute"
+					css={css`
+						transform: translateY(50vh);
+					`}
+				>
+					<div
+						css={css`
+							transform: translateY(-50%);
+						`}
+					>
+						<WebsiteTile />
+					</div>
+				</div>
+				<div
+					className="absolute"
+					css={css`
+						transform: translateY(100vh);
+					`}
+				>
+					<div
+						css={css`
+							transform: translateY(-50%);
+						`}
+					>
+						<WebsiteTile />
+					</div>
+				</div>
+			</div>
+			<div className="flex-1" />
+		</div>
 	);
 }
