@@ -1,6 +1,12 @@
 /* eslint-disable react/react-in-jsx-scope -- Unaware of jsxImportSource */
 /** @jsxImportSource @emotion/react */
-import React, { ReactElement, PropsWithChildren, useState } from "react";
+import React, {
+	ReactElement,
+	PropsWithChildren,
+	useState,
+	useRef,
+	useEffect
+} from "react";
 import Tile from "@components/Projects/Tile";
 import { css } from "@emotion/react";
 import {
@@ -25,7 +31,11 @@ import {
 } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
+import {
+	ArrowDownward,
+	ArrowUpward,
+	PreviewOutlined
+} from "@mui/icons-material";
 
 function TileFactory(
 	leftHandComponent: ReactElement,
@@ -157,74 +167,104 @@ export function Layout({ children }: PropsWithChildren<{}>) {
 	);
 }
 
+function mod(n: number, m: number) {
+	return ((n % m) + m) % m;
+	// return n % m;
+}
+
+function Tile2(offset: number, prevOffset: number, base: number) {
+	if (prevOffset + base == 1 && offset + base == 0) {
+		<motion.div className="absolute" key={base}>
+			<div
+				css={css`
+					top: -50vh;
+					transform: translateY(-50%);
+				`}
+			>
+				<WebsiteTile />
+			</div>
+		</motion.div>;
+	} else if (prevOffset + base == 0 && offset + base == 1) {
+		<motion.div className="absolute" key={base}>
+			<div
+				css={css`
+					top: 150vh;
+					transform: translateY(-50%);
+				`}
+			>
+				<WebsiteTile />
+			</div>
+		</motion.div>;
+	} else {
+		return (
+			<motion.div
+				className="absolute"
+				key={base}
+				animate={{ y: `${mod(offset + base, 5) * 50 - 50}vh` }}
+			>
+				<div
+					css={css`
+						transform: translateY(-50%);
+					`}
+				>
+					<WebsiteTile />
+				</div>
+			</motion.div>
+		);
+	}
+}
+
 export default function Projects() {
 	const [offset, setOffset] = useState(0);
 	const { scrollY } = useScroll();
 	useMotionValueEvent(scrollY, "change", latest => {
 		console.log("Page scroll: ", latest);
 	});
-	console.log(offset % 3);
-	console.log((offset + 1) % 3);
-	console.log((offset + 2) % 3);
-	const bing = [
-		<motion.div layout key={1} layoutId="1">
-			{WebsiteTile()}
-		</motion.div>,
-		<motion.div layoutId="2" layout key={2}>
-			{WebsiteTile()}
-		</motion.div>,
-		<motion.div layout layoutId="3" key={3}>
-			{WebsiteTile()}
-		</motion.div>
-	];
+	const prevOffset = useRef(0);
+	console.log("----");
+	console.log(prevOffset.current);
+	console.log(offset);
+	console.log("----");
+	useEffect(() => {
+		prevOffset.current = offset;
+	}, [offset]);
+
 	return (
-		<div className="flex">
+		<div className="flex overflow-hidden">
 			<div className="flex-1" />
 			<div className="flex-initial container relative">
-				<div
-					className="absolute"
-					css={css`
-						transform: translateY(0vh);
-					`}
-				>
-					<div
-						css={css`
-							transform: translateY(-50%);
-						`}
-					>
-						<WebsiteTile />
+				<LayoutGroup>
+					{[...Array(5).keys()].map((i: number) => {
+						return Tile2(prevOffset.current, offset, i);
+					})}
+				</LayoutGroup>
+			</div>
+			<div className="flex-1">
+				<div className="flex flex-col justify-center items-center h-[100vh]">
+					<div className="flex-initial">
+						<IconButton
+							onClick={() => {
+								if (offset - 1 < 0) {
+									setOffset(4);
+								} else {
+									setOffset((offset - 1) % 5);
+								}
+							}}
+						>
+							<ArrowUpward />
+						</IconButton>
 					</div>
-				</div>
-				<div
-					className="absolute"
-					css={css`
-						transform: translateY(50vh);
-					`}
-				>
-					<div
-						css={css`
-							transform: translateY(-50%);
-						`}
-					>
-						<WebsiteTile />
-					</div>
-				</div>
-				<div
-					className="absolute"
-					css={css`
-						transform: translateY(100vh);
-					`}
-				>
-					<div
-						css={css`
-							transform: translateY(-50%);
-						`}
-					>
-						<WebsiteTile />
+					<div className="flex-initial">
+						<IconButton
+							onClick={() => {
+								setOffset((offset + 1) % 5);
+							}}
+						>
+							<ArrowDownward />
+						</IconButton>
 					</div>
 				</div>
 			</div>
-			<div className="flex-1" />
 		</div>
 	);
 }
