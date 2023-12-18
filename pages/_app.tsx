@@ -24,8 +24,8 @@ import { ScopedCssBaseline, Theme } from "@mui/material";
 
 const StyledRoot = styled(motion.div)`
 	position: absolute;
-	width: 100vw;
-	height: 100vh;
+	min-width: 100vw;
+	min-height: 100vh;
 `;
 
 // TODO: Properly type this
@@ -122,11 +122,13 @@ export default function App({
 			</Head>
 			<main ref={mainRef}>
 				<ThemeProvider theme={pageConfigs[pathname].theme}>
-					<Navbar
-						routes={userRoutes}
-						currentPage={pathname}
-						mainRef={mainRef}
-					/>
+					{!pathname.includes("projects") || router.pathname == "/projects" ? (
+						<Navbar
+							routes={userRoutes}
+							currentPage={pathname}
+							mainRef={mainRef}
+						/>
+					) : null}
 					<StyledRoot
 						animate={{
 							...pageConfigs[pathname].transition,

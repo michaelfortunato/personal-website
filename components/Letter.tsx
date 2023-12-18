@@ -4,15 +4,10 @@ import { keyframes } from "@emotion/react";
 import { motion } from "framer-motion";
 
 // TODO: Type later when we decide how to deal with emotion
-const StyledLetter = styled.span<any>`
+const StyledLetter = styled(motion.span)<any>`
 	position: relative;
 	display: inline-block;
 	will-change: transform;
-	animation-name: ${props =>
-		enterKeyframe(props.x_offset_enter, props.y_offset_enter)};
-	animation-duration: ${props => props.enter_duration}ms;
-	animation-delay: ${props => props.enter_delay}ms;
-	animation-fill-mode: forwards;
 	transform: translate(
 		${props => props.x_offset_enter}vw,
 		${props => props.y_offset_enter}vh
@@ -39,10 +34,16 @@ export default function Letter(props: {
 }) {
 	return (
 		<StyledLetter
+			layout
+			animate={{
+				transform: `translate(0, 0)`
+			}}
+			transition={{
+				duration: props.enterDuration / 1000,
+				delay: props.enterDelay / 1000
+			}}
 			x_offset_enter={props.XOffsetEnter}
 			y_offset_enter={props.YOffsetEnter}
-			enter_duration={props.enterDuration}
-			enter_delay={props.enterDelay}
 		>
 			{props.char}
 		</StyledLetter>

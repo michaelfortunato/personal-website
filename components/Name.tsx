@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import Letter from "./Letter";
 import Grid from "@mui/material/Grid";
+import { LayoutGroup } from "framer-motion";
 
 const StyledName = styled(Grid)`
     font-size: 56px;
@@ -65,22 +66,26 @@ export default function Name(props: NameProps) {
 			{isClient && (
 				<StyledName container justifyContent="center" columnSpacing={2.5}>
 					<Grid item style={{ display: "inline-block" }}>
-						{props.firstName.split("").map((_: any, index: number) => (
-							<Letter
-								key={index}
-								triggerNameEnter={props.startAnimation}
-								{...(firstNameConfigs.current[index] as any)}
-							/>
-						))}
+						<LayoutGroup>
+							{props.firstName.split("").map((_: any, index: number) => (
+								<Letter
+									key={index}
+									triggerNameEnter={props.startAnimation}
+									{...(firstNameConfigs.current[index] as any)}
+								/>
+							))}
+						</LayoutGroup>
 					</Grid>
 					<Grid item style={{ display: "inline-block" }}>
-						{props.lastName.split("").map((_: any, index: number) => (
-							<Letter
-								key={index + 7}
-								triggerNameEnter={props.startAnimation}
-								{...(lastNameConfigs.current[index] as any)}
-							/>
-						))}
+						<LayoutGroup>
+							{props.lastName.split("").map((_: any, index: number) => (
+								<Letter
+									key={index + 7}
+									triggerNameEnter={props.startAnimation}
+									{...(lastNameConfigs.current[index] as any)}
+								/>
+							))}
+						</LayoutGroup>
 					</Grid>
 				</StyledName>
 			)}
