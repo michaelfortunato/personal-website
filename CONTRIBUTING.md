@@ -1,6 +1,6 @@
 # AI Policy
 
-I am a firm believer in the below policy from [MrIceman](https://github.com/MrIceman/), and I encourage everyone to copy the same policy in their CONTRIBUTING.md file.
+I am a firm believer in the below policy from [MrIceman](https://github.com/MrIceman/), and I encourage everyone to copy the same policy to their CONTRIBUTING.md file.
 
 ## AI not welcome here
 

@@ -119,57 +119,30 @@ function TileFactory2(
   );
 }
 
-function WebsiteTile() {
-  const leftHandSize = () => (
-    <Box sx={{ paddingLeft: 4 }}>
-      <Grid container spacing={6}>
-        <Grid item xs={12}>
-          <Typography variant="h2">Personal Website</Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <Typography variant="body1">
-            This website is a public vault of my life, and there is heavy emphasis on intricate animations.
-            It was built using NextJS. 10/18: I need a cool looking about section...
-            The NYC train animation is good and I did have a timeline extending out of it using GSAP
-            that I kinda liked but I should go back into Adobe Affect Effects and make something nicer looking.
-            This is all too late for grad school apps. Too bad! TODO: I think what I should do is create a work in progress
-            sign on the page just for presentation sake and get the blog set up. That should take about an evening.
-          </Typography>
-        </Grid>
-      </Grid>
-    </Box>
-  );
-  const rightHandside = () => (
-    <div className="flex">
-      <div className="flex-initial">
-        <Image src={clayiPhone} alt="clay-iphone.svgb" />
-      </div>
-      <div className="flex-initial">
-        <Image src={clayMBP} alt="clay-mbp.svgb" />
+
+
+export function Layout(props: PropsWithChildren<{ url: string }>) {
+  const { url, children } = props;
+  return (
+    <div
+      className="flex flex-col justify-center items-center container"
+      style={{ height: "100vh", paddingLeft: 20, paddingRight: 20 }}
+    >
+      <div>
+        <Paper component={motion.div} layoutId="page" sx={{ padding: 10 }}>
+          <div className="flex flex-row-reverse">
+            {url}
+          </div>
+          <div>
+            {children}
+          </div>
+        </Paper>
       </div>
     </div>
   );
-  return TileFactory(leftHandSize(), rightHandside());
 }
 
-export function Layout({ children }: PropsWithChildren<{}>) {
-  return (
-    <Grid
-      container
-      alignItems="center"
-      justifyContent="center"
-      style={{ height: "100vh", paddingLeft: 20, paddingRight: 20 }}
-    >
-      <Grid item xs={12}>
-        <Paper component={motion.div} layoutId="page" sx={{ padding: 10 }}>
-          {children}
-        </Paper>
-      </Grid>
-    </Grid>
-  );
-}
-// https://codesandbox.io/s/charming-smoke-6smztk?file=/src/CarouselContents.jsx:1684-1692
-
+/// https://codesandbox.io/s/charming-smoke-6smztk?file=/src/CarouselContents.jsx:1684-1692
 function Tile2(offset: number, prevOffset: number, base: number) {
   if (prevOffset + base == 1 && offset + base == 0) {
     <motion.div className="absolute" key={base}>
@@ -212,61 +185,77 @@ function Tile2(offset: number, prevOffset: number, base: number) {
   }
 }
 
-const START_selected = 0
-const END_selected = 4
-
-function calculateWindow(index: number, length: number) {
-  if (index == 0) {
-    return {
-      "top": (length - 1),
-      "center": 0,
-      "bottom": 1,
-    }
-  } else if (index == length - 1) {
-    return {
-      "top": index - 1,
-      "center": index,
-      "right": 1,
-    }
-  }
-  return {
-    "top": index - 1,
-    "center": index,
-    "right": index + 1,
-  }
+function WebsiteTile() {
+  const leftHandSize = () => (
+    <Box sx={{ paddingLeft: 4 }}>
+      <Grid container spacing={6}>
+        <Grid item xs={12}>
+          <Typography variant="h2">Personal Website</Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography variant="body1">
+            This website is a public vault of my life, and there is heavy emphasis on intricate animations.
+            It was built using NextJS. 10/18: I need a cool looking about section...
+            The NYC train animation is good and I did have a timeline extending out of it using GSAP
+            that I kinda liked but I should go back into Adobe Affect Effects and make something nicer looking.
+            This is all too late for grad school apps. Too bad! TODO: I think what I should do is create a work in progress
+            sign on the page just for presentation sake and get the blog set up. That should take about an evening.
+          </Typography>
+        </Grid>
+      </Grid>
+    </Box>
+  );
+  const rightHandside = () => (
+    <div className="flex">
+      <div className="flex-initial">
+        <Image src={clayiPhone} alt="clay-iphone.svgb" />
+      </div>
+      <div className="flex-initial">
+        <Image src={clayMBP} alt="clay-mbp.svgb" />
+      </div>
+    </div>
+  );
+  return TileFactory(leftHandSize(), rightHandside());
 }
 
-// Direction is indicated by sign
-function calculateDistance(x2: number, x1: number, length: number) {
-  return Math.abs(x2 - x1) % length
+function BlogTile() {
+  return (
+    <div className="flex justify-center">
+      <Typography variant="h2"> Blog</Typography>
+    </div>
+  )
 }
 
 export default function Projects() {
   const [selected, setSelected] = useState(0);
+  const tiles = [<WebsiteTile />, <BlogTile />]
+  const numTiles = tiles.length
 
   return (
     <div className="flex overflow-hidden" >
-      <div>
-
-      </div>
       <div className="flex-1" />
-      <div className="flex-initial flex flex-col justify-center">
-        <motion.div className="container" key={selected}
-          animate={{ opacity: 1 }}
-        >
-          <WebsiteTile />
-        </motion.div>
+      <div className="flex-[2] flex flex-col justify-center">
+        <AnimatePresence>
+          <motion.div className="container" key={selected}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {tiles[selected]}
+          </motion.div>
+        </AnimatePresence>
       </div>
       <div className="flex-1">
         <div className="flex flex-col justify-center items-center h-[100vh]">
           <div className="flex-initial">
             <IconButton
+              disabled={selected == 0}
               onClick={() => setSelected(selected - 1)}>
               <ArrowUpward />
             </IconButton>
           </div>
           <div className="flex-initial">
             <IconButton
+              disabled={selected == numTiles - 1}
               onClick={() => setSelected(selected + 1)}>
               <ArrowDownward />
             </IconButton>
