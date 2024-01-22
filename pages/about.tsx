@@ -80,31 +80,5 @@ export default function About() {
 		setHasMounted(true);
 	}, []);
 
-	return (
-		<AboutRoot
-			initial={{ opacity: 0 }}
-			animate={{ opacity: 1, transition: { duration: 0.3 } }}
-			exit={{ opacity: 0, transition: { delay: 0.6, duration: 0.3 } }}
-		>
-			<StyledPage key={1}>
-				<Lottie
-					lottieRef={lottieRef}
-					style={!isXL ? { height: "100vh" } : {}}
-					loop
-					autoplay={false}
-					animationData={animationData}
-				/>
-				<div
-					ref={triggerAniRef}
-					style={{
-						opacity: 0,
-						position: "absolute",
-						left: "50%",
-						top: "20%"
-					}}
-				/>
-			</StyledPage>
-			{/* <About2 blurbs={props.blurbs} triggerTlIntro={triggerTlIntro} key={2} /> */}
-		</AboutRoot>
-	);
+	return <div />;
 }
