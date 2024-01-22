@@ -1,10 +1,6 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
-import gsap from "gsap";
-import { CustomEase } from "gsap/dist/CustomEase";
-
-gsap.registerPlugin(CustomEase);
 
 const animation = (
 	isRow: boolean,

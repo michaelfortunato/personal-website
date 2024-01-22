@@ -9,7 +9,6 @@ import { Twirl as Hamburger } from "hamburger-react";
 import Divider from "@mui/material/Divider";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { gsap } from "gsap";
 
 const StyledNavbar = styled.div`
 	${({ theme }) => `color: #fff;`}
@@ -95,106 +94,10 @@ const StyledLine = styled.line`
 	stroke-width: 6;
 	stroke-miterlimit: 10;
 `;
-const CloseButton = props => {
-	const circleRef = useRef(null);
-	const leftLineRef = useRef(null);
-	const rightLineRef = useRef(null);
-	const tl = useRef(null);
-	const [mouseOver, setMouseOver] = useState(null);
-	const [mouseDown, setMouseDown] = useState(null);
-	useEffect(() => {
-		const circleLength = circleRef.current.getTotalLength();
-		const lineLength = leftLineRef.current.getTotalLength();
-		tl.current = gsap
-			.timeline()
-			.fromTo(
-				leftLineRef.current,
-				{ strokeDasharray: lineLength, strokeDashoffset: lineLength },
-				{ strokeDashoffset: 0, duration: 0.2 },
-				"<1.1"
-			)
-			.fromTo(
-				rightLineRef.current,
-				{ strokeDasharray: lineLength, strokeDashoffset: lineLength },
-				{ strokeDashoffset: 0, duration: 0.2 },
-				"<.2"
-			)
-			.fromTo(
-				circleRef.current,
-				{ strokeDasharray: circleLength, strokeDashoffset: circleLength },
-				{ strokeDashoffset: 0 },
-				"<.4"
-			);
-	}, []);
-	useEffect(() => {
-		if (mouseDown) {
-			gsap.to(leftLineRef.current, { scale: 0.9, transformOrigin: "50% 50%" });
-			gsap.to(rightLineRef.current, { scale: 0.9, transformOrigin: "50% 50%" });
-		}
-		if (!mouseDown && mouseDown !== null) {
-			console.log("ok");
-			gsap.to(leftLineRef.current, { scale: 1, transformOrigin: "50% 50%" });
-			gsap.to(rightLineRef.current, { scale: 1, transformOrigin: "50% 50%" });
-		}
-	}, [mouseDown]);
-
-	useEffect(() => {
-		if (mouseOver) {
-			gsap.to(leftLineRef.current, { scale: 1.2, transformOrigin: "50% 50%" });
-			gsap.to(rightLineRef.current, { scale: 1.2, transformOrigin: "50% 50%" });
-		}
-		if (!mouseOver && mouseOver !== null) {
-			gsap.to(leftLineRef.current, { scale: 1, transformOrigin: "50% 50%" });
-			gsap.to(rightLineRef.current, { scale: 1, transformOrigin: "50% 50%" });
-		}
-	}, [mouseOver]);
-	return (
-		<StyledCloseButton
-			onMouseOver={() => setMouseOver(true)}
-			onMouseLeave={() => setMouseOver(false)}
-			onMouseDown={() => setMouseDown(true)}
-			onMouseUp={() => setMouseDown(false)}
-			onClick={() => props.setIsVisible(false)}
-		>
-			<svg
-				version="1.1"
-				id="Layer_1"
-				width="80px"
-				height="100px"
-				viewBox="-10 0 201 201"
-			>
-				<StyledCircle ref={circleRef} cx="91" cy="91" rx="91" ry="91" />
-				<StyledLine
-					ref={leftLineRef}
-					x1="56.1"
-					y1="125.6"
-					x2="126.8"
-					y2="54.9"
-				/>
-				<StyledLine
-					ref={rightLineRef}
-					x1="56.2"
-					y1="54.8"
-					x2="126.8"
-					y2="125.5"
-				/>
-			</svg>
-		</StyledCloseButton>
-	);
-};
 const NavContent = props => {
 	const theme = useTheme();
 	const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
 	const navContentRef = useRef(null);
-	const linksQuery = gsap.utils.selector(navContentRef);
-	useEffect(() => {
-		const links = linksQuery(".links");
-		gsap.fromTo(
-			links,
-			{ x: -400, y: -200, rotation: 30 },
-			{ x: 0, y: 0, rotation: 0, delay: 0.2, duration: 0.3, stagger: 0.08 }
-		);
-	}, []);
 	return (
 		<Grid ref={navContentRef} container style={{ height: "100%" }}>
 			<Grid
