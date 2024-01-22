@@ -4,16 +4,19 @@ import { getAllPostIds, getPostData, PostData } from "lib/posts";
 export default function Post({ postData }: { postData: PostData }) {
 	return (
 		<Layout>
-			{postData.title}
-			<br />
-			{postData.id}
-			<br />
-			{postData.date}
-			<br />
-			<div dangerouslySetInnerHTML={{ __html: postData.renderedContent }}></div>
+			<div className="bg-white h-full">
+				{postData.title}
+				<br />
+				{postData.id}
+				<br />
+				{postData.date}
+				<br />
+				<div
+					dangerouslySetInnerHTML={{ __html: postData.renderedContent }}
+				></div>
+			</div>
 		</Layout>
 	);
-	// TODO: Render a post
 }
 
 export async function getStaticPaths() {
