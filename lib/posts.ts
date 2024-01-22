@@ -1,6 +1,8 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
+import { remark } from "remark";
+import html from "remark-html";
 
 const postsDirectory = path.join(process.cwd(), "posts");
 
@@ -11,8 +13,14 @@ export type Post = {
 
 export type PostData = {
 	id: string;
+	renderedContent: string; // Rendered file contents, most likely as rendered html
 	[key: string]: any; // TODO: Type correctly
 };
+
+async function renderMarkdownToHTML(content: string) {
+	const contentObj = await remark().use(html).process(content);
+	return contentObj.toString();
+}
 
 export async function getPostData(id: string): Promise<PostData> {
 	const fullPath = path.join(postsDirectory, `${id}.md`);
@@ -20,9 +28,11 @@ export async function getPostData(id: string): Promise<PostData> {
 
 	// Use gray-matter to parse the post metadata section
 	const matterResult = matter(fileContents);
+	const renderedContent = await renderMarkdownToHTML(matterResult.content);
 
 	return {
 		id,
+		renderedContent,
 		...matterResult.data
 	};
 }

@@ -1,4 +1,4 @@
-import Layout from "@components/layout";
+import Layout from "../../../components/layout";
 import { getAllPostIds, getPostData, PostData } from "lib/posts";
 
 export default function Post({ postData }: { postData: PostData }) {
@@ -9,6 +9,8 @@ export default function Post({ postData }: { postData: PostData }) {
 			{postData.id}
 			<br />
 			{postData.date}
+			<br />
+			<div dangerouslySetInnerHTML={{ __html: postData.renderedContent }}></div>
 		</Layout>
 	);
 	// TODO: Render a post
