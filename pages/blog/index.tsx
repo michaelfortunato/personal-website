@@ -1,4 +1,13 @@
+import { RootPageTheme } from "pages/_app";
 import { getAllPosts, Post } from "../../lib/posts";
+
+export const BlogPageTheme: RootPageTheme = {
+	name: "Blog",
+	theme: null,
+	previewColor: "#14213D",
+	previewTextColor: "#e6af4b",
+	transition: { backgroundColor: "#14213D" }
+};
 
 export async function getStaticProps() {
 	const allPostsData = await getAllPosts();

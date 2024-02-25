@@ -11,8 +11,6 @@ import styled from "@emotion/styled";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
 import Navbar from "@components/Nav/Navbar";
-import axios from "axios";
-import { SWRConfig } from "swr";
 import {
 	aboutTheme,
 	blogTheme,
@@ -22,24 +20,18 @@ import {
 import createEmotionCache from "@components/createEmotionCache";
 import { ScopedCssBaseline, Theme } from "@mui/material";
 
-const StyledRoot = styled(motion.div)`
-	position: absolute;
-	min-width: 100vw;
-	min-height: 100vh;
-`;
-
 // TODO: Properly type this
 // TODO: Move these into their respective components
 
-type RootConfig = {
+export type RootPageTheme = {
 	name: string;
-	theme: Theme;
+	theme: Theme | null;
 	previewColor?: string; // TODO: REMOVE
 	previewTextColor?: string; // TODO: REMOVE
 	transition?: { backgroundColor: string }; // TODO: REMOVE
 };
 
-const pageConfigs: { [key: string]: RootConfig } = {
+const pageConfigs: { [key: string]: RootPageTheme } = {
 	"/": {
 		name: "Home",
 		theme: indexTheme,
@@ -83,12 +75,14 @@ const pageConfigs: { [key: string]: RootConfig } = {
 };
 
 // TODO: Properly type this
-const userRoutes: any = {};
+const userRoutes: { [key: string]: any } = {};
 Object.entries(pageConfigs).forEach(([url, obj]) => {
 	if (url !== "/_error" && url !== "/404" && url !== "/504") {
 		userRoutes[url] = obj;
 	}
 });
+
+console.log(userRoutes);
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -96,6 +90,27 @@ const clientSideEmotionCache = createEmotionCache();
 export interface MyAppProps extends AppProps {
 	emotionCache?: EmotionCache;
 }
+
+function IndexPage({ pageProps }: { pageProps: any }) {
+	return (
+		<>
+			<Navbar routes={userRoutes} currentPage={pathname} mainRef={mainRef} />
+			<motion.div
+				className="absolute min-h-screen min-w-[100vw]"
+				animate={{
+					...pageConfigs[pathname].transition,
+					transition: {
+						duration: 0.3
+					}
+				}}
+			>
+				<ScopedCssBaseline />
+				<Component key={pathname} {...pageProps} />
+			</motion.div>
+		</>
+	);
+}
+
 export default function App({
 	Component,
 	pageProps,
@@ -104,7 +119,11 @@ export default function App({
 	const mainRef = useRef(null);
 	const router = useRouter();
 	// TODO: Remove this nastiness below
-	const pathname = `/${router.pathname.split("/")[1]}`;
+	const pathname = router.pathname;
+	console.log(`THE PATH IS ${pathname}`);
+	console.log(`THE PATH IS ${router.pathname}`);
+	console.log(`THE PATH LENGTH IS ${router.pathname.split.length}`);
+
 	useEffect(() => {
 		// Remove the server-side injected CSS.
 		const jssStyles = document.querySelector("#jss-server-side");
@@ -116,31 +135,35 @@ export default function App({
 		<CacheProvider value={emotionCache}>
 			<Head>
 				<title>Michael Fortunato</title>
-				<meta name="description" content="Michael Fortunato Website" />
+				<meta name="description" content="Michael Fortunato's Website" />
 				<meta name="viewport" content="initial-scale=1, width=device-width" />
 				<link rel="icon" href="" />
 			</Head>
 			<main ref={mainRef}>
-				<ThemeProvider theme={pageConfigs[pathname].theme}>
-					{!pathname.includes("projects") || router.pathname == "/projects" ? (
+				{pathname in userRoutes ? (
+					<>
 						<Navbar
 							routes={userRoutes}
 							currentPage={pathname}
 							mainRef={mainRef}
 						/>
-					) : null}
-					<StyledRoot
-						animate={{
-							...pageConfigs[pathname].transition,
-							transition: {
-								duration: 0.3
-							}
-						}}
-					>
-						<ScopedCssBaseline />
-						<Component key={pathname} {...pageProps} />
-					</StyledRoot>
-				</ThemeProvider>
+
+						<motion.div
+							className="absolute min-h-screen min-w-[100vw]"
+							animate={{
+								...pageConfigs[pathname].transition,
+								transition: {
+									duration: 0.3
+								}
+							}}
+						>
+							<ScopedCssBaseline />
+							<Component key={pathname} {...pageProps} />
+						</motion.div>
+					</>
+				) : (
+					<Component key={pathname} {...pageProps} />
+				)}
 			</main>
 		</CacheProvider>
 	);

@@ -4,15 +4,21 @@ import matter from "gray-matter";
 import { remark } from "remark";
 import html from "remark-html";
 
-const postsDirectory = path.join(process.cwd(), "posts");
+export const postsDirectory = path.join(process.cwd(), "db");
 
-export type Post = {
+export type PostFrontMatter = {
 	id: string;
+	/// The title of the post
+	title: string;
+	/// The date when the post was created
+	createdTimestamp: string;
+	/// The date when the post was last modified
+	modifiedTimestamp: string;
 	[key: string]: any; // TODO: Type correctly
 };
 
 export type PostData = {
-	id: string;
+	frontMatter: PostFrontMatter;
 	renderedContent: string; // Rendered file contents, most likely as rendered html
 	[key: string]: any; // TODO: Type correctly
 };
@@ -29,11 +35,11 @@ export async function getPostData(id: string): Promise<PostData> {
 	// Use gray-matter to parse the post metadata section
 	const matterResult = matter(fileContents);
 	const renderedContent = await renderMarkdownToHTML(matterResult.content);
+	console.log(matterResult);
 
 	return {
-		id,
-		renderedContent,
-		...matterResult.data
+		frontMatter: matterResult.data as PostFrontMatter,
+		renderedContent
 	};
 }
 
@@ -57,28 +63,27 @@ export async function getAllPostIds() {
 	});
 }
 
-export async function getAllPosts(): Promise<Post[]> {
+export async function getAllPosts(): Promise<PostFrontMatter[]> {
 	// Get file names under /posts
 	const fileNames = fs.readdirSync(postsDirectory);
-	const allPostsData: { id: string; [key: string]: any }[] = fileNames.map(
-		fileName => {
-			// Remove ".md" from file name to get id
-			const id = fileName.replace(/\.md$/, "");
+	const allPostsData: PostFrontMatter[] = fileNames.map(fileName => {
+		// Remove ".md" from file name to get id
+		const id = fileName.replace(/\.md$/, "");
 
-			// Read markdown file as string
-			const fullPath = path.join(postsDirectory, fileName);
-			const fileContents = fs.readFileSync(fullPath, "utf8");
+		// Read markdown file as string
+		const fullPath = path.join(postsDirectory, fileName);
+		const fileContents = fs.readFileSync(fullPath, "utf8");
 
-			// Use gray-matter to parse the post metadata section
-			const matterResult = matter(fileContents);
+		// Use gray-matter to parse the post metadata section
+		const matterResult = matter(fileContents);
 
-			// Combine the data with the id
-			return {
-				id,
-				...matterResult.data
-			};
-		}
-	);
+		// Combine the data with the id
+		const postFrontMatter: PostFrontMatter = {
+			id,
+			...matterResult.data
+		} as PostFrontMatter; // Need to cast this
+		return postFrontMatter;
+	});
 	// Sort posts by date
 	return allPostsData.sort((a, b) => {
 		if (a.date < b.date) {

@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^13.4.19",
+    "@tailwindcss/typography": "^0.5.10",
     "@types/node": "18.14.0",
     "autoprefixer": "^10.4.16",
     "depcheck": "^1.4.7",
