@@ -91,26 +91,6 @@ export interface MyAppProps extends AppProps {
 	emotionCache?: EmotionCache;
 }
 
-function IndexPage({ pageProps }: { pageProps: any }) {
-	return (
-		<>
-			<Navbar routes={userRoutes} currentPage={pathname} mainRef={mainRef} />
-			<motion.div
-				className="absolute min-h-screen min-w-[100vw]"
-				animate={{
-					...pageConfigs[pathname].transition,
-					transition: {
-						duration: 0.3
-					}
-				}}
-			>
-				<ScopedCssBaseline />
-				<Component key={pathname} {...pageProps} />
-			</motion.div>
-		</>
-	);
-}
-
 export default function App({
 	Component,
 	pageProps,

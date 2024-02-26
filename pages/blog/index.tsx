@@ -1,5 +1,5 @@
 import { RootPageTheme } from "pages/_app";
-import { getAllPosts, Post } from "../../lib/posts";
+import { getAllPosts, PostFrontMatter } from "../../lib/posts";
 
 export const BlogPageTheme: RootPageTheme = {
 	name: "Blog",
@@ -16,11 +16,11 @@ export async function getStaticProps() {
 	};
 }
 
-function FeaturedPost(post: Post) {
+function FeaturedPost(post: PostFrontMatter) {
 	return <div className="shadow p-4 bg-white rounded">{post.id}</div>;
 }
 
-function FeaturedPosts({ posts }: { posts: Post[] }) {
+function FeaturedPosts({ posts }: { posts: PostFrontMatter[] }) {
 	return (
 		<div className="grid grid-cols-2 gap-4">
 			{posts.map(post => (
@@ -30,11 +30,11 @@ function FeaturedPosts({ posts }: { posts: Post[] }) {
 	);
 }
 
-function getFeaturedPosts(allPosts: Post[]) {
+function getFeaturedPosts(allPosts: PostFrontMatter[]) {
 	return allPosts.filter(_post => true);
 }
 
-export default function Blog({ posts }: { posts: Post[] }) {
+export default function Blog({ posts }: { posts: PostFrontMatter[] }) {
 	const featuredPosts = getFeaturedPosts(posts); // TODO: Decide which posts to feature
 	return (
 		<div className="flex flex-col justify-center items-center min-h-screen">

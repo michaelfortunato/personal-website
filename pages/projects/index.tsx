@@ -50,50 +50,35 @@ export function TileFactory(
 	const [isOpen, setIsOpen] = useState(false);
 	const router = useRouter();
 	return (
-		<div style={{ perspective: "40rem" }}>
-			<div
-				style={{
-					top: 0,
-					left: 0
-				}}
-				layoutId="page"
-				initial={false}
-				animate={isOpen ? { rotateY: 180 } : { rotateY: 0 }}
-				transition={{ duration: 0.35 }}
-			>
-				<div animate={isOpen ? { opacity: 0 } : { opacity: 1 }}>
-					<StyledTile>
-						<div className="flex flex-col gap-5">
-							<div className="flex">
-								<div className="flex-1">
-									<h2 className="text-5xl">{title}</h2>
-								</div>
-								<div className="flex-1 flex flex-row-reverse">
-									<Link
-										href={link}
-										onClick={e => {
-											setIsOpen(!isOpen);
-											e.preventDefault();
-											setTimeout(() => {
-												router.push(`/projects/${link}`);
-											}, 350);
-										}}
-									>
-										<IconButton aria-label="View full">
-											<FlipIcon />
-										</IconButton>
-									</Link>
-								</div>
-							</div>
-							<div className="flex gap-1">
-								<div className="flex-1">{leftHandComponent}</div>
-								<div className="flex-1">{rightHandComponent}</div>
-							</div>
-						</div>
-					</StyledTile>
+		<StyledTile>
+			<div className="flex flex-col gap-5">
+				<div className="flex">
+					<div className="flex-1">
+						<h2 className="text-5xl">{title}</h2>
+					</div>
+					<div className="flex-1 flex flex-row-reverse">
+						<Link
+							href={link}
+							onClick={e => {
+								setIsOpen(!isOpen);
+								e.preventDefault();
+								setTimeout(() => {
+									router.push(`/projects/${link}`);
+								}, 350);
+							}}
+						>
+							<IconButton aria-label="View full">
+								<FlipIcon />
+							</IconButton>
+						</Link>
+					</div>
+				</div>
+				<div className="flex gap-1">
+					<div className="flex-1">{leftHandComponent}</div>
+					<div className="flex-1">{rightHandComponent}</div>
 				</div>
 			</div>
-		</div>
+		</StyledTile>
 	);
 }
 
