@@ -38,9 +38,9 @@ import {
 	ArrowUpward,
 	PreviewOutlined
 } from "@mui/icons-material";
-import { useWheel } from "@use-gesture/react";
+import { Tile as WebsiteTile } from "./personal-website";
 
-function TileFactory(
+export function TileFactory(
 	leftHandComponent: ReactElement,
 	rightHandComponent: ReactElement
 ) {
@@ -96,29 +96,6 @@ function TileFactory(
 	);
 }
 
-function TileFactory2(
-	leftHandComponent: ReactElement,
-	rightHandComponent: ReactElement
-) {
-	return (
-		<Paper className="p-4">
-			<div className="flex justify-end">
-				<div className="flex-initial">
-					<Link href={"projects/personal-website"}>
-						<IconButton aria-label="View full">
-							<FlipIcon />
-						</IconButton>
-					</Link>
-				</div>
-			</div>
-			<div className="flex gap-4">
-				<div className="flex-1">{leftHandComponent}</div>
-				<div className="flex-1">{rightHandComponent}</div>
-			</div>
-		</Paper>
-	);
-}
-
 export function Layout(props: PropsWithChildren<{ url: string }>) {
 	const { url, children } = props;
 	return (
@@ -134,85 +111,6 @@ export function Layout(props: PropsWithChildren<{ url: string }>) {
 			</div>
 		</div>
 	);
-}
-
-/// https://codesandbox.io/s/charming-smoke-6smztk?file=/src/CarouselContents.jsx:1684-1692
-function Tile2(offset: number, prevOffset: number, base: number) {
-	if (prevOffset + base == 1 && offset + base == 0) {
-		<motion.div className="absolute" key={base}>
-			<div
-				css={css`
-					top: -50vh;
-					transform: translateY(-50%);
-				`}
-			>
-				<WebsiteTile />
-			</div>
-		</motion.div>;
-	} else if (prevOffset + base == 0 && offset + base == 1) {
-		<motion.div className="absolute" key={base}>
-			<div
-				css={css`
-					top: 150vh;
-					transform: translateY(-50%);
-				`}
-			>
-				<WebsiteTile />
-			</div>
-		</motion.div>;
-	} else {
-		return (
-			<motion.div
-				className="absolute"
-				key={base}
-				animate={{ y: `${(offset + base) * 50 - 50}vh` }}
-			>
-				<div
-					css={css`
-						transform: translateY(-50%);
-					`}
-				>
-					<WebsiteTile />
-				</div>
-			</motion.div>
-		);
-	}
-}
-
-function WebsiteTile() {
-	const leftHandSize = () => (
-		<Box sx={{ paddingLeft: 4 }}>
-			<Grid container spacing={6}>
-				<Grid item xs={12}>
-					<Typography variant="h2">Personal Website</Typography>
-				</Grid>
-				<Grid item xs={12}>
-					<Typography variant="body1">
-						This website is a public vault of my life, and there is heavy
-						emphasis on intricate animations. It was built using NextJS. 10/18:
-						I need a cool looking about section... The NYC train animation is
-						good and I did have a timeline extending out of it using GSAP that I
-						kinda liked but I should go back into Adobe Affect Effects and make
-						something nicer looking. This is all too late for grad school apps.
-						Too bad! TODO: I think what I should do is create a work in progress
-						sign on the page just for presentation sake and get the blog set up.
-						That should take about an evening.
-					</Typography>
-				</Grid>
-			</Grid>
-		</Box>
-	);
-	const rightHandside = () => (
-		<div className="flex">
-			<div className="flex-initial">
-				<Image src={clayiPhone} alt="clay-iphone.svgb" />
-			</div>
-			<div className="flex-initial">
-				<Image src={clayMBP} alt="clay-mbp.svgb" />
-			</div>
-		</div>
-	);
-	return TileFactory(leftHandSize(), rightHandside());
 }
 
 function BlogTile() {
@@ -232,10 +130,11 @@ export default function Projects() {
 		<div className="flex overflow-hidden">
 			<div className="flex-1" />
 			<div className="flex-[2] flex flex-col justify-center">
-				<AnimatePresence>
+				<AnimatePresence initial={false} mode="wait">
 					<motion.div
 						className="container"
 						key={selected}
+						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
 					>
@@ -247,16 +146,16 @@ export default function Projects() {
 				<div className="flex flex-col justify-center items-center h-[100vh]">
 					<div className="flex-initial">
 						<IconButton
-							disabled={selected == 0}
-							onClick={() => setSelected(selected - 1)}
+							disabled={selected == numTiles - 1}
+							onClick={() => setSelected(selected + 1)}
 						>
 							<ArrowUpward />
 						</IconButton>
 					</div>
 					<div className="flex-initial">
 						<IconButton
-							disabled={selected == numTiles - 1}
-							onClick={() => setSelected(selected + 1)}
+							disabled={selected == 0}
+							onClick={() => setSelected(selected - 1)}
 						>
 							<ArrowDownward />
 						</IconButton>
