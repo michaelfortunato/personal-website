@@ -1,52 +1,35 @@
-import { Box, Grid, Paper, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Layout, TileFactory } from ".";
-import Image from "next/image";
-import clayiPhone from "@public/projects/clay-iphone.svg";
-import clayMBP from "@public/projects/clay-mbp.svg";
 
 export function Tile() {
-	return <WebsiteTile />;
-}
-
-function WebsiteTile() {
-	const leftHandSize = () => (
-		<div className="container flex flex-col gap-4">
-			<div className="text-base">
-				This website is a public vault of my life, and there is heavy emphasis
-				on intricate animations. It was built using NextJS. 10/18: I need a cool
-				looking about section... The NYC train animation is good and I did have
-				a timeline extending out of it using GSAP that I kinda liked but I
-				should go back into Adobe Affect Effects and make something nicer
-				looking. This is all too late for grad school apps. Too bad! TODO: I
-				think what I should do is create a work in progress sign on the page
-				just for presentation sake and get the blog set up. That should take
-				about an evening.
-			</div>
-		</div>
-	);
-	const rightHandside = () => (
-		<div className="flex">
-			<div className="flex-initial">
-				<Image src={clayiPhone} alt="clay-iphone.svgb" />
-			</div>
-			<div className="flex-initial">
-				<Image src={clayMBP} alt="clay-mbp.svgb" />
-			</div>
-		</div>
-	);
 	return TileFactory(
-		"Personal Website",
-		leftHandSize(),
-		rightHandside(),
-		"personal-website"
+		"8 Bit Adder",
+		<TileLeftSide />,
+		<TileRightSide />,
+		"8-bit-adder"
 	);
 }
 
-export default function PersonalWebsite() {
+function TileLeftSide() {
 	return (
-		<Layout url="/projects/personal-website">
+		<div>
+			<div className="text-base">8 Bit Adder</div>
+		</div>
+	);
+}
+
+function TileRightSide() {
+	return (
+		<div>
+			<h1>This was my first electrical engineering project</h1>
+		</div>
+	);
+}
+
+export default function Page() {
+	return (
+		<Layout url="/projects/8-bit-adder">
 			<Link href="/projects">
 				<motion.h1 layout="position">Expanded</motion.h1>
 			</Link>
