@@ -50,8 +50,8 @@ export function TileFactory(
 	const [isOpen, setIsOpen] = useState(false);
 	const router = useRouter();
 	return (
-		<motion.div style={{ perspective: "40rem" }}>
-			<motion.div
+		<div style={{ perspective: "40rem" }}>
+			<div
 				style={{
 					top: 0,
 					left: 0
@@ -61,7 +61,7 @@ export function TileFactory(
 				animate={isOpen ? { rotateY: 180 } : { rotateY: 0 }}
 				transition={{ duration: 0.35 }}
 			>
-				<motion.div animate={isOpen ? { opacity: 0 } : { opacity: 1 }}>
+				<div animate={isOpen ? { opacity: 0 } : { opacity: 1 }}>
 					<StyledTile>
 						<div className="flex flex-col gap-5">
 							<div className="flex">
@@ -91,9 +91,9 @@ export function TileFactory(
 							</div>
 						</div>
 					</StyledTile>
-				</motion.div>
-			</motion.div>
-		</motion.div>
+				</div>
+			</div>
+		</div>
 	);
 }
 
@@ -129,21 +129,47 @@ export const wrap = (min: number, max: number, v: number) => {
 };
 
 export default function Projects() {
-	const [selected, setSelected] = useState(0);
+	const [[selected, direction], setPage] = useState([0, 0]);
 	const tiles = [<WebsiteTile />, <EightBitAdderTile />];
 	const numTiles = tiles.length;
 
+	const OFFSET = 300;
+	const variants = {
+		enter: (direction: number) => {
+			return {
+				y: direction > 0 ? OFFSET : -OFFSET,
+				opacity: 0
+			};
+		},
+		center: {
+			zIndex: 1,
+			y: 0,
+			opacity: 1
+		},
+		exit: (direction: number) => {
+			return {
+				zIndex: 0,
+				y: direction < 0 ? OFFSET : -OFFSET,
+				opacity: 0
+			};
+		}
+	};
 	return (
 		<div className="flex overflow-hidden">
 			<div className="flex-1" />
 			<div className="flex-[2] flex flex-col justify-center">
-				<AnimatePresence initial={false} mode="wait">
+				<AnimatePresence initial={false} custom={direction} mode="popLayout">
 					<motion.div
-						className="container"
 						key={selected}
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						exit={{ opacity: 0 }}
+						variants={variants}
+						custom={direction}
+						initial="enter"
+						animate="center"
+						exit="exit"
+						transition={{
+							y: { type: "spring", stiffness: 300, damping: 30 },
+							opacity: { duration: 0.2 }
+						}}
 					>
 						{tiles[selected]}
 					</motion.div>
@@ -154,7 +180,9 @@ export default function Projects() {
 					<div className="flex-initial">
 						<IconButton
 							disabled={selected == numTiles - 1}
-							onClick={() => setSelected(selected + 1)}
+							onClick={() => {
+								setPage([selected + 1, 1]);
+							}}
 						>
 							<ArrowUpward />
 						</IconButton>
@@ -162,7 +190,9 @@ export default function Projects() {
 					<div className="flex-initial">
 						<IconButton
 							disabled={selected == 0}
-							onClick={() => setSelected(selected - 1)}
+							onClick={() => {
+								setPage([selected - 1, -1]);
+							}}
 						>
 							<ArrowDownward />
 						</IconButton>
