@@ -38,6 +38,7 @@ import {
 	ArrowUpward,
 	PreviewOutlined
 } from "@mui/icons-material";
+
 import { Tile as WebsiteTile } from "./personal-website";
 import { Tile as EightBitAdderTile } from "./8-bit-adder";
 
@@ -52,9 +53,9 @@ export function TileFactory(
 	return (
 		<StyledTile>
 			<div className="flex flex-col gap-5">
-				<div className="flex">
+				<div className="flex p2">
 					<div className="flex-1">
-						<h2 className="text-5xl">{title}</h2>
+						<h2 className="text-5xl p-4">{title}</h2>
 					</div>
 					<div className="flex-1 flex flex-row-reverse">
 						<Link
@@ -74,7 +75,7 @@ export function TileFactory(
 					</div>
 				</div>
 				<div className="flex gap-1">
-					<div className="flex-1">{leftHandComponent}</div>
+					<div className="flex-1 p-4">{leftHandComponent}</div>
 					<div className="flex-1">{rightHandComponent}</div>
 				</div>
 			</div>
@@ -99,9 +100,26 @@ export function StyledTile({
 export function Layout(props: PropsWithChildren<{ url: string }>) {
 	const { url, children } = props;
 	return (
-		<div className="h-screen">
-			<motion.div className="bg-neutral-50 p-10" layoutId="page">
-				<div className="flex flex-row-reverse">{url}</div>
+		<div className="h-screen bg-neutral-50 p-10">
+			<motion.div layoutId="page">
+				<div className="flex flex-row-reverse">
+					<Link href="/projects">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							strokeWidth={1.5}
+							stroke="currentColor"
+							className="w-6 h-6 cursor-pointer"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+							/>
+						</svg>
+					</Link>
+				</div>
 				<div>{children}</div>
 			</motion.div>
 		</div>
