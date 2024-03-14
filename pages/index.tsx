@@ -13,7 +13,7 @@ const defaultGridConfig = {
 };
 
 // Renders home page of a nextjs app (index.tsx)
-export default function Home() {
+export default function Home({ commitHash }: { commitHash: string }) {
 	const [triggerNameEnter, setTriggerNameEnter] = useState(false);
 	const [triggerGridExit, setTriggerGridExit] = useState(false);
 	return (
@@ -33,6 +33,26 @@ export default function Home() {
 				)}
 			</AnimatePresence>
 			<Hero triggerNameEnter={triggerNameEnter} />
+			<div>The commit hash: {commitHash}</div>
 		</>
 	);
+}
+
+// This function gets called at build time on server-side.
+// It won't be called on client-side, so you can even do
+// direct database queries.
+export async function getStaticProps() {
+	let commitHash = "";
+
+	if (process.env.VERCEL) {
+		commitHash = process.env.VERCEL_GIT_COMMIT_SHA as string;
+	}
+
+	// By returning { props: { posts } }, the Blog component
+	// will receive `posts` as a prop at build time
+	return {
+		props: {
+			commitHash
+		}
+	};
 }
