@@ -17,6 +17,7 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.14.3",
     "@use-gesture/react": "^10.3.0",
+    "@vercel/speed-insights": "^1.0.10",
     "axios": "^0.23.0",
     "framer-motion": "^10.12.2",
     "gray-matter": "^4.0.3",

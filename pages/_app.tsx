@@ -19,6 +19,7 @@ import {
 } from "@components/theme";
 import createEmotionCache from "@components/createEmotionCache";
 import { ScopedCssBaseline, Theme } from "@mui/material";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 // TODO: Properly type this
 // TODO: Move these into their respective components
@@ -120,6 +121,7 @@ export default function App({
 				<link rel="icon" href="" />
 			</Head>
 			<main ref={mainRef}>
+				<SpeedInsights /> {/* NOTE: For diagnostics*/}
 				{pathname in userRoutes ? (
 					<>
 						<Navbar
