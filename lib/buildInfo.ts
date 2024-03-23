@@ -2,7 +2,7 @@ function assertEnvVarExists(
 	value: unknown,
 	variableName: string
 ): asserts value is string {
-	if (typeof value !== "string" || value === null || value === undefined) {
+	if (value == "") || (typeof value !== "string" || value === null || value === undefined) {
 		throw new Error(`Environment variable "${variableName}" is not a string.`);
 	}
 }
