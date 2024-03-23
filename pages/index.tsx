@@ -4,7 +4,8 @@ import Hero from "@/components/Hero";
 import { AnimatePresence, motion } from "framer-motion";
 import { BuildInfo, getBuildInfo } from "lib/buildInfo";
 import { GetStaticProps } from "next";
-import { CodeBracketIcon } from "@heroicons/react/24/solid";
+import { CodeXml } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const defaultGridConfig = {
 	random: true,
@@ -23,7 +24,9 @@ const BuildInfo: React.FC<{ buildInfo: BuildInfo }> = ({ buildInfo }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	if (!isOpen) {
 		return (
-			<CodeBracketIcon onClick={() => setIsOpen(true)} className="h-24 w-24" />
+			<Button onClick={() => setIsOpen(true)}>
+				<CodeXml />
+			</Button>
 		);
 	}
 	return (
