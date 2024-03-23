@@ -1,6 +1,12 @@
 import "../styles/globals.css";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, {
+	useState,
+	useEffect,
+	useRef,
+	ReactElement,
+	ReactNode
+} from "react";
 import Head from "next/head";
 import { AppProps } from "next/app";
 
@@ -18,9 +24,10 @@ import {
 	projectsTheme
 } from "@/components/theme";
 import createEmotionCache from "@/components/createEmotionCache";
-import { ScopedCssBaseline, Theme } from "@mui/material";
+import { Theme } from "@mui/material";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { cn } from "lib/utils";
+import { NextPage } from "next";
 
 // TODO: Properly type this
 // TODO: Move these into their respective components
@@ -84,27 +91,26 @@ Object.entries(pageConfigs).forEach(([url, obj]) => {
 	}
 });
 
-console.log(userRoutes);
-
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
 
-export interface MyAppProps extends AppProps {
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+	getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type MyAppProps = AppProps & {
+	Component: NextPageWithLayout;
 	emotionCache?: EmotionCache;
-}
+};
 
 export default function App({
 	Component,
 	pageProps,
 	emotionCache = clientSideEmotionCache
 }: MyAppProps) {
-	const mainRef = useRef(null);
 	const router = useRouter();
 	// TODO: Remove this nastiness below
 	const pathname = router.pathname;
-	console.log(`THE PATH IS ${pathname}`);
-	console.log(`THE PATH IS ${router.pathname}`);
-	console.log(`THE PATH LENGTH IS ${router.pathname.split.length}`);
 
 	useEffect(() => {
 		// Remove the server-side injected CSS.
@@ -113,6 +119,7 @@ export default function App({
 			jssStyles?.parentElement?.removeChild(jssStyles);
 		}
 	}, []);
+
 	return (
 		<CacheProvider value={emotionCache}>
 			<Head>
@@ -136,7 +143,6 @@ export default function App({
 								}
 							}}
 						>
-							<ScopedCssBaseline />
 							<Component key={pathname} {...pageProps} />
 						</motion.div>
 					</>

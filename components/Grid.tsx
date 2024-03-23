@@ -1,31 +1,9 @@
 import React, { useState, useEffect } from "react";
-import styled from "@emotion/styled";
-import { motion } from "framer-motion";
 import Gridline from "./Gridline";
 
 const MIN_DURATION = 250;
 const MIN_DELAY = 1300;
 
-const StyledGrid = styled(motion.div)`
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100vw;
-	height: 100vh;
-	z-index: 1;
-	overflow: hidden;
-`;
-
-function randn_bm(): number {
-	let u = 0,
-		v = 0;
-	while (u === 0) u = Math.random(); //Converting [0,1) to (0,1)
-	while (v === 0) v = Math.random();
-	let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
-	num = num / 10.0 + 0.5; // Translate to 0 -> 1
-	if (num > 1 || num < 0) return randn_bm(); // resample between 0 and 1
-	return num;
-}
 function timing(
 	avgDuration: number,
 	avgDelay: number,
@@ -124,7 +102,7 @@ export default function Grid(props: any) {
 	return (
 		<>
 			{width !== 0 && height !== 0 && (
-				<StyledGrid>
+				<div className="absolute top-0 left-0 w-screen h-screen z-[1] overflow-hidden">
 					{[...Array(numRowLines)].map((_, i) => (
 						<Gridline
 							key={i}
@@ -161,7 +139,7 @@ export default function Grid(props: any) {
 							)[i + 1]}
 						/>
 					))}
-				</StyledGrid>
+				</div>
 			)}
 		</>
 	);
