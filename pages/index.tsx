@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Grid from "@/components/Grid";
 import Hero from "@/components/Hero";
 import { AnimatePresence, motion } from "framer-motion";
@@ -24,8 +24,8 @@ const BuildInfo: React.FC<{ buildInfo: BuildInfo }> = ({ buildInfo }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	if (!isOpen) {
 		return (
-			<Button onClick={() => setIsOpen(true)}>
-				<CodeXml />
+			<Button className="z-10" onClick={() => setIsOpen(true)}>
+				<CodeXml className="z-10" />
 			</Button>
 		);
 	}
