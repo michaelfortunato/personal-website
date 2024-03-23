@@ -3,9 +3,9 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Layout, TileFactory } from ".";
 import Image from "next/image";
-import clayiPhone from "@public/projects/clay-iphone.svg";
-import clayMBP from "@public/projects/clay-mbp.svg";
-import bundleSizes from "@public/projects/personal-website/bundle-sizes.png";
+import clayiPhone from "@/public/projects/clay-iphone.svg";
+import clayMBP from "@/public/projects/clay-mbp.svg";
+import bundleSizes from "@/public/projects/personal-website/bundle-sizes.png";
 
 export function Tile() {
 	return <WebsiteTile />;

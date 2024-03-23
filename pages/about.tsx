@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import Lottie, { LottieRef } from "lottie-react";
-import animationData from "@public/About_Page1_ISA-Loop.json";
+import animationData from "@/public/About_Page1_ISA-Loop.json";
 import styled from "@emotion/styled";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import About2 from "@components/About/About2";
-import { assetsURL } from "@utils/configurations";
+import About2 from "@/components/About/About2";
+import { assetsURL } from "@/utils/configurations";
 // import fs from "fs";
 
 const AboutRoot = styled(motion.div)`

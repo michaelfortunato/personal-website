@@ -10,14 +10,14 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import styled from "@emotion/styled";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
-import Navbar from "@components/Nav/Navbar";
+import Navbar from "@/components/Nav/Navbar";
 import {
 	aboutTheme,
 	blogTheme,
 	indexTheme,
 	projectsTheme
-} from "@components/theme";
-import createEmotionCache from "@components/createEmotionCache";
+} from "@/components/theme";
+import createEmotionCache from "@/components/createEmotionCache";
 import { ScopedCssBaseline, Theme } from "@mui/material";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 

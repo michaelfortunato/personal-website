@@ -7,7 +7,7 @@ This file is based on [keepachangelog.org](keepachangelog.org) and adheres to se
 
 ### Changed
 
-- Made `@components/Grid.js` into a typescript component file.
+- Made `@/components/Grid.js` into a typescript component file.
 
 ### Fixed
 

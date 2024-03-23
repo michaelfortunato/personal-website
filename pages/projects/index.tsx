@@ -19,8 +19,8 @@ import {
 	Typography
 } from "@mui/material";
 import Image from "next/image";
-import clayiPhone from "@public/projects/clay-iphone.svg";
-import clayMBP from "@public/projects/clay-mbp.svg";
+import clayiPhone from "@/public/projects/clay-iphone.svg";
+import clayMBP from "@/public/projects/clay-mbp.svg";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import FlipIcon from "@mui/icons-material/Flip";
 import {

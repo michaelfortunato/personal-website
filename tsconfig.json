@@ -15,10 +15,10 @@
 		"jsx": "preserve",
 		"baseUrl": "./",
 		"paths": {
-			"@components/*": ["components/*"],
-			"@styles/*": ["styles/*"],
-			"@public/*": ["public/*"],
-			"@utils/*": ["lib/utils/*"]
+			"@/components/*": ["components/*"],
+			"@/styles/*": ["styles/*"],
+			"@/public/*": ["public/*"],
+			"@/utils/*": ["lib/utils/*"]
 		},
 		"incremental": true
 	},
