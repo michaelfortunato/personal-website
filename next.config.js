@@ -28,6 +28,7 @@ module.exports = (phase, { defaultConfig }) => {
 		// On production builds, we should be are vars from
 		// whatever platform we are using right now its Vercel.
 		console.log("Setting up production env vars.");
+		console.log(`DEBUG: Dumping envs ${process.env}.`);
 		process.env.GIT_REPO_NAME = process.env.VERCEL_GIT_REPO_SLUG;
 		process.env.GIT_COMMIT_SHA = process.env.VERCEL_GIT_COMMIT_SHA;
 		process.env.GIT_COMMIT_BRANCH = process.env.VERCEL_COMMIT_REF;
