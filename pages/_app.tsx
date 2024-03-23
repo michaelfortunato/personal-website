@@ -20,6 +20,7 @@ import {
 import createEmotionCache from "@/components/createEmotionCache";
 import { ScopedCssBaseline, Theme } from "@mui/material";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { cn } from "lib/utils";
 
 // TODO: Properly type this
 // TODO: Move these into their respective components
@@ -120,15 +121,11 @@ export default function App({
 				<meta name="viewport" content="initial-scale=1, width=device-width" />
 				<link rel="icon" href="" />
 			</Head>
-			<main ref={mainRef}>
+			<main className={cn("min-h-screen bg-background font-sans antialiased")}>
 				<SpeedInsights /> {/* NOTE: For diagnostics*/}
 				{pathname in userRoutes ? (
 					<>
-						<Navbar
-							routes={userRoutes}
-							currentPage={pathname}
-							mainRef={mainRef}
-						/>
+						<Navbar routes={userRoutes} currentPage={pathname} />
 
 						<motion.div
 							className="absolute min-h-screen min-w-[100vw]"
