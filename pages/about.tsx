@@ -2,13 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import Lottie, { LottieRef } from "lottie-react";
 import animationData from "@/public/About_Page1_ISA-Loop.json";
 import styled from "@emotion/styled";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import About2 from "@/components/About/About2";
-import { assetsURL } from "@/utils/configurations";
-// import fs from "fs";
+import { NextPageWithLayout } from "./_app";
+import RootPageLayout from "@/components/RootPageLayout";
 
 const AboutRoot = styled(motion.div)`
 	width: 100%;
@@ -20,36 +17,12 @@ const StyledPage = styled(motion.div)`
 	height: 100vh;
 	position: relative;
 `;
-const TitleContainer = styled.div`
-	position: absolute;
-	top: 50%;
-	text-align: center;
-	width: 100%;
-	color: #fff;
-`;
-const PageFooter = styled(Grid)`
-	position: absolute;
-	top: 85vh;
-	color: white;
-`;
 
-const BlackTypography = styled(Typography)`
-	color: black;
-`;
-
-export default function About() {
+const Page: NextPageWithLayout = () => {
 	const lottieRef = useRef(null) as LottieRef;
-	const secondPageRef = useRef(null);
 	const [isXL, setIsXL] = useState(false);
 	const [hasMounted, setHasMounted] = useState(false);
 	const [triggerAniRef, isAniInView] = useInView({ initialInView: true });
-	// What are these below?
-	const [lastScrollY, setLastScrollY] = useState(0);
-	const [triggerTlIntro, setTriggerTlIntro] = useState(false);
-	const scrollTimer = useRef(null);
-	const About2Ref = useRef(null);
-
-	const [scrollStarted, setScrollStarted] = useState(false);
 
 	useEffect(() => {
 		if (hasMounted && lottieRef.current) {
@@ -107,4 +80,10 @@ export default function About() {
 			{/* <About2 blurbs={props.blurbs} triggerTlIntro={triggerTlIntro} key={2} /> */}
 		</AboutRoot>
 	);
-}
+};
+
+Page.getLayout = page => {
+	return <RootPageLayout>{page}</RootPageLayout>;
+};
+
+export default Page;

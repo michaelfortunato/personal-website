@@ -6,6 +6,8 @@ import { BuildInfo, getBuildInfo } from "lib/buildInfo";
 import { GetStaticProps } from "next";
 import { CodeXml } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { NextPageWithLayout } from "./_app";
+import RootPageLayout from "@/components/RootPageLayout";
 
 const defaultGridConfig = {
 	random: true,
@@ -40,7 +42,7 @@ const BuildInfo: React.FC<{ buildInfo: BuildInfo }> = ({ buildInfo }) => {
 };
 
 // Renders home page of a nextjs app (index.tsx)
-export default function Home({ buildInfo }: Props) {
+const Page: NextPageWithLayout<Props> = ({ buildInfo }: Props) => {
 	const [triggerNameEnter, setTriggerNameEnter] = useState(false);
 	const [triggerGridExit, setTriggerGridExit] = useState(false);
 	return (
@@ -65,7 +67,11 @@ export default function Home({ buildInfo }: Props) {
 			</div>
 		</>
 	);
-}
+};
+
+Page.getLayout = page => {
+	return <RootPageLayout>{page}</RootPageLayout>;
+};
 
 // This function gets called at build time on server-side.
 // It won't be called on client-side, so you can even do
@@ -79,3 +85,4 @@ export const getStaticProps: GetStaticProps = async () => {
 		}
 	};
 };
+export default Page;

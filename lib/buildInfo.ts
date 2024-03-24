@@ -24,17 +24,12 @@ export type Commit = {
  * @returns {Promise<Commit>}
  */
 export async function getCommitInfo(): Promise<Commit> {
-	// NOTE: This uses the environment variables populated
-	// by vercel, so if we were to switch providers we need to update this.
-	console.log(
-		"Vercel environment detected. Extracting variables for commit info..."
-	);
-	// Assert each required environment variable is a string.
+	// NOTE: These environment variables are prepoluated in next.config.js
+	// Assert each required environment variable is a non-empty string.
 	assertEnvVarExists(process.env.GIT_REPO_NAME, "GIT_REPO_NAME");
 	assertEnvVarExists(process.env.GIT_COMMIT_SHA, "GIT_COMMIT_SHA");
 	assertEnvVarExists(process.env.GIT_COMMIT_BRANCH, "GIT_COMMIT_BRANCH");
 
-	// If all checks pass, return the object.
 	return {
 		repo: process.env.GIT_REPO_NAME,
 		hash: process.env.GIT_COMMIT_SHA,

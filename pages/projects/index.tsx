@@ -1,46 +1,17 @@
 /* eslint-disable react/react-in-jsx-scope -- Unaware of jsxImportSource */
 /** @jsxImportSource @emotion/react */
-import React, {
-	ReactElement,
-	PropsWithChildren,
-	useState,
-	useRef,
-	useEffect,
-	ReactNode
-} from "react";
-import { css } from "@emotion/react";
-import {
-	Backdrop,
-	Box,
-	Button,
-	Grid,
-	IconButton,
-	Paper,
-	Typography
-} from "@mui/material";
-import Image from "next/image";
-import clayiPhone from "@/public/projects/clay-iphone.svg";
-import clayMBP from "@/public/projects/clay-mbp.svg";
-import OpenInFullIcon from "@mui/icons-material/OpenInFull";
+import { ReactElement, PropsWithChildren, useState, ReactNode } from "react";
+import { IconButton } from "@mui/material";
 import FlipIcon from "@mui/icons-material/Flip";
-import {
-	AnimatePresence,
-	LayoutGroup,
-	motion,
-	useMotionValueEvent,
-	useScroll,
-	useSpring
-} from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import {
-	ArrowDownward,
-	ArrowUpward,
-	PreviewOutlined
-} from "@mui/icons-material";
+import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
 
 import { Tile as WebsiteTile } from "./personal-website";
 import { Tile as EightBitAdderTile } from "./8-bit-adder";
+import { NextPageWithLayout } from "pages/_app";
+import RootPageLayout from "@/components/RootPageLayout";
 
 export function TileFactory(
 	title: string,
@@ -131,7 +102,7 @@ export const wrap = (min: number, max: number, v: number) => {
 	return ((((v - min) % rangeSize) + rangeSize) % rangeSize) + min;
 };
 
-export default function Projects() {
+const Page: NextPageWithLayout = () => {
 	const [[selected, direction], setPage] = useState([0, 0]);
 	const tiles = [<WebsiteTile />, <EightBitAdderTile />];
 	const numTiles = tiles.length;
@@ -204,4 +175,10 @@ export default function Projects() {
 			</div>
 		</div>
 	);
-}
+};
+
+Page.getLayout = page => {
+	return <RootPageLayout>{page}</RootPageLayout>;
+};
+
+export default Page;
