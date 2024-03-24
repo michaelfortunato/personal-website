@@ -11,20 +11,20 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { cn } from "lib/utils";
 import { NextPage } from "next";
 
-// Client-side cache, shared for the whole session of the user in the browser.
-// Deprecated, probably as we will move to style-jsx?
-const clientSideEmotionCache = createEmotionCache();
-
 export type GetLayout = (page: ReactElement) => ReactNode;
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
 	getLayout?: GetLayout;
 };
 
-type MyAppProps = AppProps & {
+export type MyAppProps = AppProps & {
 	Component: NextPageWithLayout;
 	emotionCache?: EmotionCache;
 };
+
+// Client-side cache, shared for the whole session of the user in the browser.
+// Deprecated, probably as we will move to style-jsx?
+const clientSideEmotionCache = createEmotionCache();
 
 export default function App({
 	Component,
