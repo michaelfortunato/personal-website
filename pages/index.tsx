@@ -4,10 +4,19 @@ import Hero from "@/components/Hero";
 import { AnimatePresence, motion } from "framer-motion";
 import { BuildInfo, getBuildInfo } from "lib/buildInfo";
 import { GetStaticProps } from "next";
-import { CodeXml } from "lucide-react";
+import { CodeXml, CornerDownRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NextPageWithLayout } from "./_app";
 import RootPageLayout from "@/components/RootPageLayout";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
 const defaultGridConfig = {
 	random: true,
@@ -23,7 +32,7 @@ type Props = {
 };
 
 const BuildInfo: React.FC<{ buildInfo: BuildInfo }> = ({ buildInfo }) => {
-	const [isOpen, setIsOpen] = useState(false);
+	const [isOpen, setIsOpen] = useState(true);
 	if (!isOpen) {
 		return (
 			<Button className="z-10" onClick={() => setIsOpen(true)}>
@@ -32,11 +41,38 @@ const BuildInfo: React.FC<{ buildInfo: BuildInfo }> = ({ buildInfo }) => {
 		);
 	}
 	return (
-		<div>
-			<div>The commit hash: {buildInfo.commitInfo.hash}</div>
-			<div>The commit branch: {buildInfo.commitInfo.branch}</div>
-			<div>The commit repo: {buildInfo.commitInfo.repo}</div>
-			<div>The build Timestamp: {buildInfo.buildTimestamp}</div>
+		<div className="flex justify-center md:justify-normal">
+			<div className="w-full md:w-2/12 border-2 rounded border-dashed border-foreground p-8 pt-2 m-2">
+				<h2 className="font-buildManifestHeading text-center text-4xl">
+					Build Info
+				</h2>
+				<Separator className="my-2 h-1 bg-foreground" />
+				<div className="flex flex-col gap-1">
+					<div className="flex justify-between font-medium">
+						<div className="uppercase italic">Commit Hash:</div>
+						<div>{buildInfo.commitInfo.hash}</div>
+					</div>
+					<div className="flex justify-between font-medium">
+						<div className="uppercase italic">Branch:</div>
+						<div>{buildInfo.commitInfo.branch}</div>
+					</div>
+					<div className="flex justify-between font-medium">
+						<div className="uppercase italic">Commit Hash:</div>
+						<div>{buildInfo.commitInfo.hash}</div>
+					</div>
+					<div className="flex justify-between font-medium">
+						<div className="uppercase italic">Repo:</div>
+						<div>{buildInfo.commitInfo.repo}</div>
+					</div>
+					<div className="flex justify-between font-medium">
+						<div className="uppercase italic">Build Timestamp:</div>
+					</div>
+					<div className="flex justify-between font-medium">
+						<CornerDownRight strokeWidth={1.5} />
+						<div>{buildInfo.buildTimestamp}</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	);
 };
@@ -62,7 +98,20 @@ const Page: NextPageWithLayout<Props> = ({ buildInfo }: Props) => {
 				)}
 			</AnimatePresence>
 			<Hero triggerNameEnter={triggerNameEnter} />
-			<div className="absolute bottom-0 right-0">
+			<Card className="absolute right-0 top-0">
+				<CardHeader>
+					<CardTitle>Card Title</CardTitle>
+					<CardDescription>Card Description</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<p>Card Content</p>
+				</CardContent>
+				<CardFooter>
+					<p>Card Footer</p>
+				</CardFooter>
+			</Card>
+
+			<div className="absolute bottom-0 left-0 w-full">
 				<BuildInfo buildInfo={buildInfo} />
 			</div>
 		</>

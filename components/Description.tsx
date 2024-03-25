@@ -1,23 +1,13 @@
 import React from "react";
-import styled from "@emotion/styled";
 import DescItem from "./DescItem";
 
 const tags = [
-	"Software Engineering",
-	"Statistical Machine Learning",
-	"Back-End Development",
-	"Complexity Theory",
-	"Full Stack Development",
-	"Front-End Development"
+	"Systems Developer",
+	"Interested in Compilers",
+	"Codes mostly in C and ASM",
+	"Interested in Operating Systems",
+	"Interested in Scheduling"
 ];
-
-const StyledDescription = styled.div`
-	position: relative;
-	display: flex;
-	justify-content: center;
-	color: #264653;
-	font-size: 22px;
-`;
 
 const Description = () => {
 	const n = tags.length;
@@ -31,7 +21,10 @@ const Description = () => {
 	const waitTime = moveTime;
 
 	return (
-		<StyledDescription>
+		<div
+			style={{ fontSize: "22px" }} // text-2xl is closest
+			className="relative flex justify-center text-[#264653]"
+		>
 			{tags.map((tag, index) => (
 				<DescItem
 					key={index}
@@ -41,7 +34,7 @@ const Description = () => {
 					delay={waitTime * index}
 				/>
 			))}
-		</StyledDescription>
+		</div>
 	);
 };
 

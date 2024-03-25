@@ -8,8 +8,9 @@ import { CacheProvider, EmotionCache } from "@emotion/react";
 
 import createEmotionCache from "@/components/createEmotionCache";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { cn } from "lib/utils";
+import { cn } from "@/lib/utils";
 import { NextPage } from "next";
+import { buildManfestHeadingFont } from "@/lib/fonts";
 
 export type GetLayout = (page: ReactElement) => ReactNode;
 
@@ -50,7 +51,12 @@ export default function App({
 				<meta name="viewport" content="initial-scale=1, width=device-width" />
 				<link rel="icon" href="" />
 			</Head>
-			<main className={cn("min-h-screen bg-background font-sans antialiased")}>
+			<main
+				className={cn(
+					"min-h-screen bg-background font-sans antialiased",
+					buildManfestHeadingFont.variable
+				)}
+			>
 				<SpeedInsights /> {/* NOTE: For diagnostics*/}
 				{getLayout(<Component {...pageProps} />)}
 			</main>
