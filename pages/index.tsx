@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Grid from "@/components/Grid";
 import Hero from "@/components/Hero";
 import { AnimatePresence, motion } from "framer-motion";
-import { BuildInfo, getBuildInfo } from "lib/buildInfo";
+import { BuildInfo, computeGithubURLs, getBuildInfo } from "lib/buildInfo";
 import { GetStaticProps } from "next";
 import { CodeXml, CornerDownRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import {
 	CardTitle
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
 
 const defaultGridConfig = {
 	random: true,
@@ -31,8 +32,18 @@ type Props = {
 	buildInfo: BuildInfo;
 };
 
-const BuildInfo: React.FC<{ buildInfo: BuildInfo }> = ({ buildInfo }) => {
+const BuildInfo: React.FC<{ buildInfo: BuildInfo; triggerFadeIn: boolean }> = ({
+	buildInfo: {
+		commitInfo: { repo, hash, branch },
+		buildTimestamp
+	},
+	triggerFadeIn
+}) => {
 	const [isOpen, setIsOpen] = useState(true);
+	const { repoURL, commitURL, branchURL } = useMemo(
+		() => computeGithubURLs({ repo, hash, branch }),
+		[repo, hash, branch]
+	);
 	if (!isOpen) {
 		return (
 			<Button className="z-10" onClick={() => setIsOpen(true)}>
@@ -41,39 +52,88 @@ const BuildInfo: React.FC<{ buildInfo: BuildInfo }> = ({ buildInfo }) => {
 		);
 	}
 	return (
-		<div className="flex justify-center md:justify-normal">
-			<div className="w-full md:w-2/12 border-2 rounded border-dashed border-foreground p-8 pt-2 m-2">
+		<motion.div
+			initial={{ opacity: 0 }}
+			animate={triggerFadeIn && { opacity: 1 }}
+			transition={{ type: "spring", duration: 7 }}
+			className="flex justify-center md:justify-normal"
+		>
+			<div className="md:min-w-[25%] min-w-2/12 border-4 rounded border-dotted border-foreground p-8 pt-4 m-2">
 				<h2 className="font-buildManifestHeading text-center text-4xl">
 					Build Info
 				</h2>
-				<Separator className="my-2 h-1 bg-foreground" />
+				<Separator className="my-2 bg-foreground" />
 				<div className="flex flex-col gap-1">
-					<div className="flex justify-between font-medium">
+					<div className="flex justify-between font-medium gap-x-6">
 						<div className="uppercase italic">Commit Hash:</div>
-						<div>{buildInfo.commitInfo.hash}</div>
+						<div>
+							<Link href={commitURL} target="_blank">
+								{hash}
+							</Link>
+							<motion.div
+								style={{ transformOrigin: "50%" }}
+								initial={{ scaleX: 0 }}
+								animate={
+									triggerFadeIn && {
+										scaleX: 0.1
+									}
+								}
+								transition={{ delay: 2 }}
+							>
+								<hr className="border-foreground" />
+							</motion.div>
+						</div>
 					</div>
-					<div className="flex justify-between font-medium">
+					<div className="flex justify-between font-medium gap-x-6">
 						<div className="uppercase italic">Branch:</div>
-						<div>{buildInfo.commitInfo.branch}</div>
+						<div>
+							<Link href={branchURL} target="_blank">
+								{branch}
+							</Link>
+							<motion.div
+								style={{ transformOrigin: "50%" }}
+								initial={{ scaleX: 0 }}
+								animate={
+									triggerFadeIn && {
+										scaleX: 0.1
+									}
+								}
+								transition={{ delay: 2 }}
+							>
+								<hr className="border-foreground" />
+							</motion.div>
+						</div>
 					</div>
-					<div className="flex justify-between font-medium">
-						<div className="uppercase italic">Commit Hash:</div>
-						<div>{buildInfo.commitInfo.hash}</div>
-					</div>
-					<div className="flex justify-between font-medium">
+					<div className="flex justify-between font-medium gap-x-6">
 						<div className="uppercase italic">Repo:</div>
-						<div>{buildInfo.commitInfo.repo}</div>
+						<div>
+							<Link href={repoURL} target="_blank">
+								{repo}
+							</Link>
+							<motion.div
+								style={{ transformOrigin: "50%" }}
+								initial={{ scaleX: 0 }}
+								animate={
+									triggerFadeIn && {
+										scaleX: 0.1
+									}
+								}
+								transition={{ delay: 2 }}
+							>
+								<hr className="border-foreground" />
+							</motion.div>
+						</div>
 					</div>
-					<div className="flex justify-between font-medium">
+					<div className="flex justify-between font-medium gap-x-6">
 						<div className="uppercase italic">Build Timestamp:</div>
 					</div>
 					<div className="flex justify-between font-medium">
 						<CornerDownRight strokeWidth={1.5} />
-						<div>{buildInfo.buildTimestamp}</div>
+						<div>{buildTimestamp}</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</motion.div>
 	);
 };
 
@@ -110,9 +170,8 @@ const Page: NextPageWithLayout<Props> = ({ buildInfo }: Props) => {
 					<p>Card Footer</p>
 				</CardFooter>
 			</Card>
-
 			<div className="absolute bottom-0 left-0 w-full">
-				<BuildInfo buildInfo={buildInfo} />
+				<BuildInfo buildInfo={buildInfo} triggerFadeIn={triggerGridExit} />
 			</div>
 		</>
 	);

@@ -1,9 +1,9 @@
-import React, { useRef } from "react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import { motion } from "framer-motion";
 
 // TODO: Type later when we decide how to deal with emotion
+// Why is animation smoother here than with tailwindcss? See stash
 const StyledLetter = styled(motion.span)<any>`
 	position: relative;
 	display: inline-block;

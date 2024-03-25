@@ -12,6 +12,26 @@ function assertEnvVarExists(
 	}
 }
 
+export function computeGithubURLs(commit: Commit) {
+	return {
+		repoURL: `https://github.com/michaelfortunato/${commit.repo}`,
+		commitURL: `https://github.com/michaelfortunato/${commit.repo}/commit/${commit.hash}`,
+		branchURL: `https://github.com/tree/${commit.branch}`
+	};
+}
+
+export function computeGithubCommitURL(repo: string, hash: string) {
+	return `https://github.com/michaelfortunato/${repo}/commit/${hash}`;
+}
+
+export function computeGithubRepoURL(repo: string) {
+	return `https://github.com/michaelfortunato/${repo}`;
+}
+
+export function computeGithubBranchURL(repo: string, branch: string) {
+	return `https://github.com/michaelfortunato/${repo}/tree/${branch}`;
+}
+
 // Define the expected structure of the Commit information.
 export type Commit = {
 	repo: string;
