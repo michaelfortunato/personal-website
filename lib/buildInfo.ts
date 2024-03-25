@@ -16,7 +16,7 @@ export function computeGithubURLs(commit: Commit) {
 	return {
 		repoURL: `https://github.com/michaelfortunato/${commit.repo}`,
 		commitURL: `https://github.com/michaelfortunato/${commit.repo}/commit/${commit.hash}`,
-		branchURL: `https://github.com/tree/${commit.branch}`
+		branchURL: `https://github.com/michaelfortunato/${commit.repo}/tree/${commit.branch}`
 	};
 }
 
