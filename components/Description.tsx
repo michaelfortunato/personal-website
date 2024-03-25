@@ -4,8 +4,9 @@ import DescItem from "./DescItem";
 const tags = [
 	"Systems Developer",
 	"Interested in Compilers",
-	"Codes mostly in C and ASM",
+	"Codes primarily in C",
 	"Interested in Operating Systems",
+	"Cares about Open Source",
 	"Interested in Scheduling"
 ];
 
