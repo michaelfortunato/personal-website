@@ -1,11 +1,11 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Grid from "@/components/Grid";
 import Hero from "@/components/Hero";
 import { AnimatePresence, motion } from "framer-motion";
 import { BuildInfo, computeGithubURLs, getBuildInfo } from "lib/buildInfo";
 import { GetStaticProps } from "next";
-import { CodeXml, CornerDownRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { CodeXml, CornerDownRight, Moon, Sun } from "lucide-react";
+import { Button, ButtonProps } from "@/components/ui/button";
 import { NextPageWithLayout } from "./_app";
 import RootPageLayout from "@/components/RootPageLayout";
 import {
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 
 const defaultGridConfig = {
 	random: true,
@@ -137,6 +138,33 @@ const BuildInfo: React.FC<{ buildInfo: BuildInfo; triggerFadeIn: boolean }> = ({
 	);
 };
 
+export type ModeToggleProps = React.ButtonHTMLAttributes<ButtonProps> & {};
+
+const ModeToggle = () => {
+	const { theme, setTheme } = useTheme();
+	const [mounted, setMounted] = useState(false);
+	// useEffect only runs on the client, so now we can safely show the UI
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	if (!mounted) {
+		return null;
+	}
+	console.log(theme);
+	return (
+		<Button
+			variant="ghost"
+			size="icon"
+			onClick={() => (theme == "light" ? setTheme("dark") : setTheme("light"))}
+		>
+			<Sun className="w-6 h-6 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+			<Moon className="absolute w-6 h-6 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+			<span className="sr-only">Toggle theme</span>
+		</Button>
+	);
+};
+
 // Renders home page of a nextjs app (index.tsx)
 const Page: NextPageWithLayout<Props> = ({ buildInfo }: Props) => {
 	const [triggerNameEnter, setTriggerNameEnter] = useState(false);
@@ -157,19 +185,10 @@ const Page: NextPageWithLayout<Props> = ({ buildInfo }: Props) => {
 					</motion.div>
 				)}
 			</AnimatePresence>
+			<div className="absolute top-0 right-0">
+				<ModeToggle />
+			</div>
 			<Hero triggerNameEnter={triggerNameEnter} />
-			<Card className="absolute right-0 top-0">
-				<CardHeader>
-					<CardTitle>Card Title</CardTitle>
-					<CardDescription>Card Description</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<p>Card Content</p>
-				</CardContent>
-				<CardFooter>
-					<p>Card Footer</p>
-				</CardFooter>
-			</Card>
 			<div className="absolute bottom-0 left-0 w-full">
 				<BuildInfo buildInfo={buildInfo} triggerFadeIn={triggerGridExit} />
 			</div>
