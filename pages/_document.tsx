@@ -9,7 +9,6 @@ import Document, {
 } from "next/document";
 import createEmotionServer from "@emotion/server/create-instance";
 import { AppType } from "next/app";
-import { indexTheme } from "@/components/theme";
 import createEmotionCache from "@/components/createEmotionCache";
 import { MyAppProps } from "./_app";
 
@@ -22,7 +21,6 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
 		<Html lang="en">
 			<Head>
 				{/* PWA primary color */}
-				<meta name="theme-color" content={indexTheme.palette.primary.main} />
 				<link rel="shortcut icon" href="/favicon.ico" />
 				<meta name="emotion-insertion-point" content="" />
 				{emotionStyleTags}
