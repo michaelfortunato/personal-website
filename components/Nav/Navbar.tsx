@@ -17,10 +17,14 @@ export type NavbarProps = {
 
 export default function Navbar(props: NavbarProps) {
 	const [isVisible, setIsVisible] = useState(false);
+	// TODO: const { theme } = useTheme();
 	return (
 		<div className="fixed z-50">
-			<div className="text-white p-6 fixed z-[1] inline-block">
-				<div>
+			<div className="p-6 fixed z-[1] inline-block">
+				<div
+					style={isVisible ? { color: "#FFFFFF" } : { color: "initial" }}
+					// transition={{ color: { duration: 1 } }}
+				>
 					<Hamburger
 						duration={0.2}
 						toggled={isVisible}
