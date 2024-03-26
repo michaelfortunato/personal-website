@@ -34,24 +34,6 @@ const pageConfigs: Record<string, RootPageStyle> = {
 		previewColor: "#14213D",
 		previewTextColor: "#e6af4b",
 		backgroundColor: "#14213D"
-	},
-	"/_error": {
-		name: "/_error",
-		previewColor: "#14213D",
-		previewTextColor: "#e6af4b",
-		backgroundColor: "#14213D"
-	},
-	"/404": {
-		name: "/404",
-		previewColor: "#14213D",
-		previewTextColor: "#e6af4b",
-		backgroundColor: "#14213D"
-	},
-	"/504": {
-		name: "/504",
-		previewColor: "#14213D",
-		previewTextColor: "#e6af4b",
-		backgroundColor: "#14213D"
 	}
 };
 
