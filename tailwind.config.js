@@ -51,6 +51,26 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        index: {
+          background: "#e6af4b",
+          foreground: "#264653",
+          foreground2: "rgba(230, 175, 75, 1)",
+        },
+        about: {
+          background: "#14213D",
+          foreground: "#e6af4b",
+          foreground2: "rgba(20, 33, 61, 1)",
+        },
+        projects: {
+          background: "#D5E5E5",
+          foreground: "#D5E5E5",
+          foreground2: "#e6af4b",
+        },
+        blog: {
+          background: "#14213D",
+          foreground: "#14213D",
+          foreground2: "#e6af4b",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
