@@ -1,5 +1,3 @@
-/* eslint-disable react/react-in-jsx-scope -- Unaware of jsxImportSource */
-/** @jsxImportSource @emotion/react */
 import { ReactElement, PropsWithChildren, useState, ReactNode } from "react";
 import { IconButton } from "@mui/material";
 import FlipIcon from "@mui/icons-material/Flip";
@@ -104,7 +102,7 @@ export const wrap = (min: number, max: number, v: number) => {
 
 const Page: NextPageWithLayout = () => {
   const [[selected, direction], setPage] = useState([0, 0]);
-  const tiles = [<WebsiteTile />, <EightBitAdderTile />];
+  const tiles = [<WebsiteTile key={1} />, <EightBitAdderTile key={2} />];
   const numTiles = tiles.length;
 
   const OFFSET = 300;
