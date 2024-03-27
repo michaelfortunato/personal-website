@@ -3,21 +3,21 @@ import Description from "@/components/Description";
 import Name from "@/components/Name";
 
 export default function Hero(props: { triggerNameEnter: boolean }) {
-	let [nameEntered, setNameEntered] = useState(false);
+  let [nameEntered, setNameEntered] = useState(false);
 
-	return (
-		<div className="h-[90vh] flex justify-center items-center">
-			<div>
-				<div className="relative top-[16%]">
-					<Name
-						firstName="Michael"
-						lastName="Fortunato"
-						startAnimation={props.triggerNameEnter}
-						onAnimationFinish={setNameEntered}
-					/>
-					{nameEntered ? <Description /> : null}
-				</div>
-			</div>
-		</div>
-	);
+  return (
+    <div className="flex h-[90vh] items-center justify-center">
+      <div>
+        <div className="relative top-[16%]">
+          <Name
+            firstName="Michael"
+            lastName="Fortunato"
+            startAnimation={props.triggerNameEnter}
+            onAnimationFinish={setNameEntered}
+          />
+          {nameEntered ? <Description /> : null}
+        </div>
+      </div>
+    </div>
+  );
 }

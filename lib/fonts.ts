@@ -4,7 +4,7 @@ import { Graduate } from "next/font/google";
 
 // If loading a variable font, you don't need to specify the font weight
 export const buildManfestHeadingFont = Graduate({
-	weight: "400",
-	subsets: ["latin"],
-	variable: "--build-manifest-heading"
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--build-manifest-heading",
 });
