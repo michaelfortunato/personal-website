@@ -54,9 +54,10 @@ export default function App({
       </Head>
       <ThemeProvider
         attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
+        defaultTheme="light"
+        // defaultTheme="system"
+        // enableSystem
+        // disableTransitionOnChange
       >
         <main
           className={cn(
