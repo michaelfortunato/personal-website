@@ -9,7 +9,7 @@ import {
 function Header(frontMatter: PostFrontMatter) {
   return (
     <div>
-      <h1>{frontMatter.title}</h1>
+      <h1 className="text-xl">{frontMatter.title}</h1>
       <br />
       <i>Created on</i>: {frontMatter.createdTimestamp}
     </div>
@@ -19,11 +19,7 @@ function Header(frontMatter: PostFrontMatter) {
 function Footer() {
   return (
     <div>
-      <p className="prose-2xl font-extrabold">Further Reading</p>
-      <div className="flex">
-        <div className="flex-1">h</div>
-        <div className="flex-1">h</div>
-      </div>
+      <div className="flex"></div>
     </div>
   );
 }
@@ -34,11 +30,9 @@ export default function Post({ postData }: { postData: PostData }) {
       <div className="flex h-full justify-center bg-white">
         <div className="prose flex flex-col gap-4">
           <Header {...postData.frontMatter} />
-          <hr />
           <div
             dangerouslySetInnerHTML={{ __html: postData.renderedContent }}
           ></div>
-          <hr />
           <Footer />
         </div>
       </div>

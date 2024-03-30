@@ -16,14 +16,8 @@ function WebsiteTile() {
     <div className="container flex flex-col gap-4">
       <div className="text-base">
         This website is a public vault of my life, and there is heavy emphasis
-        on intricate animations. It was built using NextJS. 10/18: I need a cool
-        looking about section... The NYC train animation is good and I did have
-        a timeline extending out of it using GSAP that I kinda liked but I
-        should go back into Adobe Affect Effects and make something nicer
-        looking. This is all too late for grad school apps. Too bad! TODO: I
-        think what I should do is create a work in progress sign on the page
-        just for presentation sake and get the blog set up. That should take
-        about an evening.
+        on intricate animations. It was built using NextJS, TailwindCSS, and
+        Framer Motion.
       </div>
     </div>
   );
@@ -45,7 +39,7 @@ function WebsiteTile() {
   );
 }
 
-export default function PersonalWebsite() {
+export default function Page() {
   return (
     <Layout url="/projects/personal-website">
       <div className="flex justify-center">
@@ -54,20 +48,16 @@ export default function PersonalWebsite() {
       <div className="mt-4 flex flex-col items-center gap-2">
         <div className="prose">
           <p>
-            What is there to say? This website has been around for years. It
-            uses a bunch of different technologies, like NextJS, GSAP, raw CSS
-            animations, Framer Motion, Tailwind CSS. The first page takes awhile
-            to load. I think it has to do with all gsap stuff on the about page.
-            I did a bundle analyzer.
+            This uses a bunch of different technologies, like NextJS, GSAP, raw
+            CSS animations, Framer Motion, Tailwind CSS. The first page takes
+            awhile to load. I thought it had to do with the large JS payload. I
+            did a bundle analyzer.
           </p>
           <h2>Bundle Analysis</h2>
           <p>
-            At first I blamed AWS cold starts. Indeed, the time to first load is
-            the slow part, once that aws image is hot, my website loads quickly
-            on my friends phone. Still, I know I am running Material UI,
-            Tailwind CSS, GSAP, and Framer Motion, so there is alot of
-            redundancy. I might experiment on the dev branch by removing the
-            About page and seeing how the time to first byte fairs.
+            While these sizes are not ideal, it turns out AWS cold starts were
+            to blame. After switching to Vercel, the time to first contentful
+            paint is in good UX range.
           </p>
           <div className="flex justify-center">
             <Image

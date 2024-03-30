@@ -4,7 +4,14 @@ import Hero from "@/components/Hero";
 import { AnimatePresence, motion } from "framer-motion";
 import { BuildInfo, computeGithubURLs, getBuildInfo } from "lib/buildInfo";
 import { GetStaticProps } from "next";
-import { CodeXml, CornerDownRight, Moon, Sun } from "lucide-react";
+import {
+  BookA,
+  CodeXml,
+  CornerDownRight,
+  Moon,
+  NotebookText,
+  Sun,
+} from "lucide-react";
 import { Button, ButtonProps } from "@/components/ui/button";
 import { NextPageWithLayout } from "./_app";
 import RootPageLayout from "@/components/RootPageLayout";
@@ -18,7 +25,15 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
+import Github from "@/public/github-mark/github-mark.svg";
 import { useTheme } from "next-themes";
+import Image from "next/image";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const defaultGridConfig = {
   random: true,
@@ -186,7 +201,49 @@ const Page: NextPageWithLayout<Props> = ({ buildInfo }: Props) => {
         )}
       </AnimatePresence>
       <div className="absolute right-0 top-0">
-        <ModeToggle />
+        {/* <ModeToggle /> */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={triggerGridExit && { opacity: 1 }}
+          transition={{ type: "spring", duration: 7 }}
+          className="flex gap-8 p-6"
+        >
+          <div>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button size="icon" variant="ghost">
+                    <Link href="/Resume.pdf" target="_blank">
+                      <BookA />
+                    </Link>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>View My Resume</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          <div>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button size="icon" variant="ghost">
+                    <Link
+                      href="https://github.com/michaelfortunato"
+                      target="_blank"
+                    >
+                      <Image src={Github} alt="Social source forge link" />
+                    </Link>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>View my code forge</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        </motion.div>
       </div>
       <Hero triggerNameEnter={triggerNameEnter} />
       <div className="absolute bottom-0 left-0 w-full">
