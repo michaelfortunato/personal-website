@@ -5,6 +5,7 @@ import Head from "next/head";
 import { AppProps } from "next/app";
 
 import { CacheProvider, EmotionCache } from "@emotion/react";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 import createEmotionCache from "@/components/createEmotionCache";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -66,6 +67,7 @@ export default function App({
           )}
         >
           {getLayout(<Component {...pageProps} />)}
+          <GoogleAnalytics gaId="G-PG5ZXTMN4Z" />
         </main>
       </ThemeProvider>
       <SpeedInsights /> {/* NOTE: For diagnostics*/}
