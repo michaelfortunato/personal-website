@@ -24,7 +24,15 @@ COMMIT_MSG_FILE=$1
 COMMIT_SOURCE=$2
 SHA1=$3
 
-/usr/bin/perl -i.bak -ne 'print unless(m/^. Please enter the commit message/..m/^#$/)' "$COMMIT_MSG_FILE"
+echo "HIIIIII"
+echo $COMMIT_SOURCE
+
+if test "$COMMIT_SOURCE" = "message"; then
+	# TODO: Do we want to warn on error here? Doubtful
+	exit 0
+elif test -z "$COMMIT_SOURCE"; then
+	convco commit --interactive -- --dry-run
+fi
 
 # case "$COMMIT_SOURCE,$SHA1" in
 #  ,|template,)
