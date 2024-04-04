@@ -25,5 +25,3 @@
 COMMIT_MSG_FILE=$1
 
 cat $COMMIT_MSG_FILE | convco check --from-stdin
-
-echo "gud"
