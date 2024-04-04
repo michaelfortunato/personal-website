@@ -6,8 +6,11 @@ import sys
 ## This hook is called with the following parameters:
 print("Running pre-commit hook...")
 
+result = subprocess.run(["git", "diff", "--staged", "--name-only"], capture_output=True, text=True)
+staged_files = result.stdout.splitlines()
+
 # TODO: Cannot get ANSI escape codes to be emmited. No colors :((
-result = subprocess.run(["npm", "run", "format:check"], capture_output=True, text=True)
+result = subprocess.run(["npm", "run", "format:check", "--"] + staged_files, capture_output=True, text=True)
 if result.returncode != 0:
   print("Run prettier on the below files or add them to .prettier ignore before commiting:")
   print(result.stdout)

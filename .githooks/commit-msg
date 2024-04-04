@@ -21,7 +21,7 @@
 # 	echo >&2 Duplicate Signed-off-by lines.
 # 	exit 1
 # }
-
+echo "Running commit-msg hook..."
 COMMIT_MSG_FILE=$1
 
 cat $COMMIT_MSG_FILE | convco check --from-stdin
