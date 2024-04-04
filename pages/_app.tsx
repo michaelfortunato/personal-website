@@ -66,8 +66,10 @@ export default function App({
             buildManfestHeadingFont.variable,
           )}
         >
-          {getLayout(<Component {...pageProps} />)}
-          <GoogleAnalytics gaId="G-PG5ZXTMN4Z" />
+          <>
+            {getLayout(<Component {...pageProps} />)}
+            <GoogleAnalytics gaId="G-PG5ZXTMN4Z" />
+          </>
         </main>
       </ThemeProvider>
       <SpeedInsights /> {/* NOTE: For diagnostics*/}
