@@ -1,39 +1,45 @@
-import Layout from "../../../components/layout";
-import {
-  getAllPostIds,
-  getPostData,
-  PostData,
-  PostFrontMatter,
-} from "lib/posts";
+import Layout from "@/components/Blog/layout";
+import { getAllPostIds, getPostData, Post, Metadata } from "lib/posts";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
-function Header(frontMatter: PostFrontMatter) {
+function Header(metadata: Metadata) {
   return (
     <div>
-      <h1 className="text-xl">{frontMatter.title}</h1>
-      <br />
-      <i>Created on</i>: {frontMatter.createdTimestamp}
+      <h1>{metadata.title}</h1>
+      <div>
+        <div>
+          <i>Written</i>: {metadata.createdTimestamp}
+        </div>
+        <div className="flex gap-2">
+          {metadata.tags.map((value, index) => (
+            <Badge key={index}>{value}</Badge>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
 
-function Footer() {
+function Footer(metadata: Metadata) {
   return (
     <div>
-      <div className="flex"></div>
+      <div className="flex">
+        <div>Revision: {metadata.modifiedTimestamp}</div>
+      </div>
     </div>
   );
 }
 
-export default function Post({ postData }: { postData: PostData }) {
+export default function Post({ postData }: { postData: Post }) {
   return (
     <Layout>
-      <div className="flex h-full justify-center bg-white">
-        <div className="prose flex flex-col gap-4">
-          <Header {...postData.frontMatter} />
-          <div
-            dangerouslySetInnerHTML={{ __html: postData.renderedContent }}
-          ></div>
-          <Footer />
+      <div className="flex h-full justify-center">
+        <div className="prose flex flex-col gap-4 dark:prose-invert">
+          <Header {...postData.metadata} />
+          <div dangerouslySetInnerHTML={{ __html: postData.content }}></div>
+          <Separator />
+          <Footer {...postData.metadata} />
         </div>
       </div>
     </Layout>
