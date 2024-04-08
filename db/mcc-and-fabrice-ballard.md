@@ -1,9 +1,10 @@
 ---
-title: "MCC and the Inspiration of Fabrice Ballard"
 createdTimestamp: "2020-01-02"
 modifiedTimestamp: "2020-01-02"
-tags: "Compiler"
+tags: ["Compiler"]
 ---
+
+# MCC and the Inspiration of Fabrice Ballard
 
 MCC is an in progress C compiler which emphasizes
 a clean and performant front end design, rather than

@@ -1,5 +1,4 @@
 import { blogInitialsFont } from "@/lib/fonts";
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
 type Props = {
@@ -9,15 +8,16 @@ type Props = {
 
 function Header() {
   return (
-    <div className={`flex items-center justify-between py-2`}>
+    <div className={`flex items-center justify-between px-16`}>
       <Link
         href="/blog"
         className={`bold ${blogInitialsFont.className} text-4xl`}
       >
         mnf.
       </Link>
-      <div className="flex gap-1">
+      <div className="flex gap-4">
         <Link href="/on-work">On Work</Link>
+        <Link href="/on-quiet">On Quiet</Link>
         <ThemeSwitch />
       </div>
     </div>
@@ -27,7 +27,9 @@ function Header() {
 const Layout = ({ preview, children }: Props) => {
   return (
     <div className="container min-h-screen">
+      <div className="invisible h-16 w-full" />
       <Header />
+      <div className="invisible h-20 w-full" />
       <article>{children}</article>
     </div>
   );

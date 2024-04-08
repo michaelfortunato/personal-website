@@ -17,6 +17,8 @@ function isTag(obj: any): obj is Tag {
 }
 
 export type Metadata = {
+  /// for use by other articles for linking and informs the url of the article
+  id: string;
   /// the front matter title
   title: string;
   /// The date when the post was created
@@ -80,6 +82,7 @@ export async function getPostData(id: string): Promise<Post> {
     documentWithFrontMatter.content,
   );
   parsedDocument.data = {
+    id,
     ...parsedDocument.data,
     ...documentWithFrontMatter.data,
   };
@@ -117,6 +120,7 @@ export async function getAllPosts(): Promise<Metadata[]> {
 
     // Combine the data with the id
     const postFrontMatter: Metadata = {
+      id,
       ...matterResult.data,
     } as Metadata; // Need to cast this
     return postFrontMatter;
