@@ -39,9 +39,9 @@ const ThemeSwitch = React.forwardRef<
         )}
         asChild
       >
-        <div className="relative">
-          <MoonIcon className="absolute transition-opacity group-data-[state=unchecked]:opacity-0" />
-          <SunIcon className="absolute transition-opacity group-data-[state=checked]:opacity-0" />
+        <div className="relative flex h-5 w-5 items-center justify-center">
+          <MoonIcon className="absolute h-[15px] w-[15px] transition-opacity group-data-[state=unchecked]:opacity-0" />
+          <SunIcon className="absolute h-[15px] w-[15px] transition-opacity group-data-[state=checked]:opacity-0" />
         </div>
       </SwitchPrimitives.Thumb>
     </SwitchPrimitives.Root>

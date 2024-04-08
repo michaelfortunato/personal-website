@@ -2,7 +2,7 @@ import RootPageLayout from "@/components/RootPageLayout";
 import { HardHat } from "lucide-react";
 import Link from "next/link";
 import { NextPageWithLayout } from "pages/_app";
-import { getAllPosts, PostFrontMatter } from "../../lib/posts";
+import { getAllPosts, Metadata } from "../../lib/posts";
 
 export async function getStaticProps() {
 	const allPostsData = await getAllPosts();
@@ -11,12 +11,12 @@ export async function getStaticProps() {
 	};
 }
 
-function FeaturedPost(post: PostFrontMatter) {
+function FeaturedPost(post: Metadata) {
 	return (<div className="shadow p-4 bg-white rounded">
     <Link href={`blog/posts/${post.id}`}>{post.id}</Link></div>);
 }
 
-function FeaturedPosts({ posts }: { posts: PostFrontMatter[] }) {
+function FeaturedPosts({ posts }: { posts: Metadata[] }) {
 	return (
 		<div className="grid grid-cols-2 gap-4">
 			{posts.map(post => (
@@ -27,10 +27,10 @@ function FeaturedPosts({ posts }: { posts: PostFrontMatter[] }) {
 }
 
 type PageProps = {
-	posts: PostFrontMatter[];
+	posts: Metadata[];
 };
 
-function getFeaturedPosts(allPosts: PostFrontMatter[]) {
+function getFeaturedPosts(allPosts: Metadata[]) {
 	return allPosts.filter(_post => true);
 }
 
