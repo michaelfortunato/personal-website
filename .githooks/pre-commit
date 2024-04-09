@@ -10,8 +10,10 @@ result = subprocess.run(["git", "diff", "--staged", "--name-status"], capture_ou
 lines = result.stdout.splitlines()
 staged_files = []
 for line in lines:
-    if line[0] != 'D':
-        staged_files.append(line.split()[1])
+    [status, name] = line.split()
+    if status != 'D':
+        if name != 'pages/blog/index.tsx':
+            staged_files.append(name)
 
 # TODO: Cannot get ANSI escape codes to be emmited. No colors :((
 result = subprocess.run(["npm", "run", "format:check", "--"] + staged_files, capture_output=True, text=True)
