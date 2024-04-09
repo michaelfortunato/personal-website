@@ -2,7 +2,8 @@ import RootPageLayout from "@/components/RootPageLayout";
 import { HardHat } from "lucide-react";
 import Link from "next/link";
 import { NextPageWithLayout } from "pages/_app";
-import { getAllPosts, Metadata } from "../../lib/posts";
+import { type Metadata } from "../../lib/posts";
+import { getAllPosts } from "@/lib/server-only/posts";
 
 export async function getStaticProps() {
 	const allPostsData = await getAllPosts();

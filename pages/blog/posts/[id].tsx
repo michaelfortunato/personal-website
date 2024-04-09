@@ -1,5 +1,6 @@
 import Layout from "@/components/Blog/layout";
-import { getAllPostIds, getPostData, Post, Metadata } from "lib/posts";
+import { Post, Metadata } from "lib/posts";
+import { getAllPostIds, getPostData } from "@/lib/server-only/posts";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 

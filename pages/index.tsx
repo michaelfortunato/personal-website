@@ -2,7 +2,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import Grid from "@/components/Grid";
 import Hero from "@/components/Hero";
 import { AnimatePresence, motion } from "framer-motion";
-import { BuildInfo, computeGithubURLs, getBuildInfo } from "lib/buildInfo";
+import { type BuildInfo, type BuildCommitInfo } from "@/lib/buildInfo";
+
 import { GetStaticProps } from "next";
 import {
   BookA,
@@ -34,6 +35,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { getBuildInfo } from "@/lib/server-only/buildInfo";
 
 const defaultGridConfig = {
   random: true,
@@ -47,6 +49,14 @@ const defaultGridConfig = {
 type Props = {
   buildInfo: BuildInfo;
 };
+
+export function computeGithubURLs(commit: BuildCommitInfo) {
+  return {
+    repoURL: `https://github.com/michaelfortunato/${commit.repo}`,
+    commitURL: `https://github.com/michaelfortunato/${commit.repo}/commit/${commit.hash}`,
+    branchURL: `https://github.com/michaelfortunato/${commit.repo}/tree/${commit.branch}`,
+  };
+}
 
 const BuildInfo: React.FC<{ buildInfo: BuildInfo; triggerFadeIn: boolean }> = ({
   buildInfo: {
@@ -166,7 +176,6 @@ const ModeToggle = () => {
   if (!mounted) {
     return null;
   }
-  console.log(theme);
   return (
     <Button
       variant="ghost"

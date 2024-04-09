@@ -14,7 +14,6 @@ import { motion, useViewportScroll } from "framer-motion";
 import Divider from "@mui/material/Divider";
 import { gsap } from "gsap";
 import { MotionPathPlugin } from "gsap/dist/MotionPathPlugin";
-import { assetsURL } from "../../utils/configurations";
 import useSWR, { mutate } from "swr";
 import matter from "gray-matter";
 import axios from "axios";
