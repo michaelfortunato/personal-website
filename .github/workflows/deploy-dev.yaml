@@ -14,9 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: Preview
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 2000
       - name: Use Node.js 20.x
         uses: actions/setup-node@v4
         with:
