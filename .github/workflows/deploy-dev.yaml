@@ -7,7 +7,7 @@ env:
   GIT_COMMIT_SHA: ${{ github.sha }}
 on:
   push:
-    branches
+    branches:
       - dev
 jobs:
   Deploy-Preview:
