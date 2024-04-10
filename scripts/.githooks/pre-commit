@@ -10,7 +10,12 @@ result = subprocess.run(["git", "diff", "--staged", "--name-status"], capture_ou
 lines = result.stdout.splitlines()
 staged_files = []
 for line in lines:
-    [status, name] = line.split()
+    parts = line.split()
+    if parts[0][0] == 'R':
+        name = parts[2]
+    else:
+        name = parts[1]
+    status = parts[0]
     if status != 'D':
         if name != 'pages/blog/index.tsx':
             staged_files.append(name)
