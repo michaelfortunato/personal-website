@@ -24,7 +24,6 @@ export async function getPostData(id: string): Promise<Post> {
   if (!(firstCommit && currentCommit)) {
     throw "Could not get commit info for article. See server code. Aborting build ...";
   }
-
   const metadata = createMetadata(
     id,
     parsedDocument.data.title as string,
@@ -32,6 +31,7 @@ export async function getPostData(id: string): Promise<Post> {
     currentCommit,
     firstCommit,
   );
+
   return {
     metadata,
     content: parsedDocument.toString(),
@@ -52,24 +52,40 @@ export async function getAllPostIds() {
 export async function getAllPosts(): Promise<Metadata[]> {
   // Get file names under /posts
   const fileNames = fs.readdirSync(postsDirectory);
-  const allPostsData: Metadata[] = fileNames.map((fileName) => {
-    // Remove ".md" from file name to get id
-    const id = fileName.replace(/\.md$/, "");
+  const allPostsData: Metadata[] = await Promise.all(
+    fileNames.map(async (fileName) => {
+      // Remove ".md" from file name to get id
+      const id = fileName.replace(/\.md$/, "");
 
-    // Read markdown file as string
-    const fullPath = path.join(postsDirectory, fileName);
-    const fileContents = fs.readFileSync(fullPath, "utf8");
+      // Read markdown file as string
+      const fullPath = path.join(postsDirectory, fileName);
+      const fileContents = fs.readFileSync(fullPath, "utf8");
+      const { data: frontMatter, content: documentContent } =
+        matter(fileContents);
 
-    // Use gray-matter to parse the post metadata section
-    const matterResult = matter(fileContents);
+      const parsedDocument = await unified()
+        .use(remarkParse)
+        .use(assertAndExtractTopHeader)
+        .use(remarkGfm)
+        .use(remarkRehype)
+        .use(rehypeStringify)
+        .process(documentContent);
 
-    // Combine the data with the id
-    const postFrontMatter: Metadata = {
-      id,
-      ...matterResult.data,
-    } as Metadata; // Need to cast this
-    return postFrontMatter;
-  });
+      const firstCommit = getCommitEntryForFile(fullPath, false);
+      const currentCommit = getCommitEntryForFile(fullPath, true);
+      if (!(firstCommit && currentCommit)) {
+        throw "Could not get commit info for article. See server code. Aborting build ...";
+      }
+      const metadata = createMetadata(
+        id,
+        parsedDocument.data.title as string,
+        frontMatter,
+        currentCommit,
+        firstCommit,
+      );
+      return metadata;
+    }),
+  );
   // Sort posts by date
   return allPostsData.sort((a, b) => {
     if (a.createdTimestamp < b.createdTimestamp) {

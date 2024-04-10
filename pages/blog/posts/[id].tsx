@@ -4,13 +4,23 @@ import { getAllPostIds, getPostData } from "@/lib/server-only/posts";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 
+function toLocaleStringIfUnixTimestamp(
+  timestamp: number | string,
+): number | string {
+  if (timestamp >= -8.64e12 && timestamp <= +8.64e12) {
+    return new Date(Number(timestamp) * 1000).toLocaleString();
+  }
+  return timestamp;
+}
+
 function Header(metadata: Metadata) {
   return (
     <div>
       <h1>{metadata.title}</h1>
       <div>
         <div>
-          <i>Written</i>: {metadata.createdTimestamp}
+          <i>Written:</i>{" "}
+          {toLocaleStringIfUnixTimestamp(metadata.createdTimestamp)}
         </div>
         <div className="flex gap-2">
           {metadata.tags.map((value, index) => (
@@ -26,7 +36,9 @@ function Footer(metadata: Metadata) {
   return (
     <div>
       <div className="flex">
-        <div>Revision: {metadata.modifiedTimestamp}</div>
+        <div>
+          Updated: {toLocaleStringIfUnixTimestamp(metadata.modifiedTimestamp)}
+        </div>
       </div>
     </div>
   );
