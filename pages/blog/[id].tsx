@@ -20,9 +20,11 @@ import {
   CommitIcon,
   TextIcon,
   TimerIcon,
+  CalendarIcon,
 } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { computeGithubCommitURL } from "@/lib/buildInfo";
+import { Clock4 } from "lucide-react";
 
 function toLocaleStringIfUnixTimestamp(
   timestamp: number | string,
@@ -48,26 +50,29 @@ function Header(metadata: Metadata) {
     <div>
       <h1>{metadata.title}</h1>
       <div className="flex flex-col gap-4">
-        <Dialog>
-          <DialogTrigger className="cursor-pointer" asChild>
-            <Avatar className="not-prose">
-              <AvatarImage src="/blog/Avatar.jpeg" />
-              <AvatarFallback>MNF</AvatarFallback>
-            </Avatar>
-          </DialogTrigger>
-          <DialogContent>
-            <div>
+        <div className="flex items-center gap-2">
+          <Dialog>
+            <DialogTrigger className="cursor-pointer" asChild>
+              <Avatar className="not-prose">
+                <AvatarImage src="/blog/Avatar.jpeg" className="mr-2 inline" />
+                <AvatarFallback>MNF</AvatarFallback>
+              </Avatar>
+            </DialogTrigger>
+            <DialogContent>
               <Image
+                className="rounded"
                 src="/blog/Avatar.jpeg"
-                width={100}
-                height={100}
+                width={400}
+                height={400}
                 alt="Me"
               />
-            </div>
-          </DialogContent>
-        </Dialog>
-        <Card className="p-2">
-          <div>
+              <p>Me apple picking, circa 2021.</p>
+            </DialogContent>
+          </Dialog>
+          <p className="not-prose inline font-semibold">me</p>
+        </div>
+        <Card className="p-2 shadow">
+          <div className="flex items-center">
             <CommitIcon className="mr-2 inline" />
             <Link
               href={computeGithubCommitURL(
@@ -78,12 +83,14 @@ function Header(metadata: Metadata) {
               {metadata.buildInfo.currentCommit.shortCommitHash}
             </Link>
           </div>
-          <div>
+          <div className="flex items-center">
             <TextIcon className="mr-2 inline" />
             {metadata.buildInfo.currentCommit.message}
           </div>
-          <div>
-            <TimerIcon className="mr-2 inline" />
+          <div className="flex items-center">
+            {/*<TimerIcon className="mr-2 inline" /> */}
+            {/* <Clock4 strokeWidth={1} /> */}
+            <CalendarIcon className="mr-2 inline" />
             {toLocaleStringIfUnixTimestamp(
               metadata.buildInfo.currentCommit.timestamp,
             )}
