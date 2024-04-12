@@ -30,7 +30,10 @@ const ThemeSwitch = React.forwardRef<
         className,
       )}
       {...props}
-      onClick={() => (theme == "light" ? setTheme("dark") : setTheme("light"))}
+      onCheckedChange={(checked) =>
+        checked ? setTheme("dark") : setTheme("light")
+      }
+      defaultChecked={theme == "dark"}
       ref={ref}
     >
       <SwitchPrimitives.Thumb
