@@ -2,7 +2,7 @@ import RootPageLayout from "@/components/RootPageLayout";
 import { HardHat } from "lucide-react";
 import Link from "next/link";
 import { NextPageWithLayout } from "pages/_app";
-import { type Metadata } from "../../lib/posts";
+import { type Metadata } from "@/lib/posts";
 import { getAllPosts } from "@/lib/server-only/posts";
 
 export async function getStaticProps() {
@@ -14,7 +14,7 @@ export async function getStaticProps() {
 
 function FeaturedPost(post: Metadata) {
 	return (<div className="shadow p-4 bg-white rounded">
-    <Link href={`blog/posts/${post.id}`}>{post.id}</Link></div>);
+    <Link href={`blog/${post.id}`}>{post.id}</Link></div>);
 }
 
 function FeaturedPosts({ posts }: { posts: Metadata[] }) {
