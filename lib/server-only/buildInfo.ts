@@ -20,7 +20,15 @@ export function getCommitEntryForFile(filepath: string, head: boolean = true) {
   if (!(commitHash && author && timestamp && message)) {
     return undefined;
   }
-  return { commitHash, author, timestamp, message };
+  return {
+    commitHash,
+    get shortCommitHash() {
+      return this.commitHash.slice(0, 7);
+    },
+    author,
+    timestamp,
+    message,
+  };
 }
 
 /// Returns the commit info for this build

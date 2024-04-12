@@ -6,8 +6,13 @@ export function computeGithubURLs(commit: BuildCommitInfo) {
   };
 }
 
+export function computeGithubCommitURL(repoName: string, commitHash: string) {
+  return `https://github.com/michaelfortunato/${repoName}/commit/${commitHash}`;
+}
+
 export type CommitEntry = {
   commitHash: string;
+  readonly shortCommitHash: string;
   author: string;
   timestamp: string;
   message: string;
