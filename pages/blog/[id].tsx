@@ -25,6 +25,11 @@ import {
 import Link from "next/link";
 import { computeGithubCommitURL } from "@/lib/buildInfo";
 import { Clock4 } from "lucide-react";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 
 function toLocaleStringIfUnixTimestamp(
   timestamp: number | string,
@@ -33,10 +38,6 @@ function toLocaleStringIfUnixTimestamp(
     return new Date(Number(timestamp) * 1000).toLocaleString();
   }
   return timestamp;
-}
-
-function HeaderRow({ children }: PropsWithChildren) {
-  return <Card className="p-2">{children}</Card>;
 }
 
 function useIsMounted() {
@@ -73,7 +74,14 @@ function Header(metadata: Metadata) {
         </div>
         <Card className="p-2 shadow">
           <div className="flex items-center">
-            <CommitIcon className="mr-2 inline" />
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <CommitIcon className="mr-2 inline cursor-pointer" />
+              </HoverCardTrigger>
+              <HoverCardContent className="w-full p-2 text-center">
+                Commit Hash
+              </HoverCardContent>
+            </HoverCard>
             <Link
               href={computeGithubCommitURL(
                 "personal-website",
@@ -84,13 +92,27 @@ function Header(metadata: Metadata) {
             </Link>
           </div>
           <div className="flex items-center">
-            <TextIcon className="mr-2 inline" />
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <TextIcon className="mr-2 inline cursor-pointer" />
+              </HoverCardTrigger>
+              <HoverCardContent className="w-full p-2 text-center">
+                Commit Message
+              </HoverCardContent>
+            </HoverCard>
             {metadata.buildInfo.currentCommit.message}
           </div>
           <div className="flex items-center">
-            {/*<TimerIcon className="mr-2 inline" /> */}
-            {/* <Clock4 strokeWidth={1} /> */}
-            <CalendarIcon className="mr-2 inline" />
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                {/*<TimerIcon className="mr-2 inline" /> */}
+                {/* <Clock4 strokeWidth={1} /> */}
+                <CalendarIcon className="mr-2 inline cursor-pointer" />
+              </HoverCardTrigger>
+              <HoverCardContent className="w-full p-2 text-center">
+                Commit Time
+              </HoverCardContent>
+            </HoverCard>
             {toLocaleStringIfUnixTimestamp(
               metadata.buildInfo.currentCommit.timestamp,
             )}
@@ -109,10 +131,8 @@ function Header(metadata: Metadata) {
 function Footer(metadata: Metadata) {
   return (
     <div>
-      <div className="flex">
-        <div>
-          Updated: {toLocaleStringIfUnixTimestamp(metadata.modifiedTimestamp)}
-        </div>
+      <div className="flex justify-center">
+        <div>You made it to the end! Thanks for reading!</div>
       </div>
     </div>
   );
