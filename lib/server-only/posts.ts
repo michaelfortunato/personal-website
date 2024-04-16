@@ -10,7 +10,7 @@ import { Root } from "remark-parse/lib";
 import { createMetadata, type Metadata, type Post } from "@/lib/posts";
 import { getCommitEntryForFile } from "@/lib/server-only/buildInfo";
 
-export const postsDirectory = path.join(process.cwd(), "db");
+export const postsDirectory = path.join(process.cwd(), "posts");
 
 export async function getPostData(id: string): Promise<Post> {
   const fullPath = path.join(postsDirectory, `${id}.md`);
