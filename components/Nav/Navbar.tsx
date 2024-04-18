@@ -54,11 +54,12 @@ const NavPage = (props: NavPageProps) => {
       {props.isVisible && (
         <motion.div
           className="relative left-0 top-0 h-screen w-screen"
-          style={{ originY: 0, backgroundColor: "#49474d" }}
+          // style={{ originY: 0, backgroundColor: "#49474d" }}
           initial={{ translateY: "-100%" }}
           animate={{
-            backgroundColor:
-              previewUrl !== null
+            backgroundColor: true
+              ? "#FFFFFF"
+              : previewUrl !== null
                 ? props.routes[previewUrl].previewColor
                 : "rgba(73, 71, 77, 1)",
             translateY: 0,

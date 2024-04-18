@@ -1,7 +1,10 @@
 import { motion } from "framer-motion";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect } from "react";
 import { useRouter } from "next/router";
 import Navbar from "./Nav/Navbar";
+import { usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
+import Link from "next/link";
 
 export type RootPageStyle = {
   name: string;
@@ -37,6 +40,12 @@ const pageConfigs: Record<string, RootPageStyle> = {
   },
 };
 
+function useThemeClass() {
+  const pathname = usePathname();
+  const map: any = { "/": "home", "/about": "about", "/projects": "projects" };
+  return map[pathname] ?? "unknown";
+}
+
 export default function RootPageLayout({ children }: PropsWithChildren) {
   const router = useRouter();
   const pathname = router.pathname;
@@ -44,20 +53,17 @@ export default function RootPageLayout({ children }: PropsWithChildren) {
     ? pageConfigs[pathname] ?? pageConfigs["/"]
     : pageConfigs["/"];
 
+  const theme = useThemeClass();
+  const { setTheme } = useTheme();
+
+  useEffect(() => {
+    setTheme(`${theme}-light`);
+  }, [theme]);
+
   return (
     <>
       <Navbar routes={pageConfigs} />
-      <motion.div
-        className="absolute min-h-screen min-w-[100vw]"
-        animate={{
-          backgroundColor: pageStyleConfig.backgroundColor,
-          transition: {
-            duration: 0.5, // Yeah? Or 0.3 it matters!
-          },
-        }}
-      >
-        {children}
-      </motion.div>
+      <div className="absolute min-h-screen min-w-full">{children}</div>
     </>
   );
 }

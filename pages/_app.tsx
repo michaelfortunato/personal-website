@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { NextPage } from "next";
 import { buildManfestHeadingFont } from "@/lib/fonts";
 import { ThemeProvider } from "@/components/themeProvider";
+import { usePathname } from "next/navigation";
 
 export type GetLayout = (page: ReactElement) => ReactNode;
 
@@ -29,6 +30,11 @@ export type MyAppProps = AppProps & {
 // Deprecated, probably as we will move to style-jsx?
 const clientSideEmotionCache = createEmotionCache();
 
+function useThemeClass() {
+  const pathname = usePathname();
+  const map: any = { "/": "home", "/about": "about", "/projects": "projects" };
+  return map[pathname] ?? "unknown";
+}
 export default function App({
   Component,
   pageProps,
@@ -44,6 +50,8 @@ export default function App({
   }, []);
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout ?? ((page) => page);
+  const theme = useThemeClass();
+  console.log(theme);
 
   return (
     <CacheProvider value={emotionCache}>
@@ -55,14 +63,13 @@ export default function App({
       </Head>
       <ThemeProvider
         attribute="class"
-        defaultTheme="light"
-        // defaultTheme="system"
-        // enableSystem
-        // disableTransitionOnChange
+        enableSystem
+        disableTransitionOnChange={false}
+        themes={["home-light", "about-light", "projects-light"]}
       >
         <main
           className={cn(
-            "min-h-screen bg-background font-sans antialiased",
+            "min-h-screen bg-background font-sans antialiased transition-colors duration-1000",
             buildManfestHeadingFont.variable,
           )}
         >
