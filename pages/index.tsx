@@ -16,15 +16,15 @@ import {
 import { Button, ButtonProps } from "@/components/ui/button";
 import { NextPageWithLayout } from "./_app";
 import RootPageLayout from "@/components/RootPageLayout";
+
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import Image from "next/image";
@@ -37,6 +37,7 @@ import {
 import { getBuildInfo } from "@/lib/server-only/buildInfo";
 import { GitHubLogoIcon, FileIcon } from "@radix-ui/react-icons";
 import BuildStamp from "@/components/BuildStamp";
+import GPGKey from "@/components/GPGKey";
 
 const defaultGridConfig = {
   random: true,
@@ -55,6 +56,8 @@ type Props = {
 const Page: NextPageWithLayout<Props> = ({ buildInfo }: Props) => {
   const [triggerNameEnter, setTriggerNameEnter] = useState(false);
   const [triggerGridExit, setTriggerGridExit] = useState(false);
+  // NOTE: work around to get tool tip with dialog
+  const [isTooltipAllowed, setIsTooltipAllowed] = useState(true);
   return (
     <>
       <AnimatePresence>
@@ -72,7 +75,6 @@ const Page: NextPageWithLayout<Props> = ({ buildInfo }: Props) => {
         )}
       </AnimatePresence>
       <div className="absolute right-0 top-0">
-        {/* <ModeToggle /> */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={triggerGridExit && { opacity: 1 }}
@@ -80,18 +82,30 @@ const Page: NextPageWithLayout<Props> = ({ buildInfo }: Props) => {
           className="flex gap-2 p-6"
         >
           <div>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button size="icon" variant="ghost">
-                    <Fingerprint width={24} height={24} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Get My gnuPGP Key</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Dialog onOpenChange={() => setIsTooltipAllowed(false)}>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger
+                    asChild
+                    onMouseEnter={() => setIsTooltipAllowed(true)}
+                  >
+                    <DialogTrigger asChild>
+                      <Button size="icon" variant="ghost">
+                        <Fingerprint width={24} height={24} />
+                      </Button>
+                    </DialogTrigger>
+                  </TooltipTrigger>
+                  {isTooltipAllowed && (
+                    <TooltipContent>
+                      <p>Get My gnuPGP Key</p>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </TooltipProvider>
+              <DialogContent className="max-h-screen bg-card lg:max-w-4xl">
+                <GPGKey />
+              </DialogContent>
+            </Dialog>
           </div>
           <div>
             <TooltipProvider>
