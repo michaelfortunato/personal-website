@@ -24,3 +24,7 @@ on Route53.
 ## Building Good Git Habits
 
 - <https://www.conventionalcommits.org/en/v1.0.0/>
+
+## Useful Resources
+
+- shadcn-ui theme generator: <https://shadcn-ui-theme-generator.vercel.app>
