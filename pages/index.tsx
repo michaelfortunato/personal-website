@@ -103,7 +103,7 @@ const Page: NextPageWithLayout<Props> = ({ buildInfo }: Props) => {
                   )}
                 </Tooltip>
               </TooltipProvider>
-              <DialogContent className="max-h-screen bg-card lg:max-w-4xl">
+              <DialogContent className="max-h-screen bg-muted lg:max-w-4xl">
                 <GPGKey />
               </DialogContent>
             </Dialog>

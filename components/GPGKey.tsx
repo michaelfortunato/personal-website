@@ -1,11 +1,19 @@
 import React from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { useCopyToClipboard } from "@/lib/hooks";
+import { useCopyToClipboard, useIsMounted } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
-import { Copy } from "lucide-react";
+import { Copy, KeyRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
+import { DownloadIcon } from "@radix-ui/react-icons";
+import Link from "next/link";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const mPubID = `rsa4096/1B35E71D2AD7D44E 2024-04-18 [SC] [expires: 2025-04-18]`;
 const mPubFingerprint = `B3C97C24E201EF1777ABFF0B1B35E71D2AD7D44E`;
@@ -74,50 +82,106 @@ uid                 [ultimate] Michael Newman Fortunato (Hadrian) <michael.n.for
 sub   rsa4096/6E20758D549A7D0F 2024-04-18 [E] [expires: 2025-04-18]
       994CE1164CB34E4973FA56556E20758D549A7D0F
 `;
-const CopyButton: React.FC<
+
+const CopyButton: React.ForwardRefExoticComponent<
   {
-    text: string;
+    textToCopy: string;
     handleCopyPromise: (copyPromise: Promise<boolean>) => void;
-  } & React.ComponentProps<typeof Button>
-> = ({ className, text, handleCopyPromise, ...props }) => {
-  const [copiedText, setCopiedText] = useCopyToClipboard();
-  return (
-    <Button
-      onClick={() => handleCopyPromise(setCopiedText(text))}
-      variant="outline"
-      size="icon"
-      className={cn("active:bg-card active:text-black", className)}
-    >
-      <Copy />
-    </Button>
-  );
-};
+  } & React.ComponentProps<typeof Button> &
+    React.RefAttributes<HTMLButtonElement>
+> = React.forwardRef(
+  ({ className, textToCopy, handleCopyPromise, ...props }, ref) => {
+    const [copiedText, setCopiedText] = useCopyToClipboard();
+    return (
+      <Button
+        ref={ref}
+        {...props}
+        variant="ghost"
+        size="icon"
+        className={cn("active:bg-card active:text-black", className)}
+        onClick={(e) => {
+          // onClick has to come before the prop spread to override it
+          console.log(e);
+          handleCopyPromise(setCopiedText(textToCopy));
+        }}
+      >
+        <Copy />
+      </Button>
+    );
+  },
+);
 
 CopyButton.displayName = "CopyButton";
 function GPGKey() {
   const { toast } = useToast();
   return (
-    <div className="h-full max-h-[80vh] w-full max-w-[inherit] overflow-hidden rounded p-8 outline outline-background">
-      <div className="relative h-full max-h-[80vh] w-full max-w-[inherit] rounded outline-background">
-        <div className="absolute right-0 top-0 z-50">
-          <CopyButton
-            className="bg-card"
-            text={publicKeyExport}
-            handleCopyPromise={(hello) =>
-              hello
-                .then(() =>
-                  toast({
-                    title: "Copied GPG Key Clipboard!",
-                    className: "flex justify-center",
-                    duration: 1000,
-                  }),
-                )
-                .catch((e) => console.log(e))
-            }
-          />
+    <div className="max-h-[80vh] max-w-[inherit] overflow-hidden p-4 pt-8">
+      <div className="flex h-3/6 max-h-[inherit] w-full max-w-[inherit] flex-col overflow-hidden ">
+        <div className="flex items-center rounded-t-lg bg-stone-100 p-2">
+          <div className="flex-auto pl-2 ">
+            <b>My PGP Key</b> <KeyRound className="inline" strokeWidth={1} />
+          </div>
+          <div className="flex flex-grow flex-row-reverse gap-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <CopyButton
+                    className="bg-none"
+                    textToCopy={publicKeyExport}
+                    handleCopyPromise={(hello) =>
+                      hello
+                        .then(() =>
+                          toast({
+                            title: "Copied PGP Key Clipboard!",
+                            className: "flex justify-center",
+                            duration: 1000,
+                          }),
+                        )
+                        .catch((e) => {
+                          console.log(e);
+                          toast({
+                            title: "Could not copied to clipboard",
+                            className: "flex justify-center",
+                            duration: 1000,
+                          });
+                        })
+                    }
+                  />
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <p>Copy to clipboard</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    // onClick={() =>
+                    //   toast({
+                    //     title: "Downloading PGP Key",
+                    //     className: "flex justify-center",
+                    //     duration: 1000,
+                    //   })
+                    // }
+                    variant="ghost"
+                    size="icon"
+                    asChild
+                  >
+                    <Link href="https://keys.openpgp.org/vks/v1/by-fingerprint/B3C97C24E201EF1777ABFF0B1B35E71D2AD7D44E">
+                      <DownloadIcon width={24} height={24} />
+                    </Link>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <p>Download from OpenPGP</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </div>
-        <ScrollArea className="h-full max-h-[inherit] w-full max-w-[inherit]">
-          <pre className="select-all">{publicKeyExport}</pre>
+        <ScrollArea className=" max-h-[inherit] w-full max-w-[inherit] flex-grow bg-card">
+          <pre className="lg:select-all">{publicKeyExport}</pre>
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
       </div>
