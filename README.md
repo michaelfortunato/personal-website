@@ -27,4 +27,6 @@ on Route53.
 
 ## Useful Resources
 
-- shadcn-ui theme generator: <https://shadcn-ui-theme-generator.vercel.app>
+1. shad-ui theme generator: <https://shadcn-ui-theme-generator.vercel.app>
+2. shad-ui theme generator: <https://dizzy.systems/editor>
+3. Typescript cheatsheet: <https://react-typescript-cheatsheet.netlify.app/docs/react-types/componentprops>

@@ -66,15 +66,12 @@
   }
 
   .home-light {
-    /* Name: custom color palette
-       Author: Ilias Ism
-       URL: https://gradient.page */
-
-    /* CSS: .bg-gradient { background: var(--gradient) } */
-    --gradient: #e6af4b;
-
+    /*
+     * previewTextColor: "#264653",
+     * backgroundColor: "#e6af4b",
+     */
     --background: 39 76% 60%;
-    --foreground: 41 7.6% 98%;
+    --foreground: 222.2 84% 4.9%;
 
     --muted: 41 23.56% 18%;
     --muted-foreground: 41 7.6% 56%;
@@ -82,14 +79,15 @@
     --popover: 41 49.8% 7.8%;
     --popover-foreground: 41 7.6% 98%;
 
-    --card: 41 49.8% 7.8%;
+    --card: 37 50% 90%;
+    --card: 0 0% 100%;
     --card-foreground: 41 7.6% 98%;
 
-    --border: 41 23.56% 18%;
+    --border: 222.2 84% 4.9%;
     --input: 41 23.56% 18%;
 
-    --primary: 41 76% 60%;
-    --primary-foreground: 41 7.6% 6%;
+    --primary: 222.2 84% 4.9%;
+    --primary-foreground: 210 40% 98%;
 
     --secondary: 41 23.56% 18%;
     --secondary-foreground: 41 7.6% 98%;
@@ -103,14 +101,53 @@
     --ring: 41 76% 60%;
   }
 
+  .home-light2 {
+    --background: 38.71 75.61% 59.8%;
+    --foreground: 222.22 47.37% 11.18%;
+    --muted: 8.87 100% 86.08%;
+    --muted-foreground: 0 2.86% 6.86%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 200 3.9% 84.9%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --popover: 0 0% 98.82%;
+    --popover-foreground: 222.2 47.4% 11.2%;
+    --input: 32.73 80.49% 8.04%;
+    --accent: 210 21.74% 45.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --card: 0 100% 88.04%;
+    --card-foreground: 0 25.66% 22.16%;
+    --border: 0 29.41% 20%;
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 210 40% 98%;
+    --ring: 215 20.2% 65.1%;
+    --radius: 0.75rem;
+  }
+
+  .x {
+    --background: 37 100% 95%;
+    --foreground: 37 5% 0%;
+    --card: 37 50% 90%;
+    --card-foreground: 37 5% 10%;
+    --popover: 37 100% 95%;
+    --popover-foreground: 37 100% 0%;
+    --primary: 37 88% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 37 30% 70%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: -1 30% 85%;
+    --muted-foreground: 37 5% 35%;
+    --accent: -1 30% 80%;
+    --accent-foreground: 37 5% 10%;
+    --destructive: 0 100% 30%;
+    --destructive-foreground: 37 5% 90%;
+    --border: 37 30% 50%;
+    --input: 37 30% 18%;
+    --ring: 37 88% 58%;
+    --radius: 0.5rem;
+  }
+
   .home-dark {
-    /* Name: custom color palette
-       Author: Ilias Ism
-       URL: https://gradient.page */
-
-    /* CSS: .bg-gradient { background: var(--gradient) } */
-    --gradient: #e6af4b;
-
     --background: 39 76% 60%;
     --foreground: 41 7.6% 98%;
 
@@ -142,11 +179,6 @@
   }
 
   .about-light {
-    /* Name: custom color palette
-       Author: Ilias Ism
-       URL: https://gradient.page */
-
-    /* CSS: .bg-gradient { background: var(--gradient) } */
     --gradient: #14213d;
 
     --background: 221 51% 16%;
@@ -179,15 +211,101 @@
     --ring: 41 76% 60%;
   }
 
+  .about-dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+
   .projects-light {
-    /* Name: custom color palette
-       Author: Ilias Ism
-       URL: https://gradient.page */
+    --background: 180 24% 87%;
+    --foreground: 222.2 84% 4.9%;
 
-    /* CSS: .bg-gradient { background: var(--gradient) } */
-    --gradient: #d5e5e5;
+    --muted: 41 23.56% 18%;
+    --muted-foreground: 41 7.6% 56%;
 
-    --background: 39 76% 60%;
+    --popover: 41 49.8% 7.8%;
+    --popover-foreground: 41 49.8% 7.8%;
+
+    --card: 41 49.8% 7.8%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --border: 41 23.56% 18%;
+    --input: 41 23.56% 18%;
+
+    --primary: 41 76% 60%;
+    --primary-foreground: 41 7.6% 6%;
+
+    --secondary: 41 23.56% 18%;
+    --secondary-foreground: 41 7.6% 98%;
+
+    --accent: 41 23.56% 18%;
+    --accent-foreground: 41 7.6% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 41 7.6% 98%;
+
+    --ring: 41 76% 60%;
+  }
+
+  .projects-dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+
+  .blog-light {
+    --gradient: #14213d;
+
+    --background: 221 51% 16%;
     --foreground: 41 7.6% 98%;
 
     --muted: 41 23.56% 18%;
@@ -216,26 +334,37 @@
 
     --ring: 41 76% 60%;
   }
+
+  .blog-dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
 }
-/* "/about": {
-    name: "About",
-    previewColor: "rgba(20, 33, 61, 1)",
-    previewTextColor: "#e6af4b",
-    backgroundColor: "#14213D",
-  },
-  "/projects": {
-    name: "Projects",
-    previewColor: "#D5E5E5",
-    previewTextColor: "#e6af4b",
-    backgroundColor: "#D5E5E5",
-  },
-  "/blog": {
-    name: "Blog",
-    previewColor: "#14213D",
-    previewTextColor: "#e6af4b",
-    backgroundColor: "#14213D",
-  },
-  */
 
 @layer base {
   * {

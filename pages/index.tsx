@@ -38,6 +38,7 @@ import { getBuildInfo } from "@/lib/server-only/buildInfo";
 import { GitHubLogoIcon, FileIcon } from "@radix-ui/react-icons";
 import BuildStamp from "@/components/BuildStamp";
 import GPGKey from "@/components/GPGKey";
+import { Toaster } from "@/components/ui/toaster";
 
 const defaultGridConfig = {
   random: true,

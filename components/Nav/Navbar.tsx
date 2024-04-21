@@ -9,7 +9,9 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Twirl as Hamburger } from "hamburger-react";
 import { gsap } from "gsap";
-import { RootPageStyle } from "../RootPageLayout";
+import { pathnameToThemeClass, RootPageStyle } from "../RootPageLayout";
+import { useTheme } from "next-themes";
+import { useIsMounted } from "@/lib/hooks";
 
 export type NavbarProps = {
   routes: Record<string, RootPageStyle>;
@@ -17,15 +19,12 @@ export type NavbarProps = {
 
 export default function Navbar(props: NavbarProps) {
   const [isVisible, setIsVisible] = useState(false);
-  // TODO: const { theme } = useTheme();
   return (
     <div className="fixed z-50">
       <div className="fixed z-[1] inline-block p-6">
-        <div
-          style={isVisible ? { color: "#FFFFFF" } : { color: "initial" }}
-          // transition={{ color: { duration: 1 } }}
-        >
+        <div>
           <Hamburger
+            color={"hsl(var(--foreground))"}
             duration={0.2}
             toggled={isVisible}
             toggle={() => setIsVisible(!isVisible)}
@@ -48,20 +47,14 @@ export type NavPageProps = {
 };
 
 const NavPage = (props: NavPageProps) => {
-  const [previewUrl, setPreviewUrl] = useState<null | string>(null);
+  const [previewURL, setPreviewURL] = useState<string | null>(null);
   return (
     <AnimatePresence initial={false}>
       {props.isVisible && (
         <motion.div
-          className="relative left-0 top-0 h-screen w-screen"
-          // style={{ originY: 0, backgroundColor: "#49474d" }}
+          className={`relative left-0 top-0 h-screen w-screen ${previewURL != null ? pathnameToThemeClass(previewURL) : ""}-light`}
           initial={{ translateY: "-100%" }}
           animate={{
-            backgroundColor: true
-              ? "#FFFFFF"
-              : previewUrl !== null
-                ? props.routes[previewUrl].previewColor
-                : "rgba(73, 71, 77, 1)",
             translateY: 0,
             transition: { duration: 0.5 },
           }}
@@ -70,8 +63,8 @@ const NavPage = (props: NavPageProps) => {
           <NavContent
             routes={props.routes}
             setIsVisible={props.setIsVisible}
-            previewUrl={previewUrl}
-            setPreviewUrl={setPreviewUrl}
+            previewURL={previewURL}
+            setPreviewURL={setPreviewURL}
           />
         </motion.div>
       )}
@@ -82,8 +75,8 @@ const NavPage = (props: NavPageProps) => {
 type NavContentProps = {
   routes: Record<string, RootPageStyle>;
   setIsVisible: Dispatch<SetStateAction<boolean>>;
-  previewUrl: string | null;
-  setPreviewUrl: Dispatch<SetStateAction<string | null>>;
+  previewURL: string | null;
+  setPreviewURL: Dispatch<SetStateAction<string | null>>;
 };
 
 const NavContent = (props: NavContentProps) => {
@@ -97,32 +90,32 @@ const NavContent = (props: NavContentProps) => {
       { x: 0, y: 0, rotation: 0, delay: 0.2, duration: 0.3, stagger: 0.08 },
     );
   }, []);
+
   return (
-    <div ref={navContentRef} className="flex h-full">
-      <div className=" flex h-full flex-1 flex-col items-center justify-center gap-4 md:flex-[4] lg:gap-24">
+    <div
+      ref={navContentRef}
+      className="flex h-full bg-background transition duration-300"
+    >
+      <div className="flex h-full flex-1 flex-col items-center justify-center gap-4 md:flex-[4] lg:gap-24">
         {Object.entries(props.routes).map(([url, { name }]) => (
           <div className="links" key={url}>
-            <motion.div
-              animate={{
-                color:
-                  props.previewUrl !== null
-                    ? props.routes[props.previewUrl]?.previewTextColor ??
-                      "#FFFFFF"
-                    : "#FFFFFF",
+            <div
+              onMouseOver={() => props.setPreviewURL(url)}
+              onMouseOut={() => props.setPreviewURL(null)}
+              onClick={() => {
+                props.setIsVisible(false);
               }}
-              transition={{ color: { duration: 1 } }}
-              onMouseOver={() => props.setPreviewUrl(url)}
-              onMouseLeave={() => props.setPreviewUrl(null)}
-              onClick={() => props.setIsVisible(false)}
-              style={{ display: "inline-block" }}
+              className="inline-block"
             >
-              <Link href={url}>
+              <Link
+                href={url}
+                className="text-foreground transition-all duration-1000"
+              >
                 <motion.h2
                   className="text-6xl lg:text-7xl"
                   animate={{
-                    scale: url === props.previewUrl ? 1 : 1,
-                    translateX: url === props.previewUrl ? "10px" : 0,
-                    translateY: url === props.previewUrl ? "-10px" : 0,
+                    translateX: url == props.previewURL ? "10px" : "0px",
+                    translateY: url == props.previewURL ? "-10px" : "0px",
                   }}
                 >
                   {name}
@@ -132,13 +125,13 @@ const NavContent = (props: NavContentProps) => {
                 <motion.div
                   style={{ transformOrigin: "50%" }}
                   animate={{
-                    scaleX: url === props.previewUrl ? 1.1 : 0,
+                    scaleX: url == props.previewURL ? 1.1 : 0,
                   }}
                 >
-                  <hr className="h-[2px] bg-white" />
+                  <hr className="h-[2px]" />
                 </motion.div>
               </AnimatePresence>
-            </motion.div>
+            </div>
           </div>
         ))}
       </div>

@@ -4,6 +4,8 @@ import { useCopyToClipboard } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
 import { Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/components/ui/use-toast";
 
 const mPubID = `rsa4096/1B35E71D2AD7D44E 2024-04-18 [SC] [expires: 2025-04-18]`;
 const mPubFingerprint = `B3C97C24E201EF1777ABFF0B1B35E71D2AD7D44E`;
@@ -73,11 +75,19 @@ sub   rsa4096/6E20758D549A7D0F 2024-04-18 [E] [expires: 2025-04-18]
       994CE1164CB34E4973FA56556E20758D549A7D0F
 `;
 const CopyButton: React.FC<
-  { text: string } & React.ComponentProps<typeof Button>
-> = ({ className, ...props }) => {
-  const [copiedText, copy] = useCopyToClipboard();
+  {
+    text: string;
+    handleCopyPromise: (copyPromise: Promise<boolean>) => void;
+  } & React.ComponentProps<typeof Button>
+> = ({ className, text, handleCopyPromise, ...props }) => {
+  const [copiedText, setCopiedText] = useCopyToClipboard();
   return (
-    <Button variant="outline" size="icon" className={cn("", className)}>
+    <Button
+      onClick={() => handleCopyPromise(setCopiedText(text))}
+      variant="outline"
+      size="icon"
+      className={cn("active:bg-card active:text-black", className)}
+    >
       <Copy />
     </Button>
   );
@@ -85,14 +95,29 @@ const CopyButton: React.FC<
 
 CopyButton.displayName = "CopyButton";
 function GPGKey() {
+  const { toast } = useToast();
   return (
     <div className="h-full max-h-[80vh] w-full max-w-[inherit] overflow-hidden rounded p-8 outline outline-background">
-      <div className="relative h-full max-h-[inherit] w-full max-w-[inherit] rounded outline outline-background">
+      <div className="relative h-full max-h-[80vh] w-full max-w-[inherit] rounded outline-background">
         <div className="absolute right-0 top-0 z-50">
-          <CopyButton className="bg-card " text={publicKeyExport} />
+          <CopyButton
+            className="bg-card"
+            text={publicKeyExport}
+            handleCopyPromise={(hello) =>
+              hello
+                .then(() =>
+                  toast({
+                    title: "Copied GPG Key Clipboard!",
+                    className: "flex justify-center",
+                    duration: 1000,
+                  }),
+                )
+                .catch((e) => console.log(e))
+            }
+          />
         </div>
         <ScrollArea className="h-full max-h-[inherit] w-full max-w-[inherit]">
-          <pre className="">{publicKeyExport}</pre>
+          <pre className="select-all">{publicKeyExport}</pre>
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
       </div>

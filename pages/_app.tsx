@@ -30,11 +30,6 @@ export type MyAppProps = AppProps & {
 // Deprecated, probably as we will move to style-jsx?
 const clientSideEmotionCache = createEmotionCache();
 
-function useThemeClass() {
-  const pathname = usePathname();
-  const map: any = { "/": "home", "/about": "about", "/projects": "projects" };
-  return map[pathname] ?? "unknown";
-}
 export default function App({
   Component,
   pageProps,
@@ -50,8 +45,6 @@ export default function App({
   }, []);
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout ?? ((page) => page);
-  const theme = useThemeClass();
-  console.log(theme);
 
   return (
     <CacheProvider value={emotionCache}>
@@ -65,11 +58,24 @@ export default function App({
         attribute="class"
         enableSystem
         disableTransitionOnChange={false}
-        themes={["home-light", "about-light", "projects-light"]}
+        themes={[
+          "light",
+          "dark",
+          "system",
+          "home-light",
+          "home-dark",
+          "about-light",
+          "about-light",
+          "projects-light",
+          "projects-dark",
+          "blog-light",
+          "blog-dark",
+          "x",
+        ]}
       >
         <main
           className={cn(
-            "min-h-screen bg-background font-sans antialiased transition-colors duration-1000",
+            "min-h-screen w-full font-sans antialiased",
             buildManfestHeadingFont.variable,
           )}
         >
