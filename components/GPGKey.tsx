@@ -156,18 +156,7 @@ function GPGKey() {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button
-                    // onClick={() =>
-                    //   toast({
-                    //     title: "Downloading PGP Key",
-                    //     className: "flex justify-center",
-                    //     duration: 1000,
-                    //   })
-                    // }
-                    variant="ghost"
-                    size="icon"
-                    asChild
-                  >
+                  <Button variant="ghost" size="icon" asChild>
                     <Link href="https://keys.openpgp.org/vks/v1/by-fingerprint/B3C97C24E201EF1777ABFF0B1B35E71D2AD7D44E">
                       <DownloadIcon width={24} height={24} />
                     </Link>

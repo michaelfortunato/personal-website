@@ -24,6 +24,8 @@ export default function Navbar(props: NavbarProps) {
       <div className="fixed z-[1] inline-block p-6">
         <div>
           <Hamburger
+            hideOutline={false}
+            label={"Menu button"}
             color={"hsl(var(--foreground))"}
             duration={0.2}
             toggled={isVisible}

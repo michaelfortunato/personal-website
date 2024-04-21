@@ -112,7 +112,7 @@ const Page: NextPageWithLayout<Props> = ({ buildInfo }: Props) => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button size="icon" variant="ghost">
+                  <Button size="icon" variant="ghost" asChild>
                     <Link href="/Resume.pdf" target="_blank">
                       <FileIcon width={24} height={24} />
                     </Link>
@@ -128,7 +128,7 @@ const Page: NextPageWithLayout<Props> = ({ buildInfo }: Props) => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button size="icon" variant="ghost">
+                  <Button size="icon" variant="ghost" asChild>
                     <Link
                       href="https://github.com/michaelfortunato"
                       target="_blank"
