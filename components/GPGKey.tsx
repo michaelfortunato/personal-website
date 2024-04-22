@@ -2,7 +2,7 @@ import React from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useCopyToClipboard, useIsMounted } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
-import { Copy, KeyRound } from "lucide-react";
+import { Copy, KeyRound, KeySquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
@@ -14,6 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
 
 const mPubID = `rsa4096/1B35E71D2AD7D44E 2024-04-18 [SC] [expires: 2025-04-18]`;
 const mPubFingerprint = `B3C97C24E201EF1777ABFF0B1B35E71D2AD7D44E`;
@@ -113,6 +114,30 @@ const CopyButton: React.ForwardRefExoticComponent<
 
 CopyButton.displayName = "CopyButton";
 function GPGKey() {
+  return (
+    <div className="grid grid-flow-col grid-rows-5 bg-accent-foreground">
+      <div className="row-span-5 grid grid-rows-subgrid">
+        <div>
+          <Badge variant={"outline"}>
+            <span className="flex gap-1">
+              <span>pub</span>
+              <KeySquare size={15} strokeWidth={1} />
+            </span>
+          </Badge>
+        </div>
+        <div className="row-start-3">uid</div>
+        <div className="row-start-4">sub</div>
+      </div>
+      <div className="col-start-2">{mPubID}</div>
+      <div className="col-start-2">{mPubFingerprint}</div>
+      <div className="col-start-2">{uid}</div>
+      <div className="col-start-2">{subPubID}</div>
+      <div className="col-start-2">{subPubFingerprint}</div>
+    </div>
+  );
+}
+
+function GPGKey2() {
   const { toast } = useToast();
   return (
     <div className="max-h-[80vh] max-w-[inherit] overflow-hidden p-4 pt-8">
