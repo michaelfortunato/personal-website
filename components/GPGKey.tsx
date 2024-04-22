@@ -128,11 +128,11 @@ function GPGKey() {
         <div className="row-start-3">uid</div>
         <div className="row-start-4">sub</div>
       </div>
-      <div className="col-start-2">{mPubID}</div>
-      <div className="col-start-2">{mPubFingerprint}</div>
-      <div className="col-start-2">{uid}</div>
-      <div className="col-start-2">{subPubID}</div>
-      <div className="col-start-2">{subPubFingerprint}</div>
+      <div className="col-start-3 col-end-9">{mPubID}</div>
+      <div className="col-start-3 col-end-9">{mPubFingerprint}</div>
+      <div className="col-start-6 col-end-9">{uid}</div>
+      <div className="col-start-3 col-end-9">{subPubID}</div>
+      <div className="col-start-3 col-end-9">{subPubFingerprint}</div>
     </div>
   );
 }
