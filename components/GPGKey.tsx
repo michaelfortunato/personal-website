@@ -2,11 +2,12 @@ import React from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useCopyToClipboard, useIsMounted } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
-import { Copy, KeyRound, KeySquare } from "lucide-react";
+import { Copy, Fingerprint, KeyRound, KeySquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
 import { DownloadIcon } from "@radix-ui/react-icons";
+import Image from "next/image";
 import Link from "next/link";
 import {
   Tooltip,
@@ -15,6 +16,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
+import GNUIcon from "@/public/Official_gnu.svg";
 
 const mPubID = `rsa4096/1B35E71D2AD7D44E 2024-04-18 [SC] [expires: 2025-04-18]`;
 const mPubFingerprint = `B3C97C24E201EF1777ABFF0B1B35E71D2AD7D44E`;
@@ -125,8 +127,30 @@ function GPGKey() {
             </span>
           </Badge>
         </div>
-        <div className="row-start-3">uid</div>
-        <div className="row-start-4">sub</div>
+        <div className="row-start-2 flex flex-row-reverse items-center">
+          <Fingerprint strokeWidth={1} size={15} />
+        </div>
+        <div className="row-start-3">
+          <span>uid</span>
+          <Image
+            className="ml-1 inline"
+            src={GNUIcon}
+            width={15}
+            height={15}
+            alt="bundle size image"
+          />
+        </div>
+        <div className="row-start-4">
+          <Badge variant={"outline"}>
+            <span className="flex gap-1">
+              <span>sub</span>
+              <KeySquare size={15} strokeWidth={1} />
+            </span>
+          </Badge>
+        </div>
+        <div className="row-start-5 flex flex-row-reverse items-center">
+          <Fingerprint strokeWidth={1} size={15} />
+        </div>
       </div>
       <div className="col-start-3 col-end-9">{mPubID}</div>
       <div className="col-start-3 col-end-9">{mPubFingerprint}</div>
