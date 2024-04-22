@@ -6,7 +6,7 @@ export default function Hero(props: { triggerNameEnter: boolean }) {
   let [nameEntered, setNameEntered] = useState(false);
 
   return (
-    <div className="flex h-[90vh] items-center justify-center">
+    <div className="flex h-[90vh] items-center justify-center overflow-hidden">
       <div>
         <div className="relative top-[16%]">
           <Name
