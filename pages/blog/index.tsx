@@ -4,16 +4,12 @@ import Link from "next/link";
 import { NextPageWithLayout } from "pages/_app";
 import { type Metadata } from "@/lib/posts";
 import { getAllPosts } from "@/lib/server-only/posts";
+import { BuildInfo } from "@/lib/buildInfo";
+import { getBuildInfo } from "@/lib/server-only/buildInfo";
 
-export async function getStaticProps() {
-	const allPostsData = await getAllPosts();
-	return {
-		props: { posts: allPostsData }
-	};
-}
 
 function FeaturedPost(post: Metadata) {
-	return (<div className="shadow p-4 bg-white rounded">
+	return (<div className="shadow p-4 bg-card rounded">
     <Link href={`blog/${post.id}`}>{post.id}</Link></div>);
 }
 
@@ -29,6 +25,7 @@ function FeaturedPosts({ posts }: { posts: Metadata[] }) {
 
 type PageProps = {
 	posts: Metadata[];
+  buildInfo: BuildInfo;
 };
 
 function getFeaturedPosts(allPosts: Metadata[]) {
@@ -44,15 +41,6 @@ const Page: NextPageWithLayout<PageProps> = ({ posts }) => {
 		</div>
     <div className="absolute w-full bottom-0 right-0 text-white">
     <div className="flex flex-col justify-center items-center">
-    <div className="flex flex-col p-8">
-      <div className="flex flex-col items-center gap-8">
-      <HardHat className="h-20 w-20"/ >
-      </div>
-      <div className="text-xl">
-      3/2024: This page (and, admittedly, website in general) is currently under construction.
-      I appreciate your patience!
-      </div>
-    </div>
     </div>
     </div>
 
@@ -61,7 +49,14 @@ const Page: NextPageWithLayout<PageProps> = ({ posts }) => {
 };
 
 Page.getLayout = page => {
-	return <RootPageLayout>{page}</RootPageLayout>;
+	return <RootPageLayout buildInfo={page.props.buildInfo}>{page}</RootPageLayout>;
 };
+
+export async function getStaticProps() {
+	const allPostsData = await getAllPosts();
+	return {
+    props: { posts: allPostsData, buildInfo: await getBuildInfo() }
+	};
+}
 
 export default Page;

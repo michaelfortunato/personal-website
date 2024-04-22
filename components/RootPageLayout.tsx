@@ -1,7 +1,13 @@
 import { motion } from "framer-motion";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect } from "react";
 import { useRouter } from "next/router";
 import Navbar from "./Nav/Navbar";
+import { usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
+import Link from "next/link";
+import { Toaster } from "./ui/toaster";
+import { BuildInfo } from "@/lib/buildInfo";
+import BuildStamp from "@/components/BuildStamp";
 
 export type RootPageStyle = {
   name: string;
@@ -37,27 +43,20 @@ const pageConfigs: Record<string, RootPageStyle> = {
   },
 };
 
-export default function RootPageLayout({ children }: PropsWithChildren) {
-  const router = useRouter();
-  const pathname = router.pathname;
-  const pageStyleConfig = pathname
-    ? pageConfigs[pathname] ?? pageConfigs["/"]
-    : pageConfigs["/"];
-
+export default function RootPageLayout({
+  children,
+  buildInfo,
+}: PropsWithChildren<{ buildInfo: BuildInfo }>) {
   return (
-    <>
+    <div>
       <Navbar routes={pageConfigs} />
-      <motion.div
-        className="absolute min-h-screen min-w-[100vw]"
-        animate={{
-          backgroundColor: pageStyleConfig.backgroundColor,
-          transition: {
-            duration: 0.5, // Yeah? Or 0.3 it matters!
-          },
-        }}
-      >
+      <div className="absolute min-h-screen min-w-full bg-background transition duration-1000">
         {children}
-      </motion.div>
-    </>
+        <div className="absolute bottom-0 left-0 w-full">
+          <BuildStamp buildInfo={buildInfo} />
+        </div>
+      </div>
+      <Toaster />
+    </div>
   );
 }

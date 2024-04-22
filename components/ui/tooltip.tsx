@@ -7,7 +7,13 @@ import { cn } from "@/lib/utils";
 
 const TooltipProvider = TooltipPrimitive.Provider;
 
-const Tooltip = TooltipPrimitive.Root;
+const Tooltip: React.FC<TooltipPrimitive.TooltipProps> = ({ children }) => {
+  return (
+    <TooltipPrimitive.Root delayDuration={100}>
+      {children}
+    </TooltipPrimitive.Root>
+  );
+};
 
 const TooltipTrigger = TooltipPrimitive.Trigger;
 

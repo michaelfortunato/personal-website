@@ -8,19 +8,15 @@ import { MoonIcon } from "@radix-ui/react-icons";
 import { SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { useIsMounted } from "@/lib/hooks";
 
 const ThemeSwitch = React.forwardRef<
   React.ElementRef<typeof SwitchPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>
 >(({ className, ...props }, ref) => {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  // useEffect only runs on the client, so now we can safely show the UI
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
+  const { resolvedTheme, setTheme } = useTheme();
+  const isMounted = useIsMounted();
+  if (!isMounted) {
     return null;
   }
   return (
@@ -33,7 +29,7 @@ const ThemeSwitch = React.forwardRef<
       onCheckedChange={(checked) =>
         checked ? setTheme("dark") : setTheme("light")
       }
-      defaultChecked={theme == "dark"}
+      defaultChecked={resolvedTheme == "dark"}
       ref={ref}
     >
       <SwitchPrimitives.Thumb

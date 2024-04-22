@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { NextPageWithLayout } from "./_app";
 import RootPageLayout from "@/components/RootPageLayout";
+import { getBuildInfo } from "@/lib/server-only/buildInfo";
 
 const AboutRoot = styled(motion.div)`
   width: 100%;
@@ -83,7 +84,15 @@ const Page: NextPageWithLayout = () => {
 };
 
 Page.getLayout = (page) => {
-  return <RootPageLayout>{page}</RootPageLayout>;
+  return (
+    <RootPageLayout buildInfo={page.props.buildInfo}>{page}</RootPageLayout>
+  );
 };
+
+export async function getStaticProps() {
+  return {
+    props: { buildInfo: await getBuildInfo() },
+  };
+}
 
 export default Page;

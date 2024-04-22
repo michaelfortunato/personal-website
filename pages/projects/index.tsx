@@ -10,6 +10,7 @@ import { Tile as WebsiteTile } from "./personal-website";
 import { Tile as EightBitAdderTile } from "./8-bit-adder";
 import { NextPageWithLayout } from "pages/_app";
 import RootPageLayout from "@/components/RootPageLayout";
+import { getBuildInfo } from "@/lib/server-only/buildInfo";
 
 export function TileFactory(
   title: string,
@@ -176,7 +177,15 @@ const Page: NextPageWithLayout = () => {
 };
 
 Page.getLayout = (page) => {
-  return <RootPageLayout>{page}</RootPageLayout>;
+  return (
+    <RootPageLayout buildInfo={page.props.buildInfo}>{page}</RootPageLayout>
+  );
 };
+
+export async function getStaticProps() {
+  return {
+    props: { buildInfo: await getBuildInfo() },
+  };
+}
 
 export default Page;

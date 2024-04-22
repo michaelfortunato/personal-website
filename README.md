@@ -24,3 +24,9 @@ on Route53.
 ## Building Good Git Habits
 
 - <https://www.conventionalcommits.org/en/v1.0.0/>
+
+## Useful Resources
+
+1. shad-ui theme generator: <https://shadcn-ui-theme-generator.vercel.app>
+2. shad-ui theme generator: <https://dizzy.systems/editor>
+3. Typescript cheatsheet: <https://react-typescript-cheatsheet.netlify.app/docs/react-types/componentprops>

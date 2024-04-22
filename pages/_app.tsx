@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { NextPage } from "next";
 import { buildManfestHeadingFont } from "@/lib/fonts";
 import { ThemeProvider } from "@/components/themeProvider";
+import Layout from "@/components/layout";
 
 export type GetLayout = (page: ReactElement) => ReactNode;
 
@@ -55,18 +56,30 @@ export default function App({
       </Head>
       <ThemeProvider
         attribute="class"
-        defaultTheme="light"
-        // defaultTheme="system"
-        // enableSystem
-        // disableTransitionOnChange
+        enableSystem
+        disableTransitionOnChange={false}
+        themes={[
+          "light",
+          "dark",
+          "system",
+          "home-light",
+          "home-dark",
+          "about-light",
+          "about-light",
+          "projects-light",
+          "projects-dark",
+          "blog-light",
+          "blog-dark",
+          "x",
+        ]}
       >
         <main
           className={cn(
-            "min-h-screen bg-background font-sans antialiased",
+            "min-h-screen w-full font-sans antialiased",
             buildManfestHeadingFont.variable,
           )}
         >
-          {getLayout(<Component {...pageProps} />)}
+          <Layout>{getLayout(<Component {...pageProps} />)}</Layout>
           <GoogleAnalytics gaId="G-PG5ZXTMN4Z" />
         </main>
       </ThemeProvider>
