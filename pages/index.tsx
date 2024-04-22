@@ -146,15 +146,14 @@ const Page: NextPageWithLayout<Props> = ({ buildInfo }: Props) => {
         </motion.div>
       </div>
       <Hero triggerNameEnter={triggerNameEnter} />
-      <div className="absolute bottom-0 left-0 w-full">
-        <BuildStamp buildInfo={buildInfo} triggerFadeIn={triggerGridExit} />
-      </div>
     </>
   );
 };
 
 Page.getLayout = (page) => {
-  return <RootPageLayout>{page}</RootPageLayout>;
+  return (
+    <RootPageLayout buildInfo={page.props.buildInfo}>{page}</RootPageLayout>
+  );
 };
 
 // This function gets called at build time on server-side.

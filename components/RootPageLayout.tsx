@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { Toaster } from "./ui/toaster";
+import { BuildInfo } from "@/lib/buildInfo";
+import BuildStamp from "@/components/BuildStamp";
 
 export type RootPageStyle = {
   name: string;
@@ -41,29 +43,18 @@ const pageConfigs: Record<string, RootPageStyle> = {
   },
 };
 
-export function pathnameToThemeClass(pathname: string) {
-  const map: any = { "/": "home", "/about": "about", "/projects": "projects" };
-  return map[pathname] ?? "unknown";
-}
-
-export default function RootPageLayout({ children }: PropsWithChildren) {
-  const pathname = usePathname();
-  const theme = pathnameToThemeClass(pathname);
-  const { setTheme } = useTheme();
-
-  useEffect(() => {
-    if (theme == "unknown") {
-      setTheme(`light`);
-      return;
-    }
-    setTheme(`${theme}-light`);
-  }, [setTheme, theme]);
-
+export default function RootPageLayout({
+  children,
+  buildInfo,
+}: PropsWithChildren<{ buildInfo: BuildInfo }>) {
   return (
     <div>
       <Navbar routes={pageConfigs} />
       <div className="absolute min-h-screen min-w-full bg-background transition duration-1000">
         {children}
+        <div className="absolute bottom-0 left-0 w-full">
+          <BuildStamp buildInfo={buildInfo} />
+        </div>
       </div>
       <Toaster />
     </div>

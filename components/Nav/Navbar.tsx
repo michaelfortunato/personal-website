@@ -9,9 +9,8 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Twirl as Hamburger } from "hamburger-react";
 import { gsap } from "gsap";
-import { pathnameToThemeClass, RootPageStyle } from "../RootPageLayout";
-import { useTheme } from "next-themes";
-import { useIsMounted } from "@/lib/hooks";
+import { resolveURLToTheme } from "@/components/layout";
+import { RootPageStyle } from "@/components/RootPageLayout";
 
 export type NavbarProps = {
   routes: Record<string, RootPageStyle>;
@@ -54,7 +53,7 @@ const NavPage = (props: NavPageProps) => {
     <AnimatePresence initial={false}>
       {props.isVisible && (
         <motion.div
-          className={`relative left-0 top-0 h-screen w-screen ${previewURL != null ? pathnameToThemeClass(previewURL) : ""}-light`}
+          className={`relative left-0 top-0 h-screen w-screen ${previewURL && resolveURLToTheme(previewURL)}`}
           initial={{ translateY: "-100%" }}
           animate={{
             translateY: 0,
@@ -130,7 +129,7 @@ const NavContent = (props: NavContentProps) => {
                     scaleX: url == props.previewURL ? 1.1 : 0,
                   }}
                 >
-                  <hr className="h-[2px]" />
+                  <hr className="border-foreground bg-inherit text-inherit" />
                 </motion.div>
               </AnimatePresence>
             </div>

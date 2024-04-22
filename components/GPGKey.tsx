@@ -116,7 +116,7 @@ function GPGKey() {
   const { toast } = useToast();
   return (
     <div className="max-h-[80vh] max-w-[inherit] overflow-hidden p-4 pt-8">
-      <div className="flex h-3/6 max-h-[inherit] w-full max-w-[inherit] flex-col overflow-hidden ">
+      <div className="flex h-full max-h-[inherit] w-full max-w-[inherit] flex-col overflow-hidden ">
         <div className="flex items-center rounded-t-lg bg-stone-100 p-2">
           <div className="flex-auto pl-2 ">
             <b>My PGP Key</b> <KeyRound className="inline" strokeWidth={1} />

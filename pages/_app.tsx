@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { NextPage } from "next";
 import { buildManfestHeadingFont } from "@/lib/fonts";
 import { ThemeProvider } from "@/components/themeProvider";
-import { usePathname } from "next/navigation";
+import Layout from "@/components/layout";
 
 export type GetLayout = (page: ReactElement) => ReactNode;
 
@@ -79,7 +79,7 @@ export default function App({
             buildManfestHeadingFont.variable,
           )}
         >
-          {getLayout(<Component {...pageProps} />)}
+          <Layout>{getLayout(<Component {...pageProps} />)}</Layout>
           <GoogleAnalytics gaId="G-PG5ZXTMN4Z" />
         </main>
       </ThemeProvider>
