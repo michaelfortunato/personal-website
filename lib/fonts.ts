@@ -13,4 +13,5 @@ export const blogInitialsFont = DM_Serif_Display({
   style: ["normal", "italic"],
   subsets: ["latin"],
   weight: "400",
+  variable: "--moniker",
 });

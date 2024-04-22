@@ -139,6 +139,10 @@ function GPGKey() {
             height={15}
             alt="bundle size image"
           />
+          <span>/</span>
+          <span className="text-center font-moniker text-xs font-bold italic">
+            mnf
+          </span>
         </div>
         <div className="row-start-4">
           <Badge variant={"outline"}>

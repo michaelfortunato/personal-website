@@ -82,6 +82,10 @@ module.exports = {
           "var(--build-manifest-heading)",
           ...require("tailwindcss/defaultTheme").fontFamily.sans,
         ],
+        moniker: [
+          "var(--moniker)",
+          ...require("tailwindcss/defaultTheme").fontFamily.sans,
+        ],
       },
       keyframes: {
         "accordion-down": {
