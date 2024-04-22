@@ -5,6 +5,7 @@ import { BadgeCheckIcon, CodeXml, DatabaseIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ClockIcon, CommitIcon } from "@radix-ui/react-icons";
+import { blogInitialsFont } from "@/lib/fonts";
 
 export function computeGithubURLs(commit: BuildCommitInfo) {
   return {
@@ -40,9 +41,13 @@ const BuildStamp: React.FC<{
       <div className="flex flex-col">
         <div className="flex justify-center gap-1">
           <div>
-            Last built by <b>me</b>
+            Last built by <b>me,</b>
           </div>
-          <BadgeCheckIcon width="15px" />
+          <div
+            className={`inline-block ${blogInitialsFont.className} font-extrabold`}
+          >
+            mnf
+          </div>
         </div>
         <div className="flex gap-2">
           <div className="flex items-center gap-1">
