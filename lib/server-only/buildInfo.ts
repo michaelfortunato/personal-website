@@ -67,19 +67,3 @@ function launchShellCmd(cmd: string) {
   }
   return buffer;
 }
-
-function assertEnvVarExists(
-  value: unknown,
-  variableName: string,
-): asserts value is string {
-  if (
-    value == "" ||
-    typeof value !== "string" ||
-    value === null ||
-    value === undefined
-  ) {
-    throw new Error(`Environment variable "${variableName}" is not a string.`);
-  }
-}
-
-launchShellCmd("git branch --show-current")?.toString().trim();

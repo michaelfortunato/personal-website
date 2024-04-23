@@ -117,7 +117,7 @@ CopyButton.displayName = "CopyButton";
 
 function GPGKeyEntry() {
   return (
-    <div className="grid grid-flow-col grid-rows-5 rounded shadow">
+    <div className="grid grid-flow-col grid-rows-5 gap-x-4 gap-y-2">
       <div className="row-span-5 grid grid-rows-subgrid">
         <div>
           <Badge variant={"outline"}>
@@ -127,10 +127,12 @@ function GPGKeyEntry() {
             </span>
           </Badge>
         </div>
-        <div className="row-start-2 flex flex-row-reverse items-center">
+        <div className="row-start-2 mt-1 flex flex-row-reverse">
           <Fingerprint strokeWidth={1} size={15} />
         </div>
-        <div className="row-start-3">
+        <div className="row-start-3 whitespace-nowrap">
+          {" "}
+          {/*  Keeps mnf on same line*/}
           <span>uid</span>
           <Image
             className="ml-1 inline"
@@ -150,13 +152,13 @@ function GPGKeyEntry() {
             </span>
           </Badge>
         </div>
-        <div className="row-start-5 flex flex-row-reverse items-center">
+        <div className="row-start-5 mt-1 flex flex-row-reverse">
           <Fingerprint strokeWidth={1} size={15} />
         </div>
       </div>
       <div className="col-start-3 col-end-9">{mPubID}</div>
       <div className="col-start-3 col-end-9">{mPubFingerprint}</div>
-      <div className="col-start-6 col-end-9">{uid}</div>
+      <div className="col-start-6 col-end-9 whitespace-nowrap">{uid}</div>
       <div className="col-start-3 col-end-9">{subPubID}</div>
       <div className="col-start-3 col-end-9">{subPubFingerprint}</div>
     </div>
@@ -166,76 +168,69 @@ function GPGKeyEntry() {
 function GPGKeyContent() {
   const { toast } = useToast();
   return (
-    <div className="max-h-[80vh] max-w-[inherit] overflow-hidden p-4 pt-8">
-      <div className="flex h-full max-h-[inherit] w-full max-w-[inherit] flex-col overflow-hidden ">
-        <div className="flex items-center rounded-t-lg bg-stone-100 p-2">
-          <div className="flex-auto pl-2 ">
-            <b>My PGP Key</b> <KeyRound className="inline" strokeWidth={1} />
-          </div>
-          <div className="flex flex-grow flex-row-reverse gap-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <CopyButton
-                    className="bg-none"
-                    textToCopy={publicKeyExport}
-                    handleCopyPromise={(hello) =>
-                      hello
-                        .then(() =>
-                          toast({
-                            title: "Copied PGP Key Clipboard!",
-                            className: "flex justify-center",
-                            duration: 1000,
-                          }),
-                        )
-                        .catch((e) => {
-                          console.log(e);
-                          toast({
-                            title: "Could not copied to clipboard",
-                            className: "flex justify-center",
-                            duration: 1000,
-                          });
-                        })
-                    }
-                  />
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  <p>Copy to clipboard</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" asChild>
-                    <Link href="https://keys.openpgp.org/vks/v1/by-fingerprint/B3C97C24E201EF1777ABFF0B1B35E71D2AD7D44E">
-                      <DownloadIcon width={24} height={24} />
-                    </Link>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  <p>Download from OpenPGP</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+    <div className="flex h-full max-h-[inherit] w-full max-w-[inherit] flex-col overflow-hidden ">
+      <div className="flex items-center rounded-t-lg bg-stone-100 p-2">
+        <div className="flex-auto pl-2 ">
+          <b>My PGP Key</b> <KeyRound className="inline" strokeWidth={1} />
         </div>
-        <ScrollArea className=" max-h-[inherit] w-full max-w-[inherit] flex-grow bg-card">
-          <pre className="lg:select-all">{publicKeyExport}</pre>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+        <div className="flex flex-grow flex-row-reverse gap-2">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <CopyButton
+                  className="bg-none"
+                  textToCopy={publicKeyExport}
+                  handleCopyPromise={(hello) =>
+                    hello
+                      .then(() =>
+                        toast({
+                          title: "Copied PGP Key Clipboard!",
+                          className: "flex justify-center",
+                          duration: 1000,
+                        }),
+                      )
+                      .catch((e) => {
+                        console.log(e);
+                        toast({
+                          title: "Could not copied to clipboard",
+                          className: "flex justify-center",
+                          duration: 1000,
+                        });
+                      })
+                  }
+                />
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>Copy to clipboard</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" asChild>
+                  <Link href="https://keys.openpgp.org/vks/v1/by-fingerprint/B3C97C24E201EF1777ABFF0B1B35E71D2AD7D44E">
+                    <DownloadIcon width={24} height={24} />
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>Download from OpenPGP</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </div>
+      <ScrollArea className=" max-h-[inherit] w-full max-w-[inherit] flex-grow bg-card">
+        <pre className="lg:select-all">{publicKeyExport}</pre>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
     </div>
   );
 }
 
 function GPGKey() {
-  return (
-    <div className="pt-4">
-      <GPGKeyEntry />
-      <GPGKeyContent />
-    </div>
-  );
+  return <GPGKeyContent />;
 }
 
 export default GPGKey;

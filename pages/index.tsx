@@ -1,18 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useState } from "react";
 import Grid from "@/components/Grid";
 import Hero from "@/components/Hero";
 import { AnimatePresence, motion } from "framer-motion";
 import { type BuildInfo, type BuildCommitInfo } from "@/lib/buildInfo";
 
 import { GetStaticProps } from "next";
-import {
-  BookA,
-  CodeXml,
-  CornerDownRight,
-  Fingerprint,
-  Moon,
-  Sun,
-} from "lucide-react";
+import { Fingerprint } from "lucide-react";
 import { Button, ButtonProps } from "@/components/ui/button";
 import { NextPageWithLayout } from "./_app";
 import RootPageLayout from "@/components/RootPageLayout";
@@ -20,14 +13,11 @@ import RootPageLayout from "@/components/RootPageLayout";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
+  DialogOverlay,
+  DialogPortal,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import Link from "next/link";
-import { useTheme } from "next-themes";
-import Image from "next/image";
 import {
   Tooltip,
   TooltipContent,
@@ -35,10 +25,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { getBuildInfo } from "@/lib/server-only/buildInfo";
-import { GitHubLogoIcon, FileIcon } from "@radix-ui/react-icons";
-import BuildStamp from "@/components/BuildStamp";
+import { FileIcon } from "@radix-ui/react-icons";
 import GPGKey from "@/components/GPGKey";
-import { Toaster } from "@/components/ui/toaster";
 
 const defaultGridConfig = {
   random: true,
@@ -103,9 +91,18 @@ const Page: NextPageWithLayout<Props> = ({ buildInfo }: Props) => {
                   )}
                 </Tooltip>
               </TooltipProvider>
-              <DialogContent className="max-h-screen bg-muted lg:max-w-4xl">
-                <GPGKey />
-              </DialogContent>
+              <DialogPortal>
+                <DialogOverlay>
+                  <div className="absolute bottom-0 flex w-full justify-center">
+                    <Button>Close</Button>
+                  </div>
+                </DialogOverlay>
+                <DialogContent className="w-fit max-w-full">
+                  <div className="max-h-[80vh] overflow-auto p-2">
+                    <GPGKey />
+                  </div>
+                </DialogContent>
+              </DialogPortal>
             </Dialog>
           </div>
           <div>
@@ -168,17 +165,6 @@ const Page: NextPageWithLayout<Props> = ({ buildInfo }: Props) => {
     </>
   );
 };
-
-/*
-
-                      <Image
-                        className="group-hover:stroke-white"
-                        src={GitIcon}
-                        alt=""
-                        width={24}
-                        height={24}
-                      />
-  */
 
 Page.getLayout = (page) => {
   return (
