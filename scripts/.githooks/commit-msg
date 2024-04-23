@@ -26,5 +26,5 @@ set -o pipefail
 echo "Running commit-msg hook..."
 COMMIT_MSG_FILE=$1
 
-cat $COMMIT_MSG_FILE | convco check --from-stdin
-echo "Good message."
+cat $COMMIT_MSG_FILE | convco check --from-stdin -c ~/.git-commit-msg-schema.yaml |
+	echo "Good message."
