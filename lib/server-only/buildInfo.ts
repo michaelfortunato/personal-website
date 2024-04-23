@@ -33,16 +33,23 @@ export function getCommitEntryForFile(filepath: string, head: boolean = true) {
 
 /// Returns the commit info for this build
 async function getBuildCommitInfo(): Promise<BuildCommitInfo> {
-  // NOTE: These environment variables are prepoluated in next.config.js
-  // Assert each required environment variable is a non-empty string.
-  assertEnvVarExists(process.env.GIT_REPO_NAME, "GIT_REPO_NAME");
-  assertEnvVarExists(process.env.GIT_COMMIT_SHA, "GIT_COMMIT_SHA");
-  assertEnvVarExists(process.env.GIT_COMMIT_BRANCH, "GIT_COMMIT_BRANCH");
+  // NOTE: We assume our build environment has our git repo
+  // and git history configured, which getCommitEntryForFile already assumes.
+  // So lets just use the git cli to get the info.
+  const branch = launchShellCmd("git branch --show-current")?.toString().trim();
+  if (!branch)
+    throw "Could not compute build branch using git cli. Are you sure the build environment has git set up?";
+  const hash = launchShellCmd(`git log -1 --pretty=format:"%H"`)
+    ?.toString()
+    .trim();
+  if (!hash)
+    throw "Could not compute build commit hash using git cli. Are you sure the build environment has git set up?";
+  const repo = "personal-website"; // This should never change.
 
   return {
-    repo: process.env.GIT_REPO_NAME,
-    hash: process.env.GIT_COMMIT_SHA,
-    branch: process.env.GIT_COMMIT_BRANCH,
+    repo,
+    hash,
+    branch,
   };
 }
 
@@ -56,7 +63,7 @@ function launchShellCmd(cmd: string) {
     }
   } catch (error) {
     console.log(error);
-    return buffer;
+    return undefined;
   }
   return buffer;
 }
@@ -74,3 +81,5 @@ function assertEnvVarExists(
     throw new Error(`Environment variable "${variableName}" is not a string.`);
   }
 }
+
+launchShellCmd("git branch --show-current")?.toString().trim();
