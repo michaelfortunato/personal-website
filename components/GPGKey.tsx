@@ -113,11 +113,11 @@ const CopyButton: React.ForwardRefExoticComponent<
     );
   },
 );
-
 CopyButton.displayName = "CopyButton";
-function GPGKey() {
+
+function GPGKeyEntry() {
   return (
-    <div className="grid grid-flow-col grid-rows-5 bg-accent-foreground">
+    <div className="grid grid-flow-col grid-rows-5 rounded shadow">
       <div className="row-span-5 grid grid-rows-subgrid">
         <div>
           <Badge variant={"outline"}>
@@ -140,9 +140,7 @@ function GPGKey() {
             alt="bundle size image"
           />
           <span>/</span>
-          <span className="text-center font-moniker text-xs font-bold italic">
-            mnf
-          </span>
+          <span className="font-moniker text-xs font-bold italic">mnf</span>
         </div>
         <div className="row-start-4">
           <Badge variant={"outline"}>
@@ -165,7 +163,7 @@ function GPGKey() {
   );
 }
 
-function GPGKey2() {
+function GPGKeyContent() {
   const { toast } = useToast();
   return (
     <div className="max-h-[80vh] max-w-[inherit] overflow-hidden p-4 pt-8">
@@ -227,6 +225,15 @@ function GPGKey2() {
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
       </div>
+    </div>
+  );
+}
+
+function GPGKey() {
+  return (
+    <div className="pt-4">
+      <GPGKeyEntry />
+      <GPGKeyContent />
     </div>
   );
 }

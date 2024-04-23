@@ -132,8 +132,27 @@ const Page: NextPageWithLayout<Props> = ({ buildInfo }: Props) => {
                     <Link
                       href="https://github.com/michaelfortunato"
                       target="_blank"
+                      className="group"
                     >
-                      <GitHubLogoIcon width={24} height={24} />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24px"
+                        height="24px"
+                        viewBox="0 0 92 92"
+                      >
+                        <defs>
+                          <clipPath id="a">
+                            <path d="M0 .113h91.887V92H0zm0 0"></path>
+                          </clipPath>
+                        </defs>
+                        <g clipPath="url(#a)">
+                          <path
+                            fill="#100f0d"
+                            className="group-hover:fill-white"
+                            d="M90.156 41.965L50.036 1.848a5.913 5.913 0 00-8.368 0l-8.332 8.332 10.566 10.566a7.03 7.03 0 017.23 1.684 7.043 7.043 0 011.673 7.277l10.183 10.184a7.026 7.026 0 017.278 1.672 7.04 7.04 0 010 9.957 7.045 7.045 0 01-9.961 0 7.038 7.038 0 01-1.532-7.66l-9.5-9.497V59.36a7.04 7.04 0 011.86 11.29 7.04 7.04 0 01-9.957 0 7.04 7.04 0 010-9.958 7.034 7.034 0 012.308-1.539V33.926a7.001 7.001 0 01-2.308-1.535 7.049 7.049 0 01-1.516-7.7L29.242 14.273 1.734 41.777a5.918 5.918 0 000 8.371L41.855 90.27a5.92 5.92 0 008.368 0l39.933-39.934a5.925 5.925 0 000-8.371"
+                          ></path>
+                        </g>
+                      </svg>
                     </Link>
                   </Button>
                 </TooltipTrigger>
@@ -149,6 +168,17 @@ const Page: NextPageWithLayout<Props> = ({ buildInfo }: Props) => {
     </>
   );
 };
+
+/*
+
+                      <Image
+                        className="group-hover:stroke-white"
+                        src={GitIcon}
+                        alt=""
+                        width={24}
+                        height={24}
+                      />
+  */
 
 Page.getLayout = (page) => {
   return (
