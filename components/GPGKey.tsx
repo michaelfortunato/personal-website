@@ -168,8 +168,8 @@ function GPGKeyEntry() {
 function GPGKeyContent() {
   const { toast } = useToast();
   return (
-    <div className="flex h-full max-h-[inherit] w-full max-w-[inherit] flex-col overflow-hidden ">
-      <div className="flex items-center rounded-t-lg bg-stone-100 p-2">
+    <div className="flex h-full max-h-[inherit] w-full max-w-[inherit] flex-col overflow-auto">
+      <div className="flex items-center rounded-t-lg bg-stone-100">
         <div className="flex-auto pl-2 ">
           <b>My PGP Key</b> <KeyRound className="inline" strokeWidth={1} />
         </div>
@@ -221,7 +221,7 @@ function GPGKeyContent() {
           </TooltipProvider>
         </div>
       </div>
-      <ScrollArea className=" max-h-[inherit] w-full max-w-[inherit] flex-grow bg-card">
+      <ScrollArea className="max-h-[inherit] w-full max-w-[inherit] flex-grow">
         <pre className="lg:select-all">{publicKeyExport}</pre>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>

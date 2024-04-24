@@ -97,8 +97,8 @@ const Page: NextPageWithLayout<Props> = ({ buildInfo }: Props) => {
                     <Button>Close</Button>
                   </div>
                 </DialogOverlay>
-                <DialogContent className="w-fit max-w-full">
-                  <div className="max-h-[80vh] overflow-auto p-2">
+                <DialogContent className="w-fit max-w-full p-0">
+                  <div className="max-h-[80vh]">
                     <GPGKey />
                   </div>
                 </DialogContent>
