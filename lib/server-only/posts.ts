@@ -40,13 +40,9 @@ export async function getPostData(id: string): Promise<Post> {
 
 export async function getAllPostIds() {
   const fileNames = fs.readdirSync(postsDirectory);
-  return fileNames.map((fileName) => {
-    return {
-      params: {
-        id: fileName.replace(/\.md$/, ""),
-      },
-    };
-  });
+  return fileNames.map((fileName) => ({
+    id: fileName.replace(/\.md$/, ""),
+  }));
 }
 
 export async function getAllPosts(): Promise<Metadata[]> {

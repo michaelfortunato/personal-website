@@ -37,6 +37,7 @@ const Page: NextPageWithLayout<PageProps> = ({ posts }) => {
 	return (
   <div>
 		<div className="flex flex-col justify-center items-center min-h-screen">
+        {/* @ts-ignore */}
 			<FeaturedPosts posts={...featuredPosts} />
 		</div>
     <div className="absolute w-full bottom-0 right-0 text-white">

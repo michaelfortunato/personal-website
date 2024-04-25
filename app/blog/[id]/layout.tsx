@@ -24,7 +24,7 @@ function Header() {
   );
 }
 
-const Layout = ({ preview, children }: Props) => {
+const PostLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="container min-h-screen">
       <div className="invisible h-16 w-full" />
@@ -35,4 +35,4 @@ const Layout = ({ preview, children }: Props) => {
   );
 };
 
-export default Layout;
+export default PostLayout;
