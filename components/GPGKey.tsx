@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useCopyToClipboard, useIsMounted } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
-import { Copy, Fingerprint, KeyRound, KeySquare } from "lucide-react";
+import { Fingerprint, KeyRound, KeySquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
@@ -16,6 +16,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
+import Copy from "@geist-ui/icons/copy";
 import GNUIcon from "@/public/Official_gnu.svg";
 
 const mPubID = `rsa4096/1B35E71D2AD7D44E 2024-04-18 [SC] [expires: 2025-04-18]`;
@@ -229,8 +230,95 @@ function GPGKeyContent() {
   );
 }
 
+function Terminal({ sourceText }: { sourceText: string }) {
+  const { toast } = useToast();
+
+  const [selected, setSelected] = useState(0);
+
+  return (
+    <div className="flex h-full max-h-[inherit] w-full max-w-[inherit] flex-col rounded bg-card">
+      <div className="flex items-center rounded-t border-b-zinc-200 bg-zinc-200 px-4 py-1 text-accent/75 outline outline-zinc-300">
+        <div className="flex-auto">
+          <Button
+            variant="default"
+            className="prose w-fit cursor-pointer rounded bg-current bg-zinc-200 p-2 text-sm text-accent/75 hover:bg-accent/15 hover:text-black"
+            onClick={() => setSelected(0)}
+          >
+            PGP Key
+          </Button>
+        </div>
+        <div className="flex flex-grow flex-row-reverse gap-2">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <CopyButton
+                  className="hover:bg-accent/15 hover:text-black"
+                  textToCopy={sourceText}
+                  handleCopyPromise={(hello) =>
+                    hello
+                      .then(() =>
+                        toast({
+                          title: "Copied PGP Key Clipboard!",
+                          className: "flex justify-center",
+                          duration: 1000,
+                        }),
+                      )
+                      .catch((e) => {
+                        console.log(e);
+                        toast({
+                          title: "Could not copied to clipboard",
+                          className: "flex justify-center",
+                          duration: 1000,
+                        });
+                      })
+                  }
+                />
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>Copy to clipboard</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="hover:bg-accent/15 hover:text-black"
+                  asChild
+                >
+                  <Link href="https://keys.openpgp.org/vks/v1/by-fingerprint/B3C97C24E201EF1777ABFF0B1B35E71D2AD7D44E">
+                    <DownloadIcon width={24} height={24} />
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>Download from OpenPGP</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      </div>
+      <div className="relative">
+        <hr className="absolute h-2 w-1 scale-x-[200] text-black" />
+      </div>
+      <ScrollArea className="h-full max-h-[inherit] w-full max-w-[inherit] flex-grow p-4 pl-8 pt-0">
+        <pre className="prose">
+          <code>{sourceText}</code>
+        </pre>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
+    </div>
+  );
+}
+
 function GPGKey() {
-  return <GPGKeyContent />;
+  return (
+    <div className="max-h-[80vh] overflow-hidden rounded-t p-0">
+      <Terminal sourceText={publicKeyExport} />
+    </div>
+  );
 }
 
 export default GPGKey;
