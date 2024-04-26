@@ -94,7 +94,7 @@ const Page: NextPageWithLayout<Props> = ({ buildInfo }: Props) => {
               <DialogPortal>
                 <DialogOverlay>
                   <div className="absolute bottom-0 flex w-full justify-center">
-                    <Button>Close</Button>
+                    <Button className="cursor-pointer">Close</Button>
                   </div>
                 </DialogOverlay>
                 <DialogContent className="w-fit max-w-full transform bg-card p-0">
