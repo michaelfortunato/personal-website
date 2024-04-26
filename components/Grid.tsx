@@ -97,6 +97,7 @@ export default function Grid(props: any) {
 
     setTimeout(() => props.setTriggerNameEnter(true), gridEnterTimeout + 500);
     setTimeout(() => props.setTriggerGridExit(true), gridEnterTimeout + 700);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

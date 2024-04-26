@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "npx prettier  . '!pages/blog/index.tsx' -w",
-    "format:check": "npx prettier  -c . '!pages/blog/index.tsx'"
+    "format": "npx prettier . -w",
+    "format:check": "npx prettier -c ."
   },
   "engines": {
     "node": ">=18.17.0"
