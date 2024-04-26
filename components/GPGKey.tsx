@@ -351,7 +351,9 @@ function Terminal() {
             <code>{publicKeyExport}</code>
           </pre>
         ) : (
-          <GPGKeyEntry />
+          <div className="pt-2">
+            <GPGKeyEntry />
+          </div>
         )}
         <ScrollBar orientation="horizontal" />
       </ScrollArea>

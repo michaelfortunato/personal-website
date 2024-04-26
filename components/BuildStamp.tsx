@@ -49,7 +49,7 @@ const BuildStamp: React.FC<{
             mnf
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap justify-center gap-2">
           <div className="flex items-center gap-1">
             <div>
               <ClockIcon stroke="20px" />
