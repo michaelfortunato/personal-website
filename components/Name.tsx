@@ -53,13 +53,14 @@ export default function Name(props: NameProps) {
   const firstNameConfigs = useRef(buildConfigs(props.firstName));
   const lastNameConfigs = useRef(buildConfigs(props.lastName));
   const [isClient, setIsClient] = useState(false);
+  const { onAnimationFinish } = props;
 
   useEffect(() => {
     setIsClient(true);
     setTimeout(() => {
-      props.onAnimationFinish(true);
+      onAnimationFinish(true);
     }, 3950);
-  }, []);
+  }, [onAnimationFinish]);
 
   return (
     <>

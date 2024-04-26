@@ -1,12 +1,12 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useCopyToClipboard, useIsMounted } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
-import { Copy, Fingerprint, KeyRound, KeySquare } from "lucide-react";
+import { Fingerprint, KeyRound, KeySquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
-import { DownloadIcon } from "@radix-ui/react-icons";
+import { CheckIcon, DownloadIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -16,7 +16,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
+import Copy from "@geist-ui/icons/copy";
 import GNUIcon from "@/public/Official_gnu.svg";
+import { motion } from "framer-motion";
 
 const mPubID = `rsa4096/1B35E71D2AD7D44E 2024-04-18 [SC] [expires: 2025-04-18]`;
 const mPubFingerprint = `B3C97C24E201EF1777ABFF0B1B35E71D2AD7D44E`;
@@ -86,6 +88,7 @@ sub   rsa4096/6E20758D549A7D0F 2024-04-18 [E] [expires: 2025-04-18]
       994CE1164CB34E4973FA56556E20758D549A7D0F
 `;
 
+import Check from "@geist-ui/icons/check";
 const CopyButton: React.ForwardRefExoticComponent<
   {
     textToCopy: string;
@@ -95,20 +98,40 @@ const CopyButton: React.ForwardRefExoticComponent<
 > = React.forwardRef(
   ({ className, textToCopy, handleCopyPromise, ...props }, ref) => {
     const [copiedText, setCopiedText] = useCopyToClipboard();
+    const [showCheck, setShowCheck] = useState(false);
+    const timer = useRef<any>(null);
+
+    useEffect(() => {
+      if (showCheck) {
+        timer.current = setTimeout(() => {
+          setShowCheck(false);
+        }, 1000);
+      } else {
+        if (timer.current) {
+          clearTimeout(timer.current);
+          timer.current = null;
+        }
+      }
+      return () => {
+        timer.current && clearTimeout(timer.current);
+      };
+    }, [showCheck]);
+
     return (
       <Button
         ref={ref}
         {...props}
         variant="ghost"
         size="icon"
-        className={cn("active:bg-card active:text-black", className)}
+        className={cn("active:text-black", className)}
         onClick={(e) => {
-          // onClick has to come before the prop spread to override it
-          console.log(e);
-          handleCopyPromise(setCopiedText(textToCopy));
+          if (!showCheck) {
+            handleCopyPromise(setCopiedText(textToCopy));
+          }
+          setShowCheck(!showCheck);
         }}
       >
-        <Copy />
+        {showCheck ? <Check width={24} height={24} /> : <Copy />}
       </Button>
     );
   },
@@ -165,26 +188,58 @@ function GPGKeyEntry() {
   );
 }
 
-function GPGKeyContent() {
+function Terminal() {
   const { toast } = useToast();
+  const [selected, setSelected] = useState(0);
+
   return (
-    <div className="flex h-full max-h-[inherit] w-full max-w-[inherit] flex-col overflow-auto">
-      <div className="flex items-center rounded-t-lg bg-stone-100">
-        <div className="flex-auto pl-2 ">
-          <b>My PGP Key</b> <KeyRound className="inline" strokeWidth={1} />
+    <div className="flex h-full max-h-[inherit] w-full max-w-[inherit] flex-col divide-y divide-zinc-300 rounded bg-card">
+      <div className="flex items-center rounded-t border-b-zinc-200 bg-zinc-200 px-4 py-1 text-accent/75">
+        <div className="flex flex-auto gap-2">
+          <div className="relative">
+            <Button
+              variant="default"
+              className="prose w-fit cursor-pointer rounded bg-current bg-zinc-200 p-2 text-sm text-accent/75 hover:bg-accent/15 hover:text-black"
+              onClick={() => setSelected(0)}
+            >
+              PGP Key
+            </Button>
+            {selected == 0 && (
+              <div className="absolute flex w-full justify-center">
+                <motion.hr className="h-2 w-2/4" />
+              </div>
+            )}
+          </div>
+          <div className="relative">
+            <Button
+              variant="default"
+              className="prose w-fit cursor-pointer rounded bg-current bg-zinc-200 p-2 text-sm text-accent/75 hover:bg-accent/15 hover:text-black"
+              onClick={() => setSelected(1)}
+            >
+              Metadata
+            </Button>
+            {selected == 1 && (
+              <div className="absolute flex w-full justify-center">
+                <motion.hr className="h-2 w-2/4" />
+              </div>
+            )}
+          </div>
         </div>
         <div className="flex flex-grow flex-row-reverse gap-2">
           <TooltipProvider>
-            <Tooltip>
+            <Tooltip open={false} /* Disable tooltip */>
               <TooltipTrigger asChild>
                 <CopyButton
-                  className="bg-none"
-                  textToCopy={publicKeyExport}
+                  className="hover:bg-accent/15 hover:text-black"
+                  textToCopy={selected == 0 ? publicKeyExport : publicKeyEntry}
                   handleCopyPromise={(hello) =>
                     hello
                       .then(() =>
                         toast({
-                          title: "Copied PGP Key Clipboard!",
+                          title:
+                            selected == 0
+                              ? "Copied PGP Key To Clipboard!"
+                              : "Copied PGP Metadata To Clipboard!",
                           className: "flex justify-center",
                           duration: 1000,
                         }),
@@ -192,7 +247,7 @@ function GPGKeyContent() {
                       .catch((e) => {
                         console.log(e);
                         toast({
-                          title: "Could not copied to clipboard",
+                          title: "Could not copy to clipboard",
                           className: "flex justify-center",
                           duration: 1000,
                         });
@@ -206,9 +261,14 @@ function GPGKeyContent() {
             </Tooltip>
           </TooltipProvider>
           <TooltipProvider>
-            <Tooltip>
+            <Tooltip open={false} /* Disable tooltip */>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="hover:bg-accent/15 hover:text-black"
+                  asChild
+                >
                   <Link href="https://keys.openpgp.org/vks/v1/by-fingerprint/B3C97C24E201EF1777ABFF0B1B35E71D2AD7D44E">
                     <DownloadIcon width={24} height={24} />
                   </Link>
@@ -221,8 +281,16 @@ function GPGKeyContent() {
           </TooltipProvider>
         </div>
       </div>
-      <ScrollArea className="max-h-[inherit] w-full max-w-[inherit] flex-grow">
-        <pre className="lg:select-all">{publicKeyExport}</pre>
+      <ScrollArea className="h-full max-h-[inherit] w-full max-w-[inherit] flex-grow p-4 pl-8 pt-0 antialiased">
+        {selected == 0 ? (
+          <pre className="prose">
+            <code>{publicKeyExport}</code>
+          </pre>
+        ) : (
+          <div className="pt-2">
+            <GPGKeyEntry />
+          </div>
+        )}
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
     </div>
@@ -230,7 +298,11 @@ function GPGKeyContent() {
 }
 
 function GPGKey() {
-  return <GPGKeyContent />;
+  return (
+    <div className="max-h-[80vh] overflow-hidden rounded-t p-0">
+      <Terminal />
+    </div>
+  );
 }
 
 export default GPGKey;

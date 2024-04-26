@@ -22,11 +22,10 @@ const StyledPage = styled(motion.div)`
 const Page: NextPageWithLayout = () => {
   const lottieRef = useRef(null) as LottieRef;
   const [isXL, setIsXL] = useState(false);
-  const [hasMounted, setHasMounted] = useState(false);
   const [triggerAniRef, isAniInView] = useInView({ initialInView: true });
 
   useEffect(() => {
-    if (hasMounted && lottieRef.current) {
+    if (lottieRef.current) {
       if (isAniInView) lottieRef.current.play();
     }
   }, [isAniInView]);
@@ -48,10 +47,6 @@ const Page: NextPageWithLayout = () => {
     if (window.matchMedia("(min-width: 3000px)").matches) {
       setIsXL(true);
     }
-  }, []);
-
-  useEffect(() => {
-    setHasMounted(true);
   }, []);
 
   return (

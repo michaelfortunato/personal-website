@@ -90,6 +90,7 @@ const NavContent = (props: NavContentProps) => {
       { x: -400, y: -200, rotation: 30 },
       { x: 0, y: 0, rotation: 0, delay: 0.2, duration: 0.3, stagger: 0.08 },
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
