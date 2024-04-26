@@ -188,70 +188,6 @@ function GPGKeyEntry() {
   );
 }
 
-function GPGKeyContent() {
-  const { toast } = useToast();
-  return (
-    <div className="flex h-full max-h-[inherit] w-full max-w-[inherit] flex-col overflow-auto">
-      <div className="flex items-center rounded-t-lg bg-stone-100">
-        <div className="flex-auto pl-2 ">
-          <b>My PGP Key</b> <KeyRound className="inline" strokeWidth={1} />
-        </div>
-        <div className="flex flex-grow flex-row-reverse gap-2">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <CopyButton
-                  className="bg-none"
-                  textToCopy={publicKeyExport}
-                  handleCopyPromise={(hello) =>
-                    hello
-                      .then(() =>
-                        toast({
-                          title: "Copied PGP Key Clipboard!",
-                          className: "flex justify-center",
-                          duration: 1000,
-                        }),
-                      )
-                      .catch((e) => {
-                        console.log(e);
-                        toast({
-                          title: "Could not copied to clipboard",
-                          className: "flex justify-center",
-                          duration: 1000,
-                        });
-                      })
-                  }
-                />
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <p>Copy to clipboard</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" asChild>
-                  <Link href="https://keys.openpgp.org/vks/v1/by-fingerprint/B3C97C24E201EF1777ABFF0B1B35E71D2AD7D44E">
-                    <DownloadIcon width={24} height={24} />
-                  </Link>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <p>Download from OpenPGP</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      </div>
-      <ScrollArea className="max-h-[inherit] w-full max-w-[inherit] flex-grow">
-        <pre className="lg:select-all">{publicKeyExport}</pre>
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
-    </div>
-  );
-}
-
 function Terminal() {
   const { toast } = useToast();
   const [selected, setSelected] = useState(0);
@@ -291,7 +227,7 @@ function Terminal() {
         </div>
         <div className="flex flex-grow flex-row-reverse gap-2">
           <TooltipProvider>
-            <Tooltip>
+            <Tooltip open={false} /* Disable tooltip */>
               <TooltipTrigger asChild>
                 <CopyButton
                   className="hover:bg-accent/15 hover:text-black"
@@ -325,7 +261,7 @@ function Terminal() {
             </Tooltip>
           </TooltipProvider>
           <TooltipProvider>
-            <Tooltip>
+            <Tooltip open={false} /* Disable tooltip */>
               <TooltipTrigger asChild>
                 <Button
                   variant="ghost"
