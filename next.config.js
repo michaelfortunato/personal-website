@@ -5,7 +5,7 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 
 const { PHASE_DEVELOPMENT_SERVER } = require("next/constants");
 
-module.exports = (phase, { defaultConfig }) => {
+module.exports = async (/** @type {string} */ phase, { defaultConfig }) => {
   /**
    * @type {import('next').NextConfig}
    */

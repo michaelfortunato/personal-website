@@ -1,21 +1,15 @@
-import { NextResponse } from "next/server";
-import type { NextFetchEvent, NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest, event: NextFetchEvent) {
-  const requestHeaders = request.headers;
-  requestHeaders.set("x-url", request.url);
-
-  // You can also set request headers in NextResponse.rewrite
-  const response = NextResponse.next({
-    request: {
-      // New request headers
-      headers: requestHeaders,
-    },
-  });
-  return response;
+// This function can be marked `async` if using `await` inside
+export function middleware(request: NextRequest) {
+  if (
+    request.nextUrl.pathname.length > 4 &&
+    request.nextUrl.pathname.slice(-5) == ".jpeg" // TODO: Get this check in the regex below to improve performance
+  ) {
+    return;
+  }
 }
 
-// See "Matching Paths" below to learn more
 export const config = {
   matcher: [
     /*
