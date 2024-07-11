@@ -72,8 +72,6 @@ export default class TelemetryService<P extends Context> {
           pageVisit = pageVisitOption.value;
         }
         pageVisit.updateLastVisited(unixTimestamp);
-        console.log("HERE");
-        console.log(pageVisit);
         (await this.pageVisitRepo.update(pageVisit, this.ctx)).unwrap();
         (await this.ctx.commit()).unwrap();
         return Ok(pageVisit);

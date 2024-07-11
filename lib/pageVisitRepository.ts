@@ -37,7 +37,7 @@ export class PageVisitSQLRepository<P extends SQLQueryable>
                   result.rows[0].visitor_ip,
                   result.rows[0].first_visited,
                   result.rows[0].last_visited,
-                  result.rows[0].reaction,
+                  result.rows[0].number_of_visits,
                 ),
               ),
         ),
@@ -72,7 +72,7 @@ export class PageVisitSQLRepository<P extends SQLQueryable>
   ): Promise<Result<PageVisit, Error>> {
     const result = await tryAsync(() =>
       ctx.query<PageVisit>(
-        "UPDATE INTO page_visit(page_url, visitor_ip, first_visited, last_visited, number_of_visits, reaction) VALUES($1, $2, $3, $4, $5, $6)",
+        "UPDATE page_visit SET page_url = $1, visitor_ip = $2, first_visited = $3, last_visited = $4, number_of_visits = $5, reaction = $6 WHERE page_url = $1 AND visitor_ip = $2;",
         [
           pageVisit.page_url,
           pageVisit.visitor_ip,

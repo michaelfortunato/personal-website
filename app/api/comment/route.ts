@@ -28,8 +28,8 @@ export async function POST(request: NextRequest) {
   const text = unwrap(reqBody.text);
   const result = await service.addComment(userId, pageId, text);
   if (result.isErr()) {
-    const e = result.unwrapErr();
-    return Response.json({ cause: e.message }, { status: 404 });
+    const error = result.error;
+    return Response.json({ message: error.message }, { status: 404 });
   }
   return Response.json({ res: reqBody });
 }

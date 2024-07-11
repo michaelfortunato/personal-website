@@ -24,5 +24,9 @@ export async function POST(request: Request) {
   const page_url = unwrap(reqBody.page_url);
   const visited_at = new Date(unwrap(reqBody.visited_at));
   const result = await service.recordVisit(page_url, visitor_ip, visited_at);
+  if (result.isErr()) {
+    const error = result.error;
+    return Response.json({ error: error.message }, { status: 404 });
+  }
   return Response.json({ res: reqBody });
 }
