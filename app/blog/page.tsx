@@ -33,7 +33,8 @@ function getFeaturedPosts(allPosts: Metadata[]) {
   return allPosts.filter((_post) => true);
 }
 
-const Page: NextPageWithLayout<PageProps> = ({ posts }) => {
+export default async function Page() {
+  const posts = await getAllPosts();
   const postList = getFeaturedPosts(posts); // TODO: Decide which posts to feature
   return (
     <div>
@@ -45,19 +46,4 @@ const Page: NextPageWithLayout<PageProps> = ({ posts }) => {
       </div>
     </div>
   );
-};
-
-Page.getLayout = (page) => {
-  return (
-    <RootPageLayout buildInfo={page.props.buildInfo}>{page}</RootPageLayout>
-  );
-};
-
-export async function getStaticProps() {
-  const allPostsData = await getAllPosts();
-  return {
-    props: { posts: allPostsData, buildInfo: await getBuildInfo() },
-  };
 }
-
-export default Page;

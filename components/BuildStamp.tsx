@@ -1,3 +1,4 @@
+"use client";
 import React, { useMemo, useState } from "react";
 import { type BuildInfo, type BuildCommitInfo } from "@/lib/buildInfo";
 
