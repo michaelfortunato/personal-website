@@ -23,3 +23,7 @@ export async function tryAsync<T, E = Error>(
     return new Err(e as E);
   }
 }
+
+export type Mutable<T> = {
+  -readonly [P in keyof T]: T[P];
+};

@@ -9,15 +9,15 @@ export const metadata: Metadata = {
   description: "Michael Fortunato's Personal Website",
 };
 
-export function resolveURLToTheme(pathname: string) {
-  const map: any = {
-    "/": "home-light",
-    "/about": "about-light",
-    "/projects": "projects-light",
-    "/blog": "blog-light",
-  };
-  return map[pathname] ?? "unknown";
-}
+// export function resolveURLToTheme(pathname: string) {
+//   const map: any = {
+//     "/": "home-light",
+//     "/about": "about-light",
+//     "/projects": "projects-light",
+//     "/blog": "blog-light",
+//   };
+//   return map[pathname] ?? "unknown";
+// }
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   // const pathname = usePathname();

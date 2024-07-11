@@ -88,7 +88,7 @@ export const getClient: GetClient<PGPoolClientWrapper> = async () => {
   if (pgPoolClient.isErr()) {
     return pgPoolClient;
   }
-  return Ok(new PGPoolClientWrapper(pgPoolClient.unwrap()));
+  return Ok(new PGPoolClientWrapper(pgPoolClient.value));
 };
 
 export default getClient;

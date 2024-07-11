@@ -17,7 +17,6 @@ module.exports = async (/** @type {string} */ phase, { defaultConfig }) => {
     eslint: {
       // ignoreDuringBuilds: true,
     },
-    output: "standalone",
   };
 
   return nextConfig;

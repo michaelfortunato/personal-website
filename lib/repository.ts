@@ -1,5 +1,4 @@
 import { Ok, Err, Result, Option, AsyncResult } from "ts-results-es";
-import { SQLQueryable } from "./persistence";
 
 export default interface Repository<T, P> {
   get(id: string, ctx: P): Promise<Result<Option<T>, Error>>;

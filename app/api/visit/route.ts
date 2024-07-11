@@ -1,27 +1,28 @@
-import PageRepository from "@/lib/pageRepository";
 import TelemetryService from "@/lib/telemetryService";
 import unwrap from "@/lib/utils";
-import VisitorRepository from "@/lib/visitorRepository";
-import getClient from "@/lib/persistence";
-import $try from "@/lib/macros";
+import { VisitorSQLRepository as VisitorRepository } from "@/lib/visitorRepository";
+import { PageSQLRepository as PageRepository } from "@/lib/pageRepository";
+import { PageVisitSQLRepository as PageVisitRepository } from "@/lib/pageVisitRepository";
+import { getPGClient as getClient } from "@/lib/persistence";
 
 /// Record a new visit to the site
 export async function POST(request: Request) {
-  const dbClientRes = $try!(await getClient());
-  const dbClient = dbClientRes;
+  const dbClientRes = await getClient();
+  if (dbClientRes.isErr()) {
+    return Response.json({ res: dbClientRes.toString() });
+  }
+  const dbClient = dbClientRes.value;
 
-  const visitorRepo = new VisitorRepository();
-  const pageRepo = new PageRepository();
-  const service = new TelemetryService<typeof dbClient>(
+  const service = new TelemetryService(
     dbClient,
-    visitorRepo,
-    pageRepo,
+    new VisitorRepository(),
+    new PageRepository(),
+    new PageVisitRepository(),
   );
   const reqBody = await request.json();
   const visitor_ip = unwrap(reqBody.visitor_ip);
   const page_url = unwrap(reqBody.page_url);
-  const visited_at = new Date();
-  visited_at.setTime(unwrap(reqBody.visited_at));
-  await service.recordVisit(page_url, visitor_ip, visited_at);
+  const visited_at = new Date(unwrap(reqBody.visited_at));
+  const result = await service.recordVisit(page_url, visitor_ip, visited_at);
   return Response.json({ res: reqBody });
 }

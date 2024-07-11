@@ -1,7 +1,7 @@
 type Page = {
   url: string;
-  createdAtUnixTimestamp: number;
-  modifiedAtUnixTimestamp: number;
+  createdAt: Date;
+  modifiedAt: Date;
 };
 
 export default Page;

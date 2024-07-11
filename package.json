@@ -5,12 +5,14 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "prebuild": "npx ts-macros transform .",
+    "prebuild": "true || npx ts-macros transform .",
     "start": "next start",
     "lint": "next lint",
     "format": "npx prettier . -w",
     "format:check": "npx prettier -c .",
-    "seed": "tsx --env-file=.env.development.local scripts/seed.ts"
+    "db:up": "tsx --env-file=.env.development.local db/migrations/run.ts -- up",
+    "db:down": "tsx --env-file=.env.development.local db/migrations/run.ts -- down",
+    "db:seed": "tsx --env-file=.env.development.local db/seed.ts"
   },
   "engines": {
     "node": ">=18.17.0"
@@ -40,6 +42,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "framer-motion": "^10.12.2",
+    "glob": "^11.0.0",
     "gray-matter": "^4.0.3",
     "gsap": "^3.11.5",
     "hamburger-react": "^2.4.1",

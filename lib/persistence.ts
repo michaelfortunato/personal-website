@@ -50,6 +50,11 @@ export interface SQLQueryable {
   ): void;
 }
 
+export interface SQLModelInfo<M> {
+  propName2ColName(propertyName: keyof M): string | null;
+  colName2PropName(colName: string): keyof M | null;
+}
+
 export interface Context {
   start(): Promise<Result<null, Error>>;
   commit(): Promise<Result<null, Error>>;

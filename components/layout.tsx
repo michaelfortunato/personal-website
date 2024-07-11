@@ -14,7 +14,7 @@ export function resolveURLToTheme(pathname: string) {
 
 export default function Layout({ children }: PropsWithChildren) {
   const pathname = usePathname();
-  const theme = resolveURLToTheme(pathname);
+  const theme = resolveURLToTheme(pathname as string);
   const { setTheme } = useTheme();
 
   useEffect(() => {
