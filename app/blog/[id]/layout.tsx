@@ -1,6 +1,6 @@
 import { blogInitialsFont } from "@/lib/fonts";
 import Link from "next/link";
-import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
+import { ThemeSwitch } from "@/components/ui/theme-switch";
 type Props = {
   preview?: boolean;
   children: React.ReactNode;

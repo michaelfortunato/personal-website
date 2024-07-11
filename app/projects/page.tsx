@@ -1,3 +1,4 @@
+"use client";
 import { ReactElement, PropsWithChildren, useState, ReactNode } from "react";
 import { IconButton } from "@mui/material";
 import FlipIcon from "@mui/icons-material/Flip";
@@ -6,11 +7,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
 
-import { Tile as WebsiteTile } from "./personal-website";
-import { Tile as EightBitAdderTile } from "./8-bit-adder";
-import { NextPageWithLayout } from "pages/_app";
-import RootPageLayout from "@/components/RootPageLayout";
-import { getBuildInfo } from "@/lib/server-only/buildInfo";
+import { Tile as WebsiteTile } from "./personal-website/page";
+import { Tile as EightBitAdderTile } from "./8-bit-adder/page";
 
 export function TileFactory(
   title: string,
@@ -96,12 +94,7 @@ export function Layout(props: PropsWithChildren<{ url: string }>) {
   );
 }
 
-export const wrap = (min: number, max: number, v: number) => {
-  const rangeSize = max - min;
-  return ((((v - min) % rangeSize) + rangeSize) % rangeSize) + min;
-};
-
-const Page: NextPageWithLayout = () => {
+export default function Page() {
   const [[selected, direction], setPage] = useState([0, 0]);
   const tiles = [<WebsiteTile key={1} />, <EightBitAdderTile key={2} />];
   const numTiles = tiles.length;
@@ -174,18 +167,4 @@ const Page: NextPageWithLayout = () => {
       </div>
     </div>
   );
-};
-
-Page.getLayout = (page) => {
-  return (
-    <RootPageLayout buildInfo={page.props.buildInfo}>{page}</RootPageLayout>
-  );
-};
-
-export async function getStaticProps() {
-  return {
-    props: { buildInfo: await getBuildInfo() },
-  };
 }
-
-export default Page;

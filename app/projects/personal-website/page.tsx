@@ -1,7 +1,4 @@
-import { Box, Grid, Paper, Typography } from "@mui/material";
-import { motion } from "framer-motion";
-import Link from "next/link";
-import { Layout, TileFactory } from ".";
+import { Layout, TileFactory } from "../page";
 import Image from "next/image";
 import clayiPhone from "@/public/projects/clay-iphone.svg";
 import clayMBP from "@/public/projects/clay-mbp.svg";

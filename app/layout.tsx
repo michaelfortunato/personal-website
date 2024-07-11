@@ -1,10 +1,12 @@
+import "../styles/globals.css";
 import { PropsWithChildren } from "react";
 import { Metadata } from "next";
-import "../styles/globals.css";
 import Navbar from "@/components/Nav/Navbar";
 import BuildStamp from "@/components/BuildStamp";
 import { Toaster } from "@/components/ui/toaster";
 import { getBuildInfo } from "@/lib/server-only/buildInfo";
+import { cn } from "@/lib/utils";
+import { ThemeProvider } from "@/components/themeProvider";
 
 export const metadata: Metadata = {
   title: "Michael Fortunato",
@@ -49,18 +51,29 @@ export default async function Layout({ children }: PropsWithChildren) {
   const buildInfo = await getBuildInfo();
 
   return (
-    <html lang="en">
-      <body className="min-h-screen w-full font-sans antialiased">
-        <div>
-          <Navbar routes={pageConfigs} />
-          <div className="absolute min-h-screen min-w-full bg-background transition duration-1000">
-            {children}
-            <div className="absolute bottom-0 left-0 w-full">
-              <BuildStamp buildInfo={buildInfo} />
+    <html lang="en" suppressHydrationWarning>
+      {/* From next-theme: If you do not add suppressHydrationWarning to
+      your <html> you will get warnings because next-themes
+      updates that element. This property only applies one level deep,
+      so it won't block hydration warnings on other elements. */}
+      <body
+        className={cn(
+          "min-h-screen w-full font-sans antialiased",
+          // buildManfestHeadingFont.variable,
+        )}
+      >
+        <ThemeProvider attribute="class">
+          <div>
+            <Navbar routes={pageConfigs} />
+            <div className="absolute min-h-screen min-w-full bg-background transition duration-1000">
+              {children}
+              <div className="w-full">
+                <BuildStamp buildInfo={buildInfo} />
+              </div>
             </div>
+            <Toaster />
           </div>
-          <Toaster />
-        </div>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -7,17 +7,17 @@ import { cn } from "@/lib/utils";
 import { MoonIcon } from "@radix-ui/react-icons";
 import { SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useIsMounted } from "@/lib/hooks";
 
 const ThemeSwitch = React.forwardRef<
   React.ElementRef<typeof SwitchPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>
 >(({ className, ...props }, ref) => {
-  const { resolvedTheme, setTheme } = useTheme();
-  const isMounted = useIsMounted();
-  if (!isMounted) {
-    return null;
-  }
+  const { theme, resolvedTheme, setTheme } = useTheme();
+  console.log(theme);
+  // const isMounted = useIsMounted();
+  // if (!isMounted) {
+  //   return null;
+  // }
   return (
     <SwitchPrimitives.Root
       className={cn(

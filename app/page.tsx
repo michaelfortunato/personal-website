@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import Grid from "@/components/Grid";
 import Hero from "@/components/Hero";
@@ -42,7 +43,7 @@ type Props = {
 };
 
 // Renders home page of a nextjs app (index.tsx)
-const Page: NextPageWithLayout<Props> = ({ buildInfo }: Props) => {
+export default function Page() {
   const [triggerNameEnter, setTriggerNameEnter] = useState(false);
   const [triggerGridExit, setTriggerGridExit] = useState(false);
   // NOTE: work around to get tool tip with dialog
@@ -162,24 +163,4 @@ const Page: NextPageWithLayout<Props> = ({ buildInfo }: Props) => {
       <Hero triggerNameEnter={triggerNameEnter} />
     </>
   );
-};
-
-Page.getLayout = (page) => {
-  return (
-    <RootPageLayout buildInfo={page.props.buildInfo}>{page}</RootPageLayout>
-  );
-};
-
-// This function gets called at build time on server-side.
-// It won't be called on client-side, so you can even do
-// direct database queries.
-export const getStaticProps: GetStaticProps = async () => {
-  // By returning { props: { posts } }, the Blog component
-  // will receive `posts` as a prop at build time
-  return {
-    props: {
-      buildInfo: await getBuildInfo(),
-    },
-  };
-};
-export default Page;
+}

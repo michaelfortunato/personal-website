@@ -10,7 +10,6 @@ import Document, {
 import createEmotionServer from "@emotion/server/create-instance";
 import { AppType } from "next/app";
 import createEmotionCache from "@/components/createEmotionCache";
-import { MyAppProps } from "./_app";
 
 interface MyDocumentProps extends DocumentProps {
   emotionStyleTags: JSX.Element[];
@@ -68,7 +67,7 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
   ctx.renderPage = () =>
     originalRenderPage({
       enhanceApp: (
-        App: React.ComponentType<React.ComponentProps<AppType> & MyAppProps>,
+        App: React.ComponentType<React.ComponentProps<AppType> & any>,
       ) =>
         function EnhanceApp(props) {
           return <App emotionCache={cache} {...props} />;

@@ -1,12 +1,10 @@
+"use client";
 import React, { useEffect, useRef, useState } from "react";
 import Lottie, { LottieRef } from "lottie-react";
 import animationData from "@/public/About_Page1_ISA-Loop.json";
 import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { NextPageWithLayout } from "./_app";
-import RootPageLayout from "@/components/RootPageLayout";
-import { getBuildInfo } from "@/lib/server-only/buildInfo";
 
 const AboutRoot = styled(motion.div)`
   width: 100%;
@@ -19,7 +17,7 @@ const StyledPage = styled(motion.div)`
   position: relative;
 `;
 
-const Page: NextPageWithLayout = () => {
+export default function Page() {
   const lottieRef = useRef(null) as LottieRef;
   const [isXL, setIsXL] = useState(false);
   const [triggerAniRef, isAniInView] = useInView({ initialInView: true });
@@ -76,18 +74,4 @@ const Page: NextPageWithLayout = () => {
       {/* <About2 blurbs={props.blurbs} triggerTlIntro={triggerTlIntro} key={2} /> */}
     </AboutRoot>
   );
-};
-
-Page.getLayout = (page) => {
-  return (
-    <RootPageLayout buildInfo={page.props.buildInfo}>{page}</RootPageLayout>
-  );
-};
-
-export async function getStaticProps() {
-  return {
-    props: { buildInfo: await getBuildInfo() },
-  };
 }
-
-export default Page;

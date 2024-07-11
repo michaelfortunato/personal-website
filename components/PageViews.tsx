@@ -1,5 +1,3 @@
-import Link from "next/link";
-import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
 import { PersonIcon } from "@radix-ui/react-icons";
 import { headers } from "next/headers";
 import { Suspense } from "react";
