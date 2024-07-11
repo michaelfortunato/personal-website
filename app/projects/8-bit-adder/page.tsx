@@ -5,7 +5,7 @@ import WideShot1Bit from "@/public/projects/8-bit-adder/wide-shot-1-bit.jpg";
 import Debug1Bit from "@/public/projects/8-bit-adder/debug-1-bit.jpg";
 import Diagram1Bit from "@/public/projects/8-bit-adder/1-bit-adder-diagram.png";
 
-export function Tile() {
+function Tile() {
   return TileFactory(
     "8 Bit Adder",
     <TileLeftSide />,
