@@ -3,13 +3,9 @@ import React, { useState } from "react";
 import Grid from "@/components/Grid";
 import Hero from "@/components/Hero";
 import { AnimatePresence, motion } from "framer-motion";
-import { type BuildInfo, type BuildCommitInfo } from "@/lib/buildInfo";
 
-import { GetStaticProps } from "next";
 import { Fingerprint } from "lucide-react";
-import { Button, ButtonProps } from "@/components/ui/button";
-import { NextPageWithLayout } from "./_app";
-import RootPageLayout from "@/components/RootPageLayout";
+import { Button } from "@/components/ui/button";
 
 import {
   Dialog,
@@ -25,7 +21,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { getBuildInfo } from "@/lib/server-only/buildInfo";
 import { FileIcon } from "@radix-ui/react-icons";
 import GPGKey from "@/components/GPGKey";
 
@@ -36,10 +31,6 @@ const defaultGridConfig = {
   avgDuration: 200,
   avgDelay: 1500,
   isDot: true,
-};
-
-type Props = {
-  buildInfo: BuildInfo;
 };
 
 // Renders home page of a nextjs app (index.tsx)
