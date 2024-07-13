@@ -62,7 +62,7 @@ export default async function Layout({ children }: PropsWithChildren) {
           // buildManfestHeadingFont.variable,
         )}
       >
-        <ThemeProvider attribute="class">
+        <ThemeProvider attribute="class" enableSystem disableTransitionOnChange>
           <div>
             <Navbar routes={pageConfigs} />
             <div className="absolute min-h-screen min-w-full bg-background transition duration-1000">
