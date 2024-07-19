@@ -1,6 +1,5 @@
 import { None, Ok, Option, Result, Some } from "ts-results-es";
 import { SQLQueryable } from "./persistence";
-import Repository from "./repository";
 import Visitor from "./visitor";
 import { tryAsync } from "./utils";
 

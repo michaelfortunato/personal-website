@@ -1,6 +1,5 @@
 import { None, Ok, Option, Result, Some } from "ts-results-es";
 import { SQLQueryable, SQLModelInfo } from "./persistence";
-import Repository from "./repository";
 import PageVisit from "./pageVisit";
 import { tryAsync } from "./utils";
 
@@ -91,21 +90,3 @@ export class PageVisitSQLRepository<P extends SQLQueryable>
 }
 
 export default PageVisitRepository;
-
-export class PageVisitSQLSimpleRepository<
-  P extends SQLQueryable & SQLModelInfo<PageVisit>,
-> implements Repository<PageVisit, P>
-{
-  get(id: string, ctx: P): Promise<Result<Option<PageVisit>, Error>> {
-    throw new Error("Method not implemented.");
-  }
-  exists(id: string, ctx: P): Promise<Result<boolean, Error>> {
-    throw new Error("Method not implemented.");
-  }
-  insert(t: PageVisit, ctx: P): Promise<Result<PageVisit, Error>> {
-    throw new Error("Method not implemented.");
-  }
-  delete(id: string, ctx: P): Promise<Result<null, Error>> {
-    throw new Error("Method not implemented.");
-  }
-}
