@@ -5,14 +5,14 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "prebuild": "true || npx ts-macros transform .",
+    "prebuild": "tsx --env-file .env build.ts",
     "start": "next start",
     "lint": "next lint",
     "format": "npx prettier . -w",
     "format:check": "npx prettier -c .",
-    "db:up": "tsx --env-file=.env.development.local db/migrations/run.ts -- up",
-    "db:down": "tsx --env-file=.env.development.local db/migrations/run.ts -- down",
-    "db:seed": "tsx --env-file=.env.development.local db/seed.ts"
+    "db:up": "tsx --env-file=.env db/migrations/run.ts -- up",
+    "db:down": "tsx --env-file=.env db/migrations/run.ts -- down",
+    "db:seed": "tsx --env-file=.env db/seed.ts"
   },
   "engines": {
     "node": ">=18.17.0"

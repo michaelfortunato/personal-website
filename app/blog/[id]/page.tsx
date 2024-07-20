@@ -123,14 +123,7 @@ function Footer(metadata: Metadata) {
   );
 }
 
-// import pg from "pg";
-// import PageViews from "@/components/PageViews";
-// const { Pool, Client } = pg;
-//   const pool = new Pool({ connectionString: process.env.POSTGRES_URL });
-//   const res = await pool.query("SELECT NOW()");
-//   await pool.end();
-
-export default async function PostPage({ params }: { params: { id: string } }) {
+export default async function Page({ params }: { params: { id: string } }) {
   const { id } = params;
   const postData = await getPostData(id);
 
@@ -150,3 +143,5 @@ export async function generateStaticParams() {
   const paths = await getAllPostIds();
   return paths;
 }
+/// Make sure these posts are generated at build time.
+export const dynamicParams = false;

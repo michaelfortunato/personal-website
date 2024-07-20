@@ -31,12 +31,19 @@ async function sqlSeedPages<P extends SQLQueryable>(db: P) {
 
 const seedPages = sqlSeedPages;
 
+async function sqlSeedUsers<P extends SQLQueryable>(db: P) {
+  const insertRow = `
+    INSERT INTO "user" (username, email)
+    VALUES ($1, $2);
+  `;
+  await db.query(insertRow, ["admin", "admin@gmail.com"]);
+}
+const seedUsers = sqlSeedUsers;
+
 async function main() {
-  // console.log(process.env);
   try {
     const client = (await getClient()).unwrap();
-    await seedPages(client);
-    await seedVisitors(client);
+    await seedUsers(client);
   } catch (e) {
     console.error(e);
     exit(1);

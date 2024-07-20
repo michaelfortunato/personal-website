@@ -9,3 +9,7 @@ DROP TABLE IF EXISTS page CASCADE;
 -- take down the visitor
 DROP TABLE IF EXISTS visitor CASCADE;
 
+-- take down the user table
+DROP TABLE IF EXISTS "user" CASCADE;
+-- take down the post table
+DROP TABLE IF EXISTS post CASCADE;

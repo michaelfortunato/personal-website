@@ -19,8 +19,17 @@ export async function getPostData(id: string): Promise<Post> {
   // Use gray-matter to parse the post metadata section
   const { data: frontMatter, content: documentContent } = matter(fileContents);
   const parsedDocument = await renderMarkdownToHTML(documentContent);
-  const firstCommit = getCommitEntryForFile(fullPath, false);
-  const currentCommit = getCommitEntryForFile(fullPath, true);
+  const fake = {
+    commitHash: "2342",
+    get shortCommitHash() {
+      return this.commitHash;
+    },
+    author: "michael",
+    timestamp: new Date().toString(),
+    message: "foo",
+  };
+  const firstCommit = getCommitEntryForFile(fullPath, false) || fake;
+  const currentCommit = getCommitEntryForFile(fullPath, true) || fake;
   if (!(firstCommit && currentCommit)) {
     throw "Could not get commit info for article. See server code. Aborting build ...";
   }
