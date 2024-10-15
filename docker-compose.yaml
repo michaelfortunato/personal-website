@@ -1,6 +1,5 @@
 # Use postgres/example user/password credentials
 services:
-
   db:
     image: postgres:latest
     restart: always
@@ -9,9 +8,8 @@ services:
       POSTGRES_PASSWORD: ${PGPASSWORD}
     # set shared memory limit when using docker-compose
     shm_size: 128mb
-    # or set shared memory limit when deploy via swarm stack
     volumes:
-      -  ${PGDATA}:/${PGDATA}
+      - ${PGDATA}:/${PGDATA}
     #  - type: tmpfs
     #    target: /dev/shm
     #    tmpfs:

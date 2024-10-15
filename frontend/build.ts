@@ -37,7 +37,12 @@ async function main() {
         }
         if (exists.value.isNone()) {
           console.log("Does not exist!");
-          return postService.create({ author_id: "0", title, content, tags });
+          return postService.createPost({
+            author_id: "0",
+            title,
+            content,
+            tags,
+          });
         }
         console.log("exists already!");
         const post = exists.value.unwrap();
