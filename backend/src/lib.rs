@@ -1,4 +1,5 @@
 use std::{
+    collections::HashMap,
     net::{IpAddr, Ipv4Addr, SocketAddr},
     ops::Deref,
     sync::Arc,
@@ -9,9 +10,11 @@ use axum::{
     routing::{get, post},
     Router,
 };
+use oauth2::PkceCodeVerifier;
 use std::env;
 use tokio::sync::Mutex;
 
+pub mod account;
 pub mod auth;
 pub mod controller;
 pub mod db;
@@ -85,7 +88,7 @@ pub struct InnerAppState {
 }
 
 pub struct Authenticators {
-    pub github_authenticator: Mutex<GithubAuthenticator>,
+    pub github_authenticator: Mutex<GithubAuthenticator<HashMap<String, PkceCodeVerifier>>>,
 }
 
 impl Authenticators {
@@ -100,6 +103,7 @@ impl Authenticators {
                 #[cfg(not(debug_assertions))]
                 /* PROD */
                 "https://api.michaelfortunato.dev/auth/oauth/callback/github".to_string(),
+                HashMap::new(),
             )),
         }
     }

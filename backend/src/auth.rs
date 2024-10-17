@@ -11,8 +11,8 @@ use serde::{Deserialize, Serialize};
 use tracing::debug;
 
 use crate::result::Error;
-
 mod jwt;
+mod oauth;
 
 #[derive(sqlx::Type, Deserialize, Debug, Serialize)]
 #[sqlx(type_name = "provider", rename_all = "lowercase")]
@@ -20,6 +20,8 @@ mod jwt;
 pub enum Provider {
     Github,
 }
+
+pub type ProviderType = Provider;
 
 impl sqlx::postgres::PgHasArrayType for Provider {
     fn array_type_info() -> sqlx::postgres::PgTypeInfo {
@@ -39,83 +41,78 @@ pub trait OAuthAuthenticator {
     ) -> Result<BasicTokenResponse, BasicRequestTokenError<AsyncHttpClientError>>;
 }
 
-pub struct GithubAuthenticator(CustomOAuthAuthenticator);
+pub struct GithubAuthenticator<S: CsrfStorage>(CustomOAuthAuthenticator<S>);
 
-impl GithubAuthenticator {
-    pub fn new(client_id: String, client_secret: String, redirect_url: String) -> Self {
-        let inner = CustomOAuthAuthenticator::new(
-            client_id,
-            client_secret,
-            redirect_url,
-            "https://github.com/login/oauth/authorize".to_string(),
-            "https://github.com/login/oauth/access_token".to_string(),
-        );
-        Self(inner)
-    }
-}
-
-impl OAuthAuthenticator for GithubAuthenticator {
-    fn generate_authorization_url(&mut self, scopes: Vec<Scope>) -> Url {
-        self.0.generate_authorization_url(scopes)
-    }
-
-    async fn request_access_token(
-        &mut self,
-        authorization_code: String,
-        csrf_state: CsrfToken,
-    ) -> Result<BasicTokenResponse, BasicRequestTokenError<AsyncHttpClientError>> {
-        self.0
-            .request_access_token(authorization_code, csrf_state)
-            .await
-    }
-}
-
-pub struct CustomOAuthAuthenticator {
-    oauth_client: BasicClient,
-    csrf_state: HashMap<String, PkceCodeVerifier>,
-}
-
-impl CustomOAuthAuthenticator {
-    pub fn new(
-        client_id: String,
-        client_secret: String,
-        redirect_url: String,
-        auth_url: String,
-        token_url: String,
-    ) -> Self {
-        let client = BasicClient::new(
-            ClientId::new(client_id),
-            Some(ClientSecret::new(client_secret)),
-            AuthUrl::new(auth_url).unwrap(),
-            Some(TokenUrl::new(token_url).unwrap()),
-        )
-        // Set the URL the user will be redirected to after the authorization process.
-        .set_redirect_uri(RedirectUrl::new(redirect_url).unwrap());
-
-        Self {
-            oauth_client: client,
-            csrf_state: HashMap::new(),
-        }
-    }
+impl CsrfStorage for HashMap<String, PkceCodeVerifier> {
     fn insert_csrf_token(
         &mut self,
         csrf_token: CsrfToken,
         pkce_verifier: PkceCodeVerifier,
     ) -> Result<(), Error> {
-        self.csrf_state
-            .insert(csrf_token.secret().clone(), pkce_verifier);
+        self.insert(csrf_token.secret().clone(), pkce_verifier);
         Ok(())
     }
+
     fn remove_csrf_token(&mut self, csrf_token: CsrfToken) -> Result<PkceCodeVerifier, Error> {
         let pkce_verifier = self
-            .csrf_state
             .remove(csrf_token.secret())
             .expect("No csrf state exists");
         Ok(pkce_verifier)
     }
 }
 
-impl OAuthAuthenticator for CustomOAuthAuthenticator {
+impl<S: CsrfStorage> std::ops::Deref for GithubAuthenticator<S> {
+    type Target = CustomOAuthAuthenticator<S>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl<S: CsrfStorage> GithubAuthenticator<S> {
+    pub fn new(client_id: String, client_secret: String, redirect_url: String, storage: S) -> Self {
+        let oauth_client = BasicClient::new(
+            ClientId::new(client_id),
+            Some(ClientSecret::new(client_secret)),
+            AuthUrl::new("https://github.com/login/oauth/authorize".to_string()).unwrap(),
+            Some(TokenUrl::new("https://github.com/login/oauth/access_token".to_string()).unwrap()),
+        )
+        // Set the URL the user will be redirected to after the authorization process.
+        .set_redirect_uri(RedirectUrl::new(redirect_url).unwrap());
+
+        let inner = CustomOAuthAuthenticator {
+            oauth_client,
+            storage,
+        };
+        Self(inner)
+    }
+}
+
+pub struct CustomOAuthAuthenticator<S: CsrfStorage> {
+    oauth_client: BasicClient,
+    storage: S,
+}
+
+#[trait_variant::make(Send)]
+pub trait CsrfStorage {
+    fn insert_csrf_token(
+        &mut self,
+        csrf_token: CsrfToken,
+        pkce_verifier: PkceCodeVerifier,
+    ) -> Result<(), Error>;
+    fn remove_csrf_token(&mut self, csrf_token: CsrfToken) -> Result<PkceCodeVerifier, Error>;
+}
+
+impl<S: CsrfStorage> CustomOAuthAuthenticator<S> {
+    pub fn new(oauth_client: BasicClient, storage: S) -> Self {
+        Self {
+            oauth_client,
+            storage,
+        }
+    }
+}
+
+impl<S: CsrfStorage> OAuthAuthenticator for CustomOAuthAuthenticator<S> {
     fn generate_authorization_url(&mut self, scopes: Vec<Scope>) -> Url {
         // Generate a PKCE challenge.
         let (pkce_challenge, pkce_code_verifier) = PkceCodeChallenge::new_random_sha256();
@@ -130,7 +127,8 @@ impl OAuthAuthenticator for CustomOAuthAuthenticator {
             .set_pkce_challenge(pkce_challenge)
             .url();
         debug!("Stashing state token away for later:  {csrf_token:?}...");
-        self.insert_csrf_token(csrf_token, pkce_code_verifier)
+        self.storage
+            .insert_csrf_token(csrf_token, pkce_code_verifier)
             .unwrap();
         auth_url
     }
@@ -139,7 +137,7 @@ impl OAuthAuthenticator for CustomOAuthAuthenticator {
         authorization_code: String,
         csrf_token: CsrfToken,
     ) -> Result<BasicTokenResponse, BasicRequestTokenError<AsyncHttpClientError>> {
-        let pkce_code_verifier = self.remove_csrf_token(csrf_token).unwrap();
+        let pkce_code_verifier = self.storage.remove_csrf_token(csrf_token).unwrap();
 
         self.oauth_client
             .exchange_code(AuthorizationCode::new(authorization_code))

@@ -10,9 +10,10 @@ CREATE TYPE PROVIDER AS ENUM (
 
 CREATE TABLE "account" (
   -- id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  email VARCHAR(120) REFERENCES "user"(email) ON DELETE CASCADE NOT NULL,
+  user_id UUID REFERENCES "user"(id) ON DELETE CASCADE NOT NULL,
+  email VARCHAR(120) UNIQUE NOT NULL
   provider PROVIDER NOT NULL,
-  UNIQUE (email, provider)
+  PRIMARY KEY (user_id, provider)
 );
 
 CREATE TABLE "post" (
