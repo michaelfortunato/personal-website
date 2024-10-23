@@ -1,17 +1,8 @@
 use std::collections::HashMap;
 
-use oauth2::{
-    basic::{BasicClient, BasicRequestTokenError, BasicTokenResponse},
-    reqwest::{self, AsyncHttpClientError},
-    url::Url,
-    AuthUrl, AuthorizationCode, ClientId, ClientSecret, CsrfToken, PkceCodeChallenge,
-    PkceCodeVerifier, RedirectUrl, Scope, TokenUrl,
-};
 use serde::{Deserialize, Serialize};
 use tracing::debug;
 
-use crate::result::Error;
-mod jwt;
 mod oauth;
 
 #[derive(sqlx::Type, Deserialize, Debug, Serialize)]
@@ -22,6 +13,7 @@ pub enum Provider {
 }
 
 pub type ProviderType = Provider;
+pub type IdentityProviderType = Provider;
 
 impl sqlx::postgres::PgHasArrayType for Provider {
     fn array_type_info() -> sqlx::postgres::PgTypeInfo {
@@ -29,121 +21,36 @@ impl sqlx::postgres::PgHasArrayType for Provider {
     }
 }
 
-#[trait_variant::make(Send)]
-pub trait OAuthAuthenticator {
-    /// This method starts the auth flow
-    fn generate_authorization_url(&mut self, scopes: Vec<Scope>) -> Url;
-    /// This method starts the auth flow
-    async fn request_access_token(
-        &mut self,
-        pkce_code: String,
-        csrf_token: CsrfToken,
-    ) -> Result<BasicTokenResponse, BasicRequestTokenError<AsyncHttpClientError>>;
-}
+/// The name is a bit ambiguous here but we use it to keep in line with
+/// the other trait names in this auth package.
+/// This should really be understood to be "IdentityProvider", but
+/// we will continue to use `Identifier for the rest of this documentation
+/// to be consistent.
+/// The job of the `Identifier` is to create a new id for clients.
+/// An id is simply a trusted object with info about the associated client.
+/// In order to do that, the client must:
+///     - First, request an id be minted
+///     - And then, prove the veracity of the id.
+pub trait Identifier {
+    /// The id-card that gets minted if a client successfully proves his
+    /// identity.
+    type Identification;
+    /// An opaque token used to reference a given request for an identification.
+    type RequestReference;
+    /// The information that "proves" the requester is who they say they are
+    type Proof;
 
-pub struct GithubAuthenticator<S: CsrfStorage>(CustomOAuthAuthenticator<S>);
-
-impl CsrfStorage for HashMap<String, PkceCodeVerifier> {
-    fn insert_csrf_token(
-        &mut self,
-        csrf_token: CsrfToken,
-        pkce_verifier: PkceCodeVerifier,
-    ) -> Result<(), Error> {
-        self.insert(csrf_token.secret().clone(), pkce_verifier);
-        Ok(())
-    }
-
-    fn remove_csrf_token(&mut self, csrf_token: CsrfToken) -> Result<PkceCodeVerifier, Error> {
-        let pkce_verifier = self
-            .remove(csrf_token.secret())
-            .expect("No csrf state exists");
-        Ok(pkce_verifier)
-    }
-}
-
-impl<S: CsrfStorage> std::ops::Deref for GithubAuthenticator<S> {
-    type Target = CustomOAuthAuthenticator<S>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl<S: CsrfStorage> GithubAuthenticator<S> {
-    pub fn new(client_id: String, client_secret: String, redirect_url: String, storage: S) -> Self {
-        let oauth_client = BasicClient::new(
-            ClientId::new(client_id),
-            Some(ClientSecret::new(client_secret)),
-            AuthUrl::new("https://github.com/login/oauth/authorize".to_string()).unwrap(),
-            Some(TokenUrl::new("https://github.com/login/oauth/access_token".to_string()).unwrap()),
-        )
-        // Set the URL the user will be redirected to after the authorization process.
-        .set_redirect_uri(RedirectUrl::new(redirect_url).unwrap());
-
-        let inner = CustomOAuthAuthenticator {
-            oauth_client,
-            storage,
-        };
-        Self(inner)
-    }
-}
-
-pub struct CustomOAuthAuthenticator<S: CsrfStorage> {
-    oauth_client: BasicClient,
-    storage: S,
+    // TODO: fn request_identification(&self) -> Result<RequestReference>
+    // TODO: fn prove_and_mint_identification(&self, request_token: Self::request_reference, proof:
+    // Self::Proof) -> Result<Identification>
 }
 
 #[trait_variant::make(Send)]
-pub trait CsrfStorage {
-    fn insert_csrf_token(
-        &mut self,
-        csrf_token: CsrfToken,
-        pkce_verifier: PkceCodeVerifier,
-    ) -> Result<(), Error>;
-    fn remove_csrf_token(&mut self, csrf_token: CsrfToken) -> Result<PkceCodeVerifier, Error>;
+pub trait Authenticator {
+    type Credential;
+    async fn authenticate(&self, credential: Self::Credential);
 }
 
-impl<S: CsrfStorage> CustomOAuthAuthenticator<S> {
-    pub fn new(oauth_client: BasicClient, storage: S) -> Self {
-        Self {
-            oauth_client,
-            storage,
-        }
-    }
-}
-
-impl<S: CsrfStorage> OAuthAuthenticator for CustomOAuthAuthenticator<S> {
-    fn generate_authorization_url(&mut self, scopes: Vec<Scope>) -> Url {
-        // Generate a PKCE challenge.
-        let (pkce_challenge, pkce_code_verifier) = PkceCodeChallenge::new_random_sha256();
-        // Generate the full authorization URL.
-        let authorization_url = self
-            .oauth_client
-            .authorize_url(CsrfToken::new_random)
-            .add_scopes(scopes);
-
-        let (auth_url, csrf_token) = authorization_url
-            // Set the PKCE code challenge.
-            .set_pkce_challenge(pkce_challenge)
-            .url();
-        debug!("Stashing state token away for later:  {csrf_token:?}...");
-        self.storage
-            .insert_csrf_token(csrf_token, pkce_code_verifier)
-            .unwrap();
-        auth_url
-    }
-    async fn request_access_token(
-        &mut self,
-        authorization_code: String,
-        csrf_token: CsrfToken,
-    ) -> Result<BasicTokenResponse, BasicRequestTokenError<AsyncHttpClientError>> {
-        let pkce_code_verifier = self.storage.remove_csrf_token(csrf_token).unwrap();
-
-        self.oauth_client
-            .exchange_code(AuthorizationCode::new(authorization_code))
-            // Set the PKCE code verifier.
-            .set_pkce_verifier(pkce_code_verifier)
-            .request_async(reqwest::async_http_client)
-            .await
-    }
+trait ExternalAccount {
+    fn email(&self) -> &str;
 }

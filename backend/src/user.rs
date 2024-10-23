@@ -28,28 +28,15 @@ pub struct Account {
 }
 
 #[trait_variant::make(Send)]
-pub trait Repository {
-    async fn get(&self, id: &Uuid) -> Result<Option<User>>;
-    async fn get_by_username(&self, username: &str) -> Result<Option<User>>;
-    async fn get_by_email(&self, email: &str) -> Result<Option<User>>;
-    async fn create(&self, new_user: &NewUser) -> Result<User>;
-    async fn link_account(&self, user: &User, account: NewAccount) -> Result<Account>;
-    async fn unlink_account(&self, user: &User, id: &Uuid) -> Result<Account>;
-}
+pub trait UserRepository<P>: crate::db::Repository<User, NewUser, Persistence = P> {}
 
-pub struct PgRepository<'c> {
-    db_pool: &'c PgPool,
-}
+pub struct PgRepository2;
 
-impl<'c> PgRepository<'c> {
-    pub fn new(db_pool: &'c PgPool) -> Self {
-        Self { db_pool }
-    }
-}
-
-impl<'c> Repository for PgRepository<'c> {
-    async fn create(&self, new_user: &NewUser) -> Result<User> {
-        let mut conn = self.db_pool.acquire().await.unwrap();
+use crate::db::Result as RepoResult;
+impl crate::db::Repository<User, NewUser> for PgRepository2 {
+    type Persistence = PgPool;
+    async fn create(&self, db: &Self::Persistence, new_user: NewUser) -> RepoResult<User> {
+        let mut conn = db.acquire().await?;
         let user = query_as!(
             User,
             r#"
@@ -61,12 +48,11 @@ impl<'c> Repository for PgRepository<'c> {
             new_user.email,
         )
         .fetch_one(&mut *conn)
-        .await
-        .map_err(Error::from)?; // Manual conversion here
+        .await?;
         Ok(user)
     }
-    async fn get(&self, id: &Uuid) -> Result<Option<User>> {
-        let mut conn = self.db_pool.acquire().await.unwrap();
+    async fn get(&self, db: &Self::Persistence, id: Uuid) -> RepoResult<User> {
+        let mut conn = db.acquire().await?;
         let user = query_as!(
             User,
             r#"
@@ -75,37 +61,33 @@ impl<'c> Repository for PgRepository<'c> {
         "#,
             id
         )
-        .fetch_optional(&mut *conn)
-        .await
-        .map_err(Error::from)?; // Manual conversion here
+        .fetch_one(&mut *conn)
+        .await?;
+
         Ok(user)
     }
-    async fn get_by_username(&self, _username: &str) -> Result<Option<User>> {
-        todo!()
-    }
-    async fn get_by_email(&self, _email: &str) -> Result<Option<User>> {
-        todo!()
-    }
-
-    async fn link_account(&self, user: &User, new_account: NewAccount) -> Result<Account> {
-        let mut conn = self.db_pool.acquire().await.unwrap();
-        let account = query_as!(
-            Account,
+    async fn exists(&self, db: &Self::Persistence, id: Uuid) -> RepoResult<bool> {
+        let mut conn = db.acquire().await?;
+        struct Row {
+            exists: Option<bool>,
+        }
+        let Row { exists } = query_as!(
+            Row,
             r#"
-        INSERT INTO "account"(email, provider)
-        VALUES($1, $2)
-        RETURNING email, provider "provider: Provider";
+            SELECT EXISTS(SELECT 1 FROM "user" WHERE id=$1) as "exists"
         "#,
-            new_account.email,
-            new_account.provider as Provider
+            id
         )
         .fetch_one(&mut *conn)
-        .await
-        .map_err(Error::from)?;
-        Ok(account)
+        .await?;
+        Ok(exists.unwrap_or(false))
     }
-
-    async fn unlink_account(&self, user: &User, id: &Uuid) -> Result<Account> {
+    async fn update(&self, db: &Self::Persistence, entity: User) -> RepoResult<User> {
+        todo!();
+    }
+    async fn delete(&self, db: &Self::Persistence, id: Uuid) -> RepoResult<User> {
         todo!();
     }
 }
+
+impl UserRepository<PgPool> for PgRepository2 {}

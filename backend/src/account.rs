@@ -7,11 +7,12 @@ pub struct Account {
     user_id: Uuid,
     username: String,
     email: String,
+    identity_provider: ProviderType,
 }
 
 #[derive(Serialize, Debug, Deserialize)]
 pub struct NewAccount {
     pub user_id: Uuid,
     pub email: String,
-    pub provider: ProviderType,
+    pub identity_provider: ProviderType,
 }

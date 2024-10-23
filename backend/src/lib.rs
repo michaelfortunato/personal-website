@@ -5,7 +5,6 @@ use std::{
     sync::Arc,
 };
 
-use auth::GithubAuthenticator;
 use axum::{
     routing::{get, post},
     Router,
@@ -16,8 +15,8 @@ use tokio::sync::Mutex;
 
 pub mod account;
 pub mod auth;
-pub mod controller;
 pub mod db;
+pub mod http;
 pub mod post;
 mod result;
 pub mod user;
@@ -62,11 +61,7 @@ pub fn run(config: Config) {
 
 pub fn app(app_state: AppState) -> Router {
     Router::new()
-        .route("/auth/login/:provider", post(controller::auth::login))
-        .route("/auth/callback/:provider", get(controller::auth::callback))
-        .route("/auth/me", get(controller::auth::me))
-        .route("/auth/logout", post(controller::auth::logout))
-        .route("/post", post(controller::post::create))
+        .route("/signin/:provider", post(http::auth::signup))
         .with_state(app_state)
 }
 
@@ -83,36 +78,6 @@ impl Deref for AppState {
 
 pub struct InnerAppState {
     db: PgPool,
-    authenticators: Authenticators,
-    private_key: String,
-}
-
-pub struct Authenticators {
-    pub github_authenticator: Mutex<GithubAuthenticator<HashMap<String, PkceCodeVerifier>>>,
-}
-
-impl Authenticators {
-    pub fn new() -> Self {
-        Self {
-            github_authenticator: Mutex::new(GithubAuthenticator::new(
-                env::var("OAUTH_GITHUB_CLIENT_ID").unwrap(),
-                env::var("OAUTH_GITHUB_CLIENT_SECRET").unwrap(),
-                #[cfg(debug_assertions)]
-                /* DEV */
-                "http://localhost:8080/auth/oauth/callback/github".to_string(),
-                #[cfg(not(debug_assertions))]
-                /* PROD */
-                "https://api.michaelfortunato.dev/auth/oauth/callback/github".to_string(),
-                HashMap::new(),
-            )),
-        }
-    }
-}
-
-impl Default for Authenticators {
-    fn default() -> Self {
-        Self::new()
-    }
 }
 
 async fn serve(config: Config) {
@@ -129,11 +94,7 @@ async fn serve(config: Config) {
 
 pub async fn get_app_state(database_url: &str) -> Result<AppState> {
     let db = get_pg_pool(database_url).await?;
-    Ok(AppState(Arc::new(InnerAppState {
-        db,
-        authenticators: Authenticators::new(),
-        private_key: "SECRET".to_string(),
-    })))
+    Ok(AppState(Arc::new(InnerAppState { db })))
 }
 
 #[cfg(test)]

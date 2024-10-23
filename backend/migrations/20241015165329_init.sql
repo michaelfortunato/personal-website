@@ -11,7 +11,7 @@ CREATE TYPE PROVIDER AS ENUM (
 CREATE TABLE "account" (
   -- id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES "user"(id) ON DELETE CASCADE NOT NULL,
-  email VARCHAR(120) UNIQUE NOT NULL
+  email VARCHAR(120) UNIQUE NOT NULL,
   provider PROVIDER NOT NULL,
   PRIMARY KEY (user_id, provider)
 );

@@ -1,34 +1,24 @@
+use std::collections::HashMap;
+
 use oauth2::{
     basic::{BasicClient, BasicRequestTokenError, BasicTokenResponse},
     reqwest::AsyncHttpClientError,
-    AccessToken, AuthorizationCode, CsrfToken, PkceCodeChallenge, PkceCodeVerifier, Scope,
+    AccessToken, AuthUrl, AuthorizationCode, ClientId, ClientSecret, CsrfToken, PkceCodeChallenge,
+    PkceCodeVerifier, RedirectUrl, Scope, TokenUrl,
 };
 use reqwest::Url;
 use tracing::debug;
-mod github;
 
-struct OAuthAccount {
-    email: String,
-}
+use super::ExternalAccount;
+mod github;
 
 type Error = anyhow::Error;
 
 #[trait_variant::make(Send)]
-pub trait OAuthAuthenticator {
-    type OAuthAccount;
-    /// get_access_token
-    async fn request_access_token(
-        &mut self,
-        authorization_code: AuthorizationCode,
-        csrf_token: CsrfToken,
-    ) -> Result<BasicTokenResponse, BasicRequestTokenError<AsyncHttpClientError>>;
+trait OAuthAuthenticator {
+    type OAuthAccount: ExternalAccount;
     /// get the external account
     async fn get_oauth_account(access_token: AccessToken) -> Result<Self::OAuthAccount, Error>;
-}
-
-struct OAuthHttpClient<S: CsrfStorage> {
-    oauth_client: BasicClient,
-    storage: S,
 }
 
 #[trait_variant::make(Send)]
@@ -41,14 +31,35 @@ pub trait CsrfStorage {
     fn remove_csrf_token(&mut self, csrf_token: CsrfToken) -> Result<PkceCodeVerifier, Error>;
 }
 
-impl<S: CsrfStorage> OAuthHttpClient<S> {
-    pub fn new(oauth_client: BasicClient, storage: S) -> Self {
+pub struct OAuthClient<S: CsrfStorage> {
+    oauth_client: BasicClient,
+    storage: S,
+}
+
+impl<S: CsrfStorage> OAuthClient<S> {
+    pub fn new(
+        client_id: String,
+        client_secret: String,
+        auth_url: String,
+        token_url: String,
+        redirect_url: String,
+        storage: S,
+    ) -> Self {
+        let oauth_client = BasicClient::new(
+            ClientId::new(client_id),
+            Some(ClientSecret::new(client_secret)),
+            AuthUrl::new(auth_url).unwrap(),
+            Some(TokenUrl::new(token_url).unwrap()),
+        )
+        // Set the URL the user will be redirected to after the authorization process.
+        .set_redirect_uri(RedirectUrl::new(redirect_url).unwrap());
+
         Self {
             oauth_client,
             storage,
         }
     }
-    async fn generate_authorization_url(&mut self, scopes: Vec<Scope>) -> Url {
+    pub async fn generate_authorization_url(&mut self, scopes: Vec<Scope>) -> Url {
         // Generate a PKCE challenge.
         let (pkce_challenge, pkce_code_verifier) = PkceCodeChallenge::new_random_sha256();
         // Generate the full authorization URL.
@@ -67,7 +78,7 @@ impl<S: CsrfStorage> OAuthHttpClient<S> {
             .unwrap();
         auth_url
     }
-    async fn request_access_token(
+    pub async fn request_access_token(
         &mut self,
         authorization_code: String,
         csrf_token: CsrfToken,
@@ -82,3 +93,23 @@ impl<S: CsrfStorage> OAuthHttpClient<S> {
             .await
     }
 }
+
+impl CsrfStorage for HashMap<String, PkceCodeVerifier> {
+    fn insert_csrf_token(
+        &mut self,
+        csrf_token: CsrfToken,
+        pkce_verifier: PkceCodeVerifier,
+    ) -> Result<(), Error> {
+        self.insert(csrf_token.secret().clone(), pkce_verifier);
+        Ok(())
+    }
+
+    fn remove_csrf_token(&mut self, csrf_token: CsrfToken) -> Result<PkceCodeVerifier, Error> {
+        let pkce_verifier = self
+            .remove(csrf_token.secret())
+            .expect("No csrf state exists");
+        Ok(pkce_verifier)
+    }
+}
+
+pub type BasicOAuthClient = OAuthClient<HashMap<String, PkceCodeVerifier>>;
