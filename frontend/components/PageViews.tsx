@@ -1,5 +1,4 @@
 import { PersonIcon } from "@radix-ui/react-icons";
-import { headers } from "next/headers";
 import { Suspense } from "react";
 
 type Props = {
@@ -16,11 +15,7 @@ function PageViewsUI({ numViews }: { numViews: number }) {
   );
 }
 
-async function PageViewsInner({ slug }: { slug: string }) {
-  const h = headers();
-  const ip = h.get("x-forwarded-for") ?? "127.0.0.10";
-  // const res = await recordVisit(slug, ip);
-
+function PageViewsInner({ slug }: { slug: string }) {
   return (
     <div className="flex items-center rounded px-2 py-1 text-muted-foreground shadow">
       <PersonIcon />

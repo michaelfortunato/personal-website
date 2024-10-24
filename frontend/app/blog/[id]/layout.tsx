@@ -1,6 +1,7 @@
 import { blogInitialsFont } from "@/lib/fonts";
 import Link from "next/link";
 import { ThemeSwitch } from "@/components/ui/theme-switch";
+import { SignInButton } from "@/components/SignIn";
 type Props = {
   preview?: boolean;
   children: React.ReactNode;
@@ -15,9 +16,10 @@ function Header() {
       >
         mnf.
       </Link>
-      <div className="flex gap-4">
+      <div className="flex items-center gap-4">
         <Link href="/on-work">On Work</Link>
         <Link href="/on-quiet">On Quiet</Link>
+        <SignInButton />
         <ThemeSwitch />
       </div>
     </div>

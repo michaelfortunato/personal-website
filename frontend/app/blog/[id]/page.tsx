@@ -123,6 +123,9 @@ function Footer(metadata: Metadata) {
   );
 }
 
+/// Make sure these posts are generated at build time.
+export const dynamicParams = false;
+
 export default async function Page({ params }: { params: { id: string } }) {
   const { id } = params;
   const postData = await getPostData(id);
@@ -143,5 +146,3 @@ export async function generateStaticParams() {
   const paths = await getAllPostIds();
   return paths;
 }
-/// Make sure these posts are generated at build time.
-export const dynamicParams = false;

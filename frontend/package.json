@@ -9,10 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "format": "npx prettier . -w",
-    "format:check": "npx prettier -c .",
-    "db:up": "tsx --env-file=.env db/migrations/run.ts -- up",
-    "db:down": "tsx --env-file=.env db/migrations/run.ts -- down",
-    "db:seed": "tsx --env-file=.env db/seed.ts"
+    "format:check": "npx prettier -c ."
   },
   "engines": {
     "node": ">=18.17.0"
@@ -30,6 +27,7 @@
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-hover-card": "^1.0.7",
     "@radix-ui/react-icons": "^1.3.0",
+    "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-scroll-area": "^1.0.5",
     "@radix-ui/react-separator": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
@@ -49,7 +47,7 @@
     "katex": "^0.15.1",
     "lottie-react": "^2.1.0",
     "lucide-react": "^0.363.0",
-    "next": "^14.2.5",
+    "next": "^15.0.1",
     "next-themes": "^0.3.0",
     "pg": "^8.12.0",
     "react": "^18.2.0",
