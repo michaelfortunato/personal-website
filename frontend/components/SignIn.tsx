@@ -32,7 +32,7 @@ export function SignInForm(props: SignInFormProps) {
             <Input
               id="email"
               type="email"
-              placeholder="m@example.com"
+              placeholder="name@example.com"
               required
             />
           </div>
@@ -49,11 +49,11 @@ export function SignInForm(props: SignInFormProps) {
             Login
           </Button>
           <Button variant="outline" className="w-full">
-            Login with Google
+            Login with GitHub
           </Button>
         </div>
         <div className="mt-4 text-center text-sm">
-          {"Don't have an account?"}
+          {"Don't have an account? "}
           <Link href="#" className="underline">
             Sign up
           </Link>
