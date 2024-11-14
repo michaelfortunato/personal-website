@@ -11,9 +11,8 @@ pub mod persistence;
 pub mod repo;
 mod result;
 
-use context::{AppContext, ThreadSafeAppContext};
+use context::AppContext;
 use log::*;
-use repo::{AccountRepository, UserRepository};
 pub use result::Result;
 
 /// This library supports an http server.
@@ -49,16 +48,53 @@ pub fn run(config: Config) {
         .block_on(serve(config));
 }
 
-pub fn app<
-    P: Clone + Send + Sync + 'static,
-    UR: UserRepository<P> + Send + Sync + Clone + 'static,
-    AR: AccountRepository<P> + Clone + Send + Sync + 'static,
->(
-    app_context: ThreadSafeAppContext<P, UR, AR>,
-) -> Router {
+// TODO: Stop generics invasion
+// All the credit goes here!
+// Great idea. https://tulipemoutarde.be/posts/2023-08-20-depencency-injection-rust-axum/#static-dispatch-with-generics
+
+pub fn app<S: 'static + AppContext + Sync + Clone + Send>(app_context: S) -> Router {
     Router::new()
-        // .route("/authorize", post(http::auth::authorize))
+        .route("/user", post(http::user::create_user::<S>))
         .with_state(app_context)
+}
+
+#[derive(Clone)]
+struct AppContextImpl {
+    persistence: persistence::pg::Persistence,
+    user_repo: repo::sql::Repo,
+    account_repo: repo::sql::Repo,
+}
+
+impl AppContextImpl {
+    pub fn new(persistence: persistence::pg::Persistence) -> Self {
+        let user_repo = repo::sql::Repo;
+        let account_repo = repo::sql::Repo;
+        Self {
+            persistence,
+            user_repo,
+            account_repo,
+        }
+    }
+}
+
+impl AppContext for AppContextImpl {
+    type Persistence = persistence::pg::Persistence;
+
+    type UserRepository = repo::sql::Repo;
+
+    type AccountRepository = repo::sql::Repo;
+
+    fn db(&self) -> &Self::Persistence {
+        &self.persistence
+    }
+
+    fn user_repo(&self) -> &Self::UserRepository {
+        &self.user_repo
+    }
+
+    fn account_repo(&self) -> &Self::AccountRepository {
+        &self.account_repo
+    }
 }
 
 async fn serve(config: Config) {
@@ -67,14 +103,13 @@ async fn serve(config: Config) {
     let persistence = persistence::pg::connect(config.database_url.as_ref())
         .await
         .unwrap();
-    let user_repo = repo::sql::Repo;
-    let account_repo = repo::sql::Repo;
-    let context = ThreadSafeAppContext::from(AppContext::new(persistence, user_repo, account_repo));
-    debug!("Success. Preparing to listen...");
+    let context = AppContextImpl::new(persistence);
+    debug!("Success. Requesting port...");
     let app = app(context);
     let listener = tokio::net::TcpListener::bind(SocketAddr::new(config.ip, config.port))
         .await
         .unwrap();
+    debug!("Success. Start listening...");
     axum::serve(listener, app).await.unwrap();
 }
 

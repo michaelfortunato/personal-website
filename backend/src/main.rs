@@ -4,6 +4,7 @@ use personal_website::Config;
 /// As such, Let us have the main.rs file define its api, which, because
 /// it's an executable MUST must be using stdin and stdout of the process.
 use std::{env, net::IpAddr};
+use tracing_subscriber::EnvFilter;
 
 use clap::Parser;
 #[derive(Debug, Parser)]
@@ -48,7 +49,9 @@ fn main() {
 }
 
 fn install_logger() {
-    tracing_subscriber::fmt::fmt().init();
+    tracing_subscriber::fmt::fmt()
+        .with_env_filter(EnvFilter::from_default_env())
+        .init();
 }
 
 #[test]
