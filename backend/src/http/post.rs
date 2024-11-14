@@ -8,15 +8,14 @@ use tracing::debug;
 use uuid::Uuid;
 
 use crate::{
-    post::{NewPost, Post},
+    model::post::{NewPost, Post},
     result::Result,
-    AppState,
 };
 
-#[debug_handler]
-pub async fn create(
-    State(app_state): State<AppState>,
-    Json(new_post): Json<NewPost>,
-) -> Result<Json<Post>> {
-    todo!();
-}
+// #[debug_handler]
+// pub async fn create(
+//     State(app_state): State<AppState>,
+//     Json(new_post): Json<NewPost>,
+// ) -> Result<Json<Post>> {
+//     todo!();
+// }

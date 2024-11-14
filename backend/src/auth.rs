@@ -1,12 +1,14 @@
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
-use tracing::debug;
+
+use crate::{
+    model::user::NewUser,
+    repo::{AccountRepository, UserRepository},
+    result::Error,
+};
 
 mod oauth;
 
-#[derive(sqlx::Type, Deserialize, Debug, Serialize)]
-#[sqlx(type_name = "provider", rename_all = "lowercase")]
+#[derive(Deserialize, Debug, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Provider {
     Github,
@@ -15,10 +17,20 @@ pub enum Provider {
 pub type ProviderType = Provider;
 pub type IdentityProviderType = Provider;
 
-impl sqlx::postgres::PgHasArrayType for Provider {
-    fn array_type_info() -> sqlx::postgres::PgTypeInfo {
-        sqlx::postgres::PgTypeInfo::with_name("_provider")
-    }
+pub type RegistrationToken = String;
+
+pub async fn register<
+    Persistence,
+    UserRepo: UserRepository<Persistence>,
+    AccountRepo: AccountRepository<Persistence>,
+>(
+    new_user: NewUser,
+    identity_provider: IdentityProviderType,
+    db: Persistence,
+    user_repo: UserRepo,
+    account_repo: AccountRepo,
+) -> Result<RegistrationToken, Error> {
+    todo!();
 }
 
 /// The name is a bit ambiguous here but we use it to keep in line with

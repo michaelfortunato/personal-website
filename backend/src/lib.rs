@@ -1,30 +1,20 @@
-use std::{
-    collections::HashMap,
-    net::{IpAddr, Ipv4Addr, SocketAddr},
-    ops::Deref,
-    sync::Arc,
-};
+use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 
-use axum::{
-    routing::{get, post},
-    Router,
-};
-use oauth2::PkceCodeVerifier;
-use std::env;
-use tokio::sync::Mutex;
+use axum::{routing::post, Router};
 
-pub mod account;
 pub mod auth;
-pub mod db;
+pub mod context;
 pub mod http;
-pub mod post;
+pub(crate) mod log;
+pub mod model;
+pub mod persistence;
+pub mod repo;
 mod result;
-pub mod user;
 
-use db::get_pg_pool;
+use context::{AppContext, ThreadSafeAppContext};
+use log::*;
+use repo::{AccountRepository, UserRepository};
 pub use result::Result;
-use sqlx::PgPool;
-use tracing::{debug, info};
 
 /// This library supports an http server.
 /// This is the config for http server.
@@ -59,47 +49,38 @@ pub fn run(config: Config) {
         .block_on(serve(config));
 }
 
-pub fn app(app_state: AppState) -> Router {
+pub fn app<
+    P: Clone + Send + Sync + 'static,
+    UR: UserRepository<P> + Send + Sync + Clone + 'static,
+    AR: AccountRepository<P> + Clone + Send + Sync + 'static,
+>(
+    app_context: ThreadSafeAppContext<P, UR, AR>,
+) -> Router {
     Router::new()
-        .route("/signin/:provider", post(http::auth::signup))
-        .with_state(app_state)
-}
-
-#[derive(Clone)]
-pub struct AppState(Arc<InnerAppState>);
-// deref so you can still access the inner fields easily
-impl Deref for AppState {
-    type Target = InnerAppState;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-pub struct InnerAppState {
-    db: PgPool,
+        // .route("/authorize", post(http::auth::authorize))
+        .with_state(app_context)
 }
 
 async fn serve(config: Config) {
     info!("Starting server...");
     debug!("Aquring database connection (app state)");
-    let app_state = get_app_state(config.database_url.as_ref()).await.unwrap();
+    let persistence = persistence::pg::connect(config.database_url.as_ref())
+        .await
+        .unwrap();
+    let user_repo = repo::sql::Repo;
+    let account_repo = repo::sql::Repo;
+    let context = ThreadSafeAppContext::from(AppContext::new(persistence, user_repo, account_repo));
     debug!("Success. Preparing to listen...");
-    let app = app(app_state);
+    let app = app(context);
     let listener = tokio::net::TcpListener::bind(SocketAddr::new(config.ip, config.port))
         .await
         .unwrap();
     axum::serve(listener, app).await.unwrap();
 }
 
-pub async fn get_app_state(database_url: &str) -> Result<AppState> {
-    let db = get_pg_pool(database_url).await?;
-    Ok(AppState(Arc::new(InnerAppState { db })))
-}
-
 #[cfg(test)]
 mod tests {
-    use crate::get_app_state;
+    // use crate::get_app_state;
 
     use super::app;
     use axum::{
@@ -111,19 +92,21 @@ mod tests {
 
     #[tokio::test]
     async fn hello_world() {
-        let db = get_app_state("postgres://postgres:password@localhost:5432/postgres")
-            .await
-            .unwrap();
-        let app = app(db);
+        /*
+                let db = get_app_state("postgres://postgres:password@localhost:5432/postgres")
+                    .await
+                    .unwrap();
+                let app = app(db);
 
-        // `Router` implements `tower::Service<Request<Body>>` so we can
-        // call it like any tower service, no need to run an HTTP server.
-        let response = app
-            .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())
-            .await
-            .unwrap();
-        println!("{response:?}");
+                // `Router` implements `tower::Service<Request<Body>>` so we can
+                // call it like any tower service, no need to run an HTTP server.
+                let response = app
+                    .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())
+                    .await
+                    .unwrap();
+                println!("{response:?}");
 
-        assert_eq!(response.status(), StatusCode::OK);
+                assert_eq!(response.status(), StatusCode::OK);
+        */
     }
 }

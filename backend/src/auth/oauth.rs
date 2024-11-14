@@ -7,9 +7,9 @@ use oauth2::{
     PkceCodeVerifier, RedirectUrl, Scope, TokenUrl,
 };
 use reqwest::Url;
-use tracing::debug;
 
 use super::ExternalAccount;
+use crate::log::*;
 mod github;
 
 type Error = anyhow::Error;

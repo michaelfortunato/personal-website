@@ -1,9 +1,4 @@
-use axum::{
-    extract::{FromRequestParts, Path, Query, State},
-    http::{request::Parts, StatusCode},
-    response::Redirect,
-    RequestPartsExt,
-};
+use axum::extract::{Path, State};
 use axum_extra::{
     extract::CookieJar,
     headers::{authorization::Bearer, Authorization, Cookie, SetCookie},
@@ -14,7 +9,7 @@ use jsonwebtoken::{decode, DecodingKey};
 use serde::{Deserialize, Serialize};
 use tracing::debug;
 
-use crate::{auth::Provider, user::User, AppState};
+use crate::model::account::Provider;
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Claims {
@@ -27,6 +22,7 @@ struct AuthSession {
 }
 
 const JWT_SECRET: &str = "ABDCD";
+/*
 
 #[axum::async_trait]
 impl FromRequestParts<AppState> for AuthSession {
@@ -40,7 +36,7 @@ impl FromRequestParts<AppState> for AuthSession {
         let token = match parts.extract::<TypedHeader<Authorization<Bearer>>>().await {
             Ok(TypedHeader(Authorization(ref bearer))) => bearer.token().to_owned(),
             Err(_) => {
-                let cookie_jar = parts.extract::<CookieJar>().await.unwrap();
+                let cookie_jar = parts.extract::<CookieJar>().await.as_ref().unwrap();
                 cookie_jar
                     .get("JWT")
                     .map(|cookie| cookie.value().to_string()) // Map Option<Cookie> to String
@@ -60,14 +56,11 @@ impl FromRequestParts<AppState> for AuthSession {
         })
     }
 }
+*/
 
-/// This does not actually log the user in.
-/// But rather initiates the oauth flow, see callback
-/// for help
-#[debug_handler]
-pub async fn signup(State(state): State<AppState>, Path(provider): Path<Provider>) {
-    debug!("In signin!");
-}
+// This does not actually log the user in.
+// But rather initiates the oauth flow, see callback
+// for help
 
 /*
 #[derive(Deserialize)]
