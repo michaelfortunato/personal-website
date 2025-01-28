@@ -2,12 +2,11 @@ import React from "react";
 import DescItem from "./DescItem";
 
 const tags = [
-  "Systems Developer",
+  "Interested In Geometric Deep Learning",
   "Interested in Compilers",
   "Codes primarily in C",
-  "Interested in Operating Systems",
   "Cares about Open Source",
-  "Interested in Scheduling",
+  "Likes Neovim",
 ];
 
 const Description = () => {
