@@ -3,8 +3,6 @@ import DescItem from "./DescItem";
 
 const tags = [
   "Interested In Geometric Deep Learning",
-  "Interested in Compilers",
-  "Codes primarily in C",
   "Cares about Open Source",
   "Likes Neovim",
 ];
