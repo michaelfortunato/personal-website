@@ -268,7 +268,7 @@ function Terminal() {
                   className="hover:bg-accent/15 hover:text-black"
                   asChild
                 >
-                  <Link href="https://keys.openpgp.org/vks/v1/by-fingerprint/B3C97C24E201EF1777ABFF0B1B35E71D2AD7D44E">
+                  <Link href="https://keys.openpgp.org/vks/v1/by-fingerprint/D7E18BB5FDB3851CB7F7F0EF8B87187D74CC41FC">
                     <DownloadIcon width={24} height={24} />
                   </Link>
                 </Button>
