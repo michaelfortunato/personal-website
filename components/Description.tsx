@@ -2,7 +2,7 @@ import React from "react";
 import DescItem from "./DescItem";
 
 const tags = [
-  "Researcher In AI + Group Theory"
+  "Researcher In AI + Group Theory",
   "Symmmetry Discovery",
   "Group Equivariant NNs",
 ];
