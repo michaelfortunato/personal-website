@@ -2,9 +2,9 @@ import React from "react";
 import DescItem from "./DescItem";
 
 const tags = [
-  "Interested In Geometric Deep Learning",
-  "Cares about Open Source",
-  "Likes Neovim",
+  "Researcher In AI + Group Theory"
+  "Symmmetry Discovery",
+  "Group Equivariant NNs",
 ];
 
 const Description = () => {
