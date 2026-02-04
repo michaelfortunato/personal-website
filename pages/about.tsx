@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
-import Lottie, { LottieRef } from "lottie-react";
+import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
+import type { LottieRef } from "lottie-react";
 import animationData from "@/public/About_Page1_ISA-Loop.json";
 import styled from "@emotion/styled";
 import { motion } from "framer-motion";
@@ -7,6 +8,8 @@ import { useInView } from "react-intersection-observer";
 import { NextPageWithLayout } from "./_app";
 import RootPageLayout from "@/components/RootPageLayout";
 import { getBuildInfo } from "@/lib/server-only/buildInfo";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 const AboutRoot = styled(motion.div)`
   width: 100%;

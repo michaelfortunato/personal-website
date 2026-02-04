@@ -1,52 +1,36 @@
 import Layout from "@/components/Blog/layout";
-import { Post, Metadata } from "lib/posts";
+import { type Metadata, type Post } from "@/lib/posts";
 import { getAllPostIds, getPostData } from "@/lib/server-only/posts";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { PropsWithChildren, useEffect, useState } from "react";
 import Image from "next/image";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  GitHubLogoIcon,
-  CommitIcon,
-  TextIcon,
-  TimerIcon,
-  CalendarIcon,
-} from "@radix-ui/react-icons";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { CommitIcon, TextIcon, CalendarIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { computeGithubCommitURL } from "@/lib/buildInfo";
-import { Clock4 } from "lucide-react";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 
-function toLocaleStringIfUnixTimestamp(
-  timestamp: number | string,
-): number | string {
-  if (timestamp >= -8.64e12 && timestamp <= +8.64e12) {
-    return new Date(Number(timestamp) * 1000).toLocaleString();
+function toLocaleStringIfUnixTimestamp(timestamp: string): string {
+  const asNumber = Number(timestamp);
+  if (!Number.isNaN(asNumber) && asNumber >= -8.64e12 && asNumber <= +8.64e12) {
+    return new Date(asNumber * 1000).toLocaleString();
   }
   return timestamp;
 }
 
-function useIsMounted() {
-  const [isMounted, setIsMoutned] = useState(false);
-  useEffect(() => setIsMoutned(true), []);
-  return isMounted;
-}
-
 function Header(metadata: Metadata) {
+  const commitHash = metadata.buildInfo.currentCommit.commitHash;
+  const hasValidCommitHash = /^[a-f0-9]{40}$/i.test(commitHash);
+  const commitUrl = hasValidCommitHash
+    ? computeGithubCommitURL("personal-website", commitHash)
+    : null;
+
   return (
     <div>
       <h1>{metadata.title}</h1>
@@ -82,14 +66,13 @@ function Header(metadata: Metadata) {
                 Commit Hash
               </HoverCardContent>
             </HoverCard>
-            <Link
-              href={computeGithubCommitURL(
-                "personal-website",
-                metadata.buildInfo.currentCommit.commitHash,
-              )}
-            >
-              {metadata.buildInfo.currentCommit.shortCommitHash}
-            </Link>
+            {commitUrl ? (
+              <Link href={commitUrl}>
+                {metadata.buildInfo.currentCommit.shortCommitHash}
+              </Link>
+            ) : (
+              <span>{metadata.buildInfo.currentCommit.shortCommitHash}</span>
+            )}
           </div>
           <div className="flex items-center">
             <HoverCard>
@@ -105,8 +88,6 @@ function Header(metadata: Metadata) {
           <div className="flex items-center">
             <HoverCard>
               <HoverCardTrigger asChild>
-                {/*<TimerIcon className="mr-2 inline" /> */}
-                {/* <Clock4 strokeWidth={1} /> */}
                 <CalendarIcon className="mr-2 inline cursor-pointer" />
               </HoverCardTrigger>
               <HoverCardContent className="w-full p-2 text-center">
@@ -128,7 +109,7 @@ function Header(metadata: Metadata) {
   );
 }
 
-function Footer(metadata: Metadata) {
+function Footer(_metadata: Metadata) {
   return (
     <div>
       <div className="flex justify-center">

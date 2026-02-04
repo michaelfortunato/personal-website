@@ -1,6 +1,3 @@
-import { Box, Grid, Paper, Typography } from "@mui/material";
-import { motion } from "framer-motion";
-import Link from "next/link";
 import { Layout, TileFactory } from ".";
 import Image from "next/image";
 import clayiPhone from "@/public/projects/clay-iphone.svg";
@@ -41,7 +38,7 @@ function WebsiteTile() {
 
 export default function Page() {
   return (
-    <Layout url="/projects/personal-website">
+    <Layout>
       <div className="flex justify-center">
         <h1 className="text-6xl">Personal Website</h1>
       </div>

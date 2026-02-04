@@ -1,0 +1,9 @@
+# Example direnv file (do not put secrets in git).
+# Copy to `.envrc` (ignored) and run `direnv allow`.
+
+# Only required if you install private `@gsap/*` packages from GreenSock.
+export GSAP_AUTH_TOKEN=""
+
+# Optional: bundle analyzer (see `next.config.js`)
+export ANALYZE="false"
+

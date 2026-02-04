@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Grid from "@/components/Grid";
 import Hero from "@/components/Hero";
 import { AnimatePresence, motion } from "framer-motion";
-import { type BuildInfo, type BuildCommitInfo } from "@/lib/buildInfo";
+import { type BuildInfo } from "@/lib/buildInfo";
 
 import { GetStaticProps } from "next";
 import { Fingerprint } from "lucide-react";
-import { Button, ButtonProps } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { NextPageWithLayout } from "./_app";
 import RootPageLayout from "@/components/RootPageLayout";
 
@@ -42,7 +42,7 @@ type Props = {
 };
 
 // Renders home page of a nextjs app (index.tsx)
-const Page: NextPageWithLayout<Props> = ({ buildInfo }: Props) => {
+const Page: NextPageWithLayout<Props> = ({ buildInfo: _buildInfo }: Props) => {
   const [triggerNameEnter, setTriggerNameEnter] = useState(false);
   const [triggerGridExit, setTriggerGridExit] = useState(false);
   // NOTE: work around to get tool tip with dialog

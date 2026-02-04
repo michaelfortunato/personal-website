@@ -2,7 +2,6 @@ import { blogInitialsFont } from "@/lib/fonts";
 import Link from "next/link";
 import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
 type Props = {
-  preview?: boolean;
   children: React.ReactNode;
 };
 
@@ -24,7 +23,7 @@ function Header() {
   );
 }
 
-const Layout = ({ preview, children }: Props) => {
+const Layout = ({ children }: Props) => {
   return (
     <div className="container min-h-screen">
       <div className="invisible h-16 w-full" />

@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 import { MoonIcon } from "@radix-ui/react-icons";
 import { SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
 import { useIsMounted } from "@/lib/hooks";
 
 const ThemeSwitch = React.forwardRef<

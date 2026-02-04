@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Gridline from "./Gridline";
 
 const MIN_DURATION = 250;
@@ -49,8 +49,8 @@ export default function Grid(props: any) {
     height: any,
     spacing: number,
   ) => {
-    let new_spacing = isRow ? spacing : (height / width) * spacing;
-    let fixedPos = props.offset + new_spacing * i;
+    const newSpacing = isRow ? spacing : (height / width) * spacing;
+    const fixedPos = props.offset + newSpacing * i;
     const floatingPos = 100 * (props.random ? Math.random() : 0);
     return { fixedPos, floatingPos };
   };

@@ -1,16 +1,15 @@
 import { ReactElement, PropsWithChildren, useState, ReactNode } from "react";
-import { IconButton } from "@mui/material";
-import FlipIcon from "@mui/icons-material/Flip";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
+import { ArrowDown, ArrowUp, FlipHorizontal } from "lucide-react";
 
 import { Tile as WebsiteTile } from "./personal-website";
 import { Tile as EightBitAdderTile } from "./8-bit-adder";
 import { NextPageWithLayout } from "pages/_app";
 import RootPageLayout from "@/components/RootPageLayout";
 import { getBuildInfo } from "@/lib/server-only/buildInfo";
+import { Button } from "@/components/ui/button";
 
 export function TileFactory(
   title: string,
@@ -18,7 +17,6 @@ export function TileFactory(
   rightHandComponent: ReactElement,
   link: string,
 ) {
-  const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   return (
     <StyledTile>
@@ -28,20 +26,20 @@ export function TileFactory(
             <h2 className="p-4 text-5xl">{title}</h2>
           </div>
           <div className="flex flex-1 flex-row-reverse">
-            <Link
-              href={link}
-              onClick={(e) => {
-                setIsOpen(!isOpen);
-                e.preventDefault();
-                setTimeout(() => {
-                  router.push(`/projects/${link}`);
-                }, 350);
-              }}
-            >
-              <IconButton aria-label="View full">
-                <FlipIcon />
-              </IconButton>
-            </Link>
+            <Button variant="ghost" size="icon" asChild>
+              <Link
+                href={link}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setTimeout(() => {
+                    router.push(`/projects/${link}`);
+                  }, 350);
+                }}
+              >
+                <FlipHorizontal />
+                <span className="sr-only">View full</span>
+              </Link>
+            </Button>
           </div>
         </div>
         <div className="flex gap-1">
@@ -53,13 +51,7 @@ export function TileFactory(
   );
 }
 
-export function StyledTile({
-  props,
-  children,
-}: {
-  props?: any;
-  children: ReactNode;
-}) {
+export function StyledTile({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-96 rounded bg-neutral-50 p-3 shadow-md">
       {children}
@@ -67,8 +59,8 @@ export function StyledTile({
   );
 }
 
-export function Layout(props: PropsWithChildren<{ url: string }>) {
-  const { url, children } = props;
+export function Layout(props: PropsWithChildren) {
+  const { children } = props;
   return (
     <div className="h-screen bg-neutral-50 p-10">
       <motion.div layoutId="page">
@@ -151,24 +143,28 @@ const Page: NextPageWithLayout = () => {
       <div className="flex-1">
         <div className="flex h-[100vh] flex-col items-center justify-center">
           <div className="flex-initial">
-            <IconButton
+            <Button
+              variant="ghost"
+              size="icon"
               disabled={selected == numTiles - 1}
               onClick={() => {
                 setPage([selected + 1, 1]);
               }}
             >
-              <ArrowUpward />
-            </IconButton>
+              <ArrowUp />
+            </Button>
           </div>
           <div className="flex-initial">
-            <IconButton
+            <Button
+              variant="ghost"
+              size="icon"
               disabled={selected == 0}
               onClick={() => {
                 setPage([selected - 1, -1]);
               }}
             >
-              <ArrowDownward />
-            </IconButton>
+              <ArrowDown />
+            </Button>
           </div>
         </div>
       </div>

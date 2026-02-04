@@ -1,20 +1,18 @@
 import { useTheme } from "next-themes";
-import { usePathname } from "next/navigation";
+import { useRouter } from "next/router";
 import { PropsWithChildren, useEffect } from "react";
 
 export function resolveURLToTheme(pathname: string) {
-  const map: any = {
-    "/": "home-light",
-    "/about": "about-light",
-    "/projects": "projects-light",
-    "/blog": "blog-light",
-  };
-  return map[pathname] ?? "unknown";
+  if (pathname === "/") return "home-light";
+  if (pathname.startsWith("/about")) return "about-light";
+  if (pathname.startsWith("/projects")) return "projects-light";
+  if (pathname.startsWith("/blog")) return "blog-light";
+  return "unknown";
 }
 
 export default function Layout({ children }: PropsWithChildren) {
-  const pathname = usePathname();
-  const theme = resolveURLToTheme(pathname);
+  const router = useRouter();
+  const theme = resolveURLToTheme(router.asPath);
   const { setTheme } = useTheme();
 
   useEffect(() => {

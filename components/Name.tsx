@@ -1,33 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
-import styled from "@emotion/styled";
+import { useEffect, useMemo, useState } from "react";
 import Letter from "./Letter";
-import Grid from "@mui/material/Grid";
 import { LayoutGroup } from "framer-motion";
 
-const StyledName = styled(Grid)`
-    font-size: 56px;
-    overflow: visible;
-    display: flex;
-    justify-content: center;
-    position: relative;
-    text-align: center;
-    color: #264653;
-    padding-top: 2%;
-    margin-bottom: 0px;
-}
-`;
-
 function buildConfigs(name: string) {
-  let configsList = [];
-  let config = {};
-  let letters = name.split("");
-  configsList = letters.map((char, index) => {
-    config = configSetup(char, index);
-    return config;
-  });
-  return configsList;
+  return name.split("").map((char) => configSetup(char));
 }
-function configSetup(char: string, index: number) {
+function configSetup(char: string) {
   return {
     char: char,
     XOffsetEnter: randomArcPoint(38).x, //((index % 2) == 0) ? 25 : -25;
@@ -38,7 +16,7 @@ function configSetup(char: string, index: number) {
 }
 
 function randomArcPoint(radius: number) {
-  let theta = 2 * Math.random() * Math.PI;
+  const theta = 2 * Math.random() * Math.PI;
   return { x: radius * Math.cos(theta), y: radius * Math.cos(theta) };
 }
 
@@ -50,8 +28,14 @@ interface NameProps {
 }
 
 export default function Name(props: NameProps) {
-  const firstNameConfigs = useRef(buildConfigs(props.firstName));
-  const lastNameConfigs = useRef(buildConfigs(props.lastName));
+  const firstNameConfigs = useMemo(
+    () => buildConfigs(props.firstName),
+    [props.firstName],
+  );
+  const lastNameConfigs = useMemo(
+    () => buildConfigs(props.lastName),
+    [props.lastName],
+  );
   const [isClient, setIsClient] = useState(false);
   const { onAnimationFinish } = props;
 
@@ -65,30 +49,32 @@ export default function Name(props: NameProps) {
   return (
     <>
       {isClient && (
-        <StyledName container justifyContent="center" columnSpacing={2.5}>
-          <Grid item style={{ display: "inline-block" }}>
-            <LayoutGroup>
-              {props.firstName.split("").map((_: any, index: number) => (
-                <Letter
-                  key={index}
-                  triggerNameEnter={props.startAnimation}
-                  {...(firstNameConfigs.current[index] as any)}
-                />
-              ))}
-            </LayoutGroup>
-          </Grid>
-          <Grid item style={{ display: "inline-block" }}>
-            <LayoutGroup>
-              {props.lastName.split("").map((_: any, index: number) => (
-                <Letter
-                  key={index + 7}
-                  triggerNameEnter={props.startAnimation}
-                  {...(lastNameConfigs.current[index] as any)}
-                />
-              ))}
-            </LayoutGroup>
-          </Grid>
-        </StyledName>
+        <div className="relative flex justify-center overflow-visible pt-[2%] text-center text-[56px] text-[#264653]">
+          <div className="flex gap-6">
+            <div className="inline-block">
+              <LayoutGroup>
+                {props.firstName.split("").map((_, index) => (
+                  <Letter
+                    key={index}
+                    triggerNameEnter={props.startAnimation}
+                    {...(firstNameConfigs[index] as any)}
+                  />
+                ))}
+              </LayoutGroup>
+            </div>
+            <div className="inline-block">
+              <LayoutGroup>
+                {props.lastName.split("").map((_, index) => (
+                  <Letter
+                    key={index + 7}
+                    triggerNameEnter={props.startAnimation}
+                    {...(lastNameConfigs[index] as any)}
+                  />
+                ))}
+              </LayoutGroup>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

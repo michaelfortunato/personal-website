@@ -1,6 +1,6 @@
 import "../styles/globals.css";
 
-import React, { useEffect, ReactElement, ReactNode } from "react";
+import { useEffect, type ReactElement, type ReactNode } from "react";
 import Head from "next/head";
 import { AppProps } from "next/app";
 

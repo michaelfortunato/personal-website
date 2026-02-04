@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { type BuildInfo, type BuildCommitInfo } from "@/lib/buildInfo";
 
-import { BadgeCheckIcon, CodeXml, DatabaseIcon } from "lucide-react";
+import { CodeXml, DatabaseIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ClockIcon, CommitIcon } from "@radix-ui/react-icons";
@@ -25,7 +25,7 @@ const BuildStamp: React.FC<{
   },
 }) => {
   const [isOpen, setIsOpen] = useState(true);
-  const { repoURL, commitURL, branchURL } = useMemo(
+  const { commitURL, branchURL } = useMemo(
     () => computeGithubURLs({ repo, hash, branch }),
     [repo, hash, branch],
   );

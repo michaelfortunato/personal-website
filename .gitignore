@@ -28,6 +28,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+.env
+.envrc
 .env.local
 .env.development.local
 .env.test.local
@@ -38,3 +40,13 @@ yarn-error.log*
 
 # local database
 .db
+
+# nested build artifacts (avoid accidental commits)
+**/node_modules/
+**/.next/
+**/build/
+**/target/
+
+# legacy local folders (not part of deploy)
+backend/
+frontend/

@@ -6,10 +6,30 @@ import { getAllPosts } from "@/lib/server-only/posts";
 import { BuildInfo } from "@/lib/buildInfo";
 import { getBuildInfo } from "@/lib/server-only/buildInfo";
 
+function formatTimestamp(timestamp: string) {
+  const asNumber = Number(timestamp);
+  if (!Number.isNaN(asNumber) && asNumber >= -8.64e12 && asNumber <= +8.64e12) {
+    return new Date(asNumber * 1000).toLocaleDateString();
+  }
+  const asDate = new Date(timestamp);
+  if (!Number.isNaN(asDate.valueOf())) {
+    return asDate.toLocaleDateString();
+  }
+  return timestamp;
+}
+
 function FeaturedPost(post: Metadata) {
   return (
     <div className="rounded bg-card p-4 shadow">
-      <Link href={`blog/${post.id}`}>{post.id}</Link>
+      <Link
+        className="text-lg font-semibold underline"
+        href={`/blog/${post.id}`}
+      >
+        {post.title}
+      </Link>
+      <div className="mt-2 text-sm text-muted-foreground">
+        {formatTimestamp(post.createdTimestamp)}
+      </div>
     </div>
   );
 }
@@ -36,13 +56,8 @@ function getFeaturedPosts(allPosts: Metadata[]) {
 const Page: NextPageWithLayout<PageProps> = ({ posts }) => {
   const postList = getFeaturedPosts(posts); // TODO: Decide which posts to feature
   return (
-    <div>
-      <div className="flex min-h-screen flex-col items-center justify-center">
-        <FeaturedPosts posts={[...postList]} />
-      </div>
-      <div className="absolute bottom-0 right-0 w-full text-white">
-        <div className="flex flex-col items-center justify-center"></div>
-      </div>
+    <div className="flex min-h-screen flex-col items-center justify-center">
+      <FeaturedPosts posts={[...postList]} />
     </div>
   );
 };

@@ -1,4 +1,3 @@
-import React from "react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import gsap from "gsap";
@@ -66,9 +65,8 @@ const StyledGridlineColumn = styled.div<any>`
 `;
 function Gridline(props: any) {
   const circleSize = 10; // in pixels
-  let circleXScaling = (props.width / circleSize) * 2;
-  let circleYScaling = (props.height / circleSize) * 2;
-  // TODO: React, what is the difference between a const and let in function
+  const circleXScaling = (props.width / circleSize) * 2;
+  const circleYScaling = (props.height / circleSize) * 2;
   const ani = animation(props.isRow, circleXScaling, circleYScaling);
 
   return props.isRow ? (

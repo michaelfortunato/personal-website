@@ -1,12 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { useCopyToClipboard, useIsMounted } from "@/lib/hooks";
+import { useCopyToClipboard } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
-import { Fingerprint, KeyRound, KeySquare } from "lucide-react";
+import { Fingerprint, KeySquare } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
-import { CheckIcon, DownloadIcon } from "@radix-ui/react-icons";
+import { DownloadIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -84,9 +83,7 @@ W62U0grbbgcuT0+crwFSCvrVvNN27Uwf/vw7ebxsiLS/E+Mw/YsEB9xT57bCJ9cq
 const publicKeyEntry = `pub   rsa4096 2025-03-27 [SC] [expires: 2026-03-27]
       D7E18BB5FDB3851CB7F7F0EF8B87187D74CC41FC
 uid           [ultimate] Michael Newman Fortunato (Tacitus) <michael.n.fortunato@gmail.com>
-sub   rsa4096 2025-03-27 [E] [expires: 2026-03-27]`
-;
-
+sub   rsa4096 2025-03-27 [E] [expires: 2026-03-27]`;
 import Check from "@geist-ui/icons/check";
 const CopyButton: React.ForwardRefExoticComponent<
   {
@@ -96,7 +93,7 @@ const CopyButton: React.ForwardRefExoticComponent<
     React.RefAttributes<HTMLButtonElement>
 > = React.forwardRef(
   ({ className, textToCopy, handleCopyPromise, ...props }, ref) => {
-    const [copiedText, setCopiedText] = useCopyToClipboard();
+    const [, setCopiedText] = useCopyToClipboard();
     const [showCheck, setShowCheck] = useState(false);
     const timer = useRef<any>(null);
 
@@ -123,7 +120,7 @@ const CopyButton: React.ForwardRefExoticComponent<
         variant="ghost"
         size="icon"
         className={cn("active:text-black", className)}
-        onClick={(e) => {
+        onClick={() => {
           if (!showCheck) {
             handleCopyPromise(setCopiedText(textToCopy));
           }

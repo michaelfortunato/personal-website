@@ -1,10 +1,5 @@
-import { motion } from "framer-motion";
-import { PropsWithChildren, useEffect } from "react";
-import { useRouter } from "next/router";
+import { PropsWithChildren } from "react";
 import Navbar from "./Nav/Navbar";
-import { usePathname } from "next/navigation";
-import { useTheme } from "next-themes";
-import Link from "next/link";
 import { Toaster } from "./ui/toaster";
 import { BuildInfo } from "@/lib/buildInfo";
 import BuildStamp from "@/components/BuildStamp";

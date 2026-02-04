@@ -1,4 +1,3 @@
-import React from "react";
 import DescItem from "./DescItem";
 
 const tags = [

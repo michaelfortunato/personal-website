@@ -53,7 +53,7 @@ function TileRightSide() {
 
 export default function Page() {
   return (
-    <Layout url="/projects/8-bit-adder">
+    <Layout>
       <div className="mt-4 flex flex-col items-center gap-2">
         <div className="prose">
           <h2>Overview</h2>

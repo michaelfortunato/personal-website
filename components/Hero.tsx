@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Description from "@/components/Description";
 import Name from "@/components/Name";
 
 export default function Hero(props: { triggerNameEnter: boolean }) {
-  let [nameEntered, setNameEntered] = useState(false);
+  const [nameEntered, setNameEntered] = useState(false);
 
   return (
     <div className="flex h-[90vh] items-center justify-center overflow-hidden">
