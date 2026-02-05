@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import type { LottieRef } from "lottie-react";
 import animationData from "@/public/About_Page1_ISA-Loop.json";
-import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { NextPageWithLayout } from "./_app";
@@ -10,17 +9,6 @@ import RootPageLayout from "@/components/RootPageLayout";
 import { getBuildInfo } from "@/lib/server-only/buildInfo";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
-
-const AboutRoot = styled(motion.div)`
-  width: 100%;
-  overflow-x: hidden;
-`;
-const StyledPage = styled(motion.div)`
-  width: 100vw;
-  overflow-x: hidden;
-  height: 100vh;
-  position: relative;
-`;
 
 const Page: NextPageWithLayout = () => {
   const lottieRef = useRef(null) as LottieRef;
@@ -53,12 +41,16 @@ const Page: NextPageWithLayout = () => {
   }, []);
 
   return (
-    <AboutRoot
+    <motion.div
+      className="w-full overflow-x-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1, transition: { duration: 0.3 } }}
       exit={{ opacity: 0, transition: { delay: 0.6, duration: 0.3 } }}
     >
-      <StyledPage key={1}>
+      <motion.div
+        key={1}
+        className="relative h-screen w-screen overflow-x-hidden"
+      >
         <Lottie
           lottieRef={lottieRef}
           style={!isXL ? { height: "100vh" } : {}}
@@ -75,9 +67,9 @@ const Page: NextPageWithLayout = () => {
             top: "20%",
           }}
         />
-      </StyledPage>
+      </motion.div>
       {/* <About2 blurbs={props.blurbs} triggerTlIntro={triggerTlIntro} key={2} /> */}
-    </AboutRoot>
+    </motion.div>
   );
 };
 

@@ -375,3 +375,62 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes mf-gridline-row {
+  to {
+    transform: scaleX(var(--mf-gridline-scale-x, 1)) scaleY(0.125);
+    border-radius: 0%;
+  }
+}
+
+@keyframes mf-gridline-col {
+  to {
+    transform: scaleX(0.125) scaleY(var(--mf-gridline-scale-y, 1));
+    border-radius: 0%;
+  }
+}
+
+.mf-gridline {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  transform: scaleX(1) scaleY(1);
+  will-change: transform;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-out;
+}
+
+.mf-gridline--row {
+  animation-name: mf-gridline-row;
+}
+
+.mf-gridline--col {
+  animation-name: mf-gridline-col;
+}
+
+@keyframes mf-desc-carousel-3 {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  16.6667% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+
+  33.3333%,
+  100% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+}
+
+.mf-desc-item {
+  position: absolute;
+  opacity: 0;
+  transform: translateY(-20px);
+  animation-name: mf-desc-carousel-3;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}

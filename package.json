@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 0",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -15,10 +15,6 @@
     "node": ">=20.9.0"
   },
   "dependencies": {
-    "@emotion/cache": "^11.14.0",
-    "@emotion/react": "^11.11.1",
-    "@emotion/server": "^11.11.0",
-    "@emotion/styled": "^11.11.0",
     "@geist-ui/icons": "^1.0.2",
     "@next/third-parties": "^16.1.6",
     "@radix-ui/react-avatar": "^1.0.4",

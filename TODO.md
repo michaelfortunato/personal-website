@@ -20,7 +20,7 @@ site behavior.
 ## Day 3 — UI stack simplification (optional, but recommended)
 
 - [x] Migrate off MUI (Tailwind + shadcn/ui for buttons/icons)
-- [ ] Decide whether to keep Emotion (currently used for dynamic keyframes in grid + tagline)
+- [x] Remove Emotion (migrate grid + tagline animations to CSS/Framer Motion)
 
 ## Day 4 — Blog cleanup
 

@@ -1,92 +1,41 @@
-import styled from "@emotion/styled";
-import { keyframes } from "@emotion/react";
-import gsap from "gsap";
-import { CustomEase } from "gsap/dist/CustomEase";
+import type { CSSProperties } from "react";
 
-gsap.registerPlugin(CustomEase);
+type GridlineProps = {
+  isRow: boolean;
+  width: number;
+  height: number;
+  duration: number;
+  delay: number;
+  fixedPos: number;
+  floatingPos: number;
+  isDot?: boolean;
+};
 
-const animation = (
-  isRow: boolean,
-  circleXScaling: number,
-  circleYScaling: number,
-) =>
-  isRow
-    ? keyframes`
- 	to { 
-		transform: scaleX(${circleXScaling}) scaleY(0.125);
-		border-radius: 0%; /* Needed from Chrome Performance */
- 	}
-	`
-    : keyframes`
-	to { 
-		transform: scaleX(0.125) scaleY(${circleYScaling});
-		border-radius: 0%; /* Needed from Chrome Performance */
-	}
-`;
-
-const StyledGridlineRow = styled.div<any>`
-  position: absolute;
-  background: white;
-  height: ${(props) => `${props.circleSize}px`};
-  width: ${(props) => `${props.circleSize}px`};
-  left: ${(props) => `${props.floatingPos}vw`};
-  top: ${(props) => `${props.fixedPos}vh`};
-  border-radius: 50%;
-
-  /* TODO: Needed for Chrome. Why? */
-  transform: scaleX(1) scaleY(1); /* TODO: Needed for Chrome. Why? */
-  will-change: transform; /* TODO: Needed for Chrome. Why? */
-
-  animation-name: ${(props) => props.animation};
-  animation-duration: ${(props) => props.duration / 1000}s;
-  animation-delay: ${(props) => props.delay / 1000}s;
-  animation-fill-mode: forwards;
-  animation-timing-function: ease-out;
-`;
-
-const StyledGridlineColumn = styled.div<any>`
-  position: absolute;
-  background: white;
-  height: ${(props) => `${props.circleSize}px`};
-  width: ${(props) => `${props.circleSize}px`};
-  left: ${(props) => `${props.fixedPos}vw`};
-  top: ${(props) => `${props.floatingPos}vh`};
-  border-radius: 50%;
-
-  /* TODO: Needed for Chrome. Why? */
-  transform: scaleX(1) scaleY(1); /* TODO: Needed for Chrome. Why? */
-  will-change: transform; /* TODO: Needed for Chrome. Why? */
-
-  animation-name: ${(props) => props.animation};
-  animation-duration: ${(props) => props.duration / 1000}s;
-  animation-delay: ${(props) => props.delay / 1000}s;
-  animation-fill-mode: forwards;
-  animation-timing-function: ease-out;
-`;
-function Gridline(props: any) {
+function Gridline(props: GridlineProps) {
   const circleSize = 10; // in pixels
   const circleXScaling = (props.width / circleSize) * 2;
   const circleYScaling = (props.height / circleSize) * 2;
-  const ani = animation(props.isRow, circleXScaling, circleYScaling);
 
-  return props.isRow ? (
-    <StyledGridlineRow
-      {...props}
-      circleSize={circleSize}
-      circleXScaling={circleXScaling}
-      circleYScaling={circleYScaling}
-      animation={ani}
-    />
-  ) : (
-    <StyledGridlineColumn
-      {...props}
-      circleSize={circleSize}
-      circleXScaling={circleXScaling}
-      circleYScaling={circleYScaling}
-      animation={ani}
+  const style: CSSProperties & Record<string, string | number> = {
+    width: circleSize,
+    height: circleSize,
+    left: props.isRow ? `${props.floatingPos}vw` : `${props.fixedPos}vw`,
+    top: props.isRow ? `${props.fixedPos}vh` : `${props.floatingPos}vh`,
+    animationDuration: `${props.duration / 1000}s`,
+    animationDelay: `${props.delay / 1000}s`,
+    "--mf-gridline-scale-x": circleXScaling,
+    "--mf-gridline-scale-y": circleYScaling,
+  };
+
+  return (
+    <div
+      className={`mf-gridline ${props.isRow ? "mf-gridline--row" : "mf-gridline--col"}`}
+      style={style}
+      aria-hidden="true"
     />
   );
 }
 
 Gridline.displayName = "Gridline";
+
 export default Gridline;
