@@ -16,6 +16,7 @@ import {
 import { getCommitEntryForFile } from "@/lib/server-only/buildInfo";
 
 export const postsDirectory = path.join(process.cwd(), "posts");
+
 const typstContentDirectory = path.join(process.cwd(), "content", "typst");
 const typstBuildDirectory = path.join(process.cwd(), "public", "typst");
 
@@ -27,37 +28,7 @@ function getTypstPaths(id: string) {
 }
 
 export async function getPostData(id: string): Promise<Post> {
-  const markdownPath = path.join(postsDirectory, `${id}.md`);
-  if (fs.existsSync(markdownPath)) {
-    return getMarkdownPostData(id, markdownPath);
-  }
-
   return getTypstPostData(id);
-}
-
-async function getMarkdownPostData(
-  id: string,
-  fullPath: string,
-): Promise<Post> {
-  const fileContents = fs.readFileSync(fullPath, "utf-8");
-
-  // Use gray-matter to parse the post metadata section
-  const { data: frontMatter, content: documentContent } = matter(fileContents);
-  const parsedDocument = await renderMarkdownToHTML(documentContent);
-  const { firstCommit, currentCommit } =
-    getCommitInfoForFileOrFallback(fullPath);
-  const metadata = createMetadata(
-    id,
-    parsedDocument.data.title as string,
-    frontMatter,
-    currentCommit,
-    firstCommit,
-  );
-
-  return {
-    metadata,
-    content: parsedDocument.toString(),
-  };
 }
 
 async function getTypstPostData(id: string): Promise<Post> {
@@ -96,9 +67,8 @@ async function getTypstPostData(id: string): Promise<Post> {
 }
 
 export async function getAllPostIds() {
-  const markdownIds = getMarkdownPostIds();
   const typstIds = getTypstPostIds();
-  const allIds = [...markdownIds, ...typstIds];
+  const allIds = [...typstIds];
 
   const seen = new Set<string>();
   for (const id of allIds) {
@@ -111,32 +81,7 @@ export async function getAllPostIds() {
   return allIds.map((id) => ({ params: { id } }));
 }
 
-export async function getAllPosts(): Promise<Metadata[]> {
-  const markdownPosts = getMarkdownPostIds().map(async (id) => {
-    const fullPath = path.join(postsDirectory, `${id}.md`);
-    const fileContents = fs.readFileSync(fullPath, "utf8");
-    const { data: frontMatter, content: documentContent } =
-      matter(fileContents);
-
-    const parsedDocument = await unified()
-      .use(remarkParse)
-      .use(assertAndExtractTopHeader)
-      .use(remarkGfm)
-      .use(remarkRehype)
-      .use(rehypeStringify)
-      .process(documentContent);
-
-    const { firstCommit, currentCommit } =
-      getCommitInfoForFileOrFallback(fullPath);
-    return createMetadata(
-      id,
-      parsedDocument.data.title as string,
-      frontMatter,
-      currentCommit,
-      firstCommit,
-    );
-  });
-
+export async function getAllPostsMetadata(): Promise<Metadata[]> {
   const typstPosts = getTypstPostIds().map(async (id) => {
     const { sourcePath, metaPath } = getTypstPaths(id);
     const metaJson = fs.readFileSync(metaPath, "utf-8");
@@ -148,10 +93,7 @@ export async function getAllPosts(): Promise<Metadata[]> {
     return createMetadata(id, title, meta, currentCommit, firstCommit);
   });
 
-  const allPostsData: Metadata[] = await Promise.all([
-    ...markdownPosts,
-    ...typstPosts,
-  ]);
+  const allPostsData: Metadata[] = await Promise.all([...typstPosts]);
   // Sort posts by date
   return allPostsData.sort((a, b) => {
     if (a.createdTimestamp < b.createdTimestamp) {
@@ -160,17 +102,6 @@ export async function getAllPosts(): Promise<Metadata[]> {
       return -1;
     }
   });
-}
-
-async function renderMarkdownToHTML(content: string) {
-  const contentObj = await unified()
-    .use(remarkParse)
-    .use(assertAndExtractTopHeader)
-    .use(remarkGfm)
-    .use(remarkRehype)
-    .use(rehypeStringify)
-    .process(content);
-  return contentObj;
 }
 
 // Custom Remark plugin to insert metadata
