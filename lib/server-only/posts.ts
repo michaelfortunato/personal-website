@@ -97,6 +97,8 @@ export async function _typstQuery(typstFilepath: string): Promise<unknown[]> {
     TYPST_QUERY,
     "--format",
     "json",
+    "--features",
+    "html",
     "--root",
     root,
   ]);
