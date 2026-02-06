@@ -1,28 +1,18 @@
 import { CommitEntry } from "@/lib/buildInfo";
 
-type Tag = "Compiler";
-
-export type FrontMatter = Partial<{
+export type Metadata = {
   /// for use by other articles for linking and informs the url of the article
   id: string;
   /// the front matter title
   title: string;
-  /// The date when the post was created
-  createdTimestamp: string;
-  /// The date when the post was last modified
-  modifiedTimestamp: string;
-  /// What version of the article? This should be manual
-  version: number;
-  tags: Tag[];
-}>;
 
-export type Metadata = Required<FrontMatter> & {
-  /// for use by other articles for linking and informs the url of the article
-  id: string;
-  /// the front matter title
-  title: string;
+  version?: number;
+
+  tags: string[];
+
   /// meta information about the build of this article
   buildInfo: {
+    isDirty: boolean;
     /// The git commit that built this article
     currentCommit: CommitEntry;
     /// The first git commit that built this article
@@ -33,18 +23,18 @@ export type Metadata = Required<FrontMatter> & {
 export function createMetadata(
   id: string,
   title: string,
-  frontMatter: FrontMatter,
   currentCommit: CommitEntry,
   firstCommit: CommitEntry,
+  tags: string[] = [],
+  isDirty: boolean = false,
 ) {
   return {
-    id: frontMatter.id ?? id,
-    title: frontMatter.title ?? title,
-    createdTimestamp: frontMatter.createdTimestamp ?? firstCommit.timestamp,
-    modifiedTimestamp: frontMatter.modifiedTimestamp ?? currentCommit.timestamp,
-    version: frontMatter.version ?? 1,
-    tags: frontMatter.tags ?? [],
-    buildInfo: { currentCommit, firstCommit },
+    id: id,
+    title: title,
+    createdTimestamp: firstCommit.timestamp,
+    modifiedTimestamp: currentCommit.timestamp,
+    tags: tags ?? [],
+    buildInfo: { isDirty, currentCommit, firstCommit },
   };
 }
 

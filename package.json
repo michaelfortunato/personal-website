@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "rheo:build": "node scripts/rheo-build.mjs",
+    "build:blog": "npx tsx scripts/buildBlog.ts",
     "format": "npx prettier . -w",
     "format:check": "npx prettier -c ."
   },
@@ -28,6 +28,7 @@
     "@radix-ui/react-toast": "^1.1.5",
     "@radix-ui/react-tooltip": "^1.0.7",
     "@vercel/speed-insights": "^1.0.10",
+    "cheerio": "^1.2.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "framer-motion": "^10.12.2",

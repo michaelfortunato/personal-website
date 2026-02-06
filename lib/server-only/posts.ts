@@ -1,164 +1,21 @@
-import fs from "fs";
+import { promisify } from "util";
 import path from "path";
-import matter from "gray-matter";
-import rehypeStringify from "rehype-stringify";
-import remarkGfm from "remark-gfm";
-import remarkParse from "remark-parse";
-import remarkRehype from "remark-rehype";
-import { unified, Plugin } from "unified";
-import { Root } from "remark-parse/lib";
+import { execFile } from "child_process";
+import * as cheerio from "cheerio";
+const execFileAsync = promisify(execFile);
+
 import {
-  createMetadata,
-  type FrontMatter,
-  type Metadata,
-  type Post,
-} from "@/lib/posts";
-import { getCommitEntryForFile } from "@/lib/server-only/buildInfo";
+  getCommitEntryForFile,
+  getGitDir,
+  isDirty as isDirtyFunc,
+} from "./buildInfo";
 
-export const postsDirectory = path.join(process.cwd(), "posts");
-
-const typstContentDirectory = path.join(process.cwd(), "content", "typst");
-const typstBuildDirectory = path.join(process.cwd(), "public", "typst");
-
-function getTypstPaths(id: string) {
-  const sourcePath = path.join(typstContentDirectory, id, "index.typ");
-  const metaPath = path.join(typstContentDirectory, id, "meta.json");
-  const htmlPath = path.join(typstBuildDirectory, id, "html", "index.html");
-  return { sourcePath, metaPath, htmlPath };
-}
-
-export async function getPostData(id: string): Promise<Post> {
-  return getTypstPostData(id);
-}
-
-async function getTypstPostData(id: string): Promise<Post> {
-  const { sourcePath, metaPath, htmlPath } = getTypstPaths(id);
-  if (!fs.existsSync(metaPath)) {
-    throw `Typst post is missing metadata: ${metaPath}`;
-  }
-  if (!fs.existsSync(sourcePath)) {
-    throw `Typst post is missing source: ${sourcePath}`;
-  }
-  if (!fs.existsSync(htmlPath)) {
-    throw `Typst post is missing compiled HTML. Run \`npm run rheo:build\`.\nMissing: ${htmlPath}`;
-  }
-
-  const metaJson = fs.readFileSync(metaPath, "utf-8");
-  const meta = JSON.parse(metaJson) as FrontMatter;
-  const title = meta.title ?? id;
-
-  const { firstCommit, currentCommit } =
-    getCommitInfoForFileOrFallback(sourcePath);
-  const metadata = createMetadata(id, title, meta, currentCommit, firstCommit);
-
-  const iframeSrc = `/typst/${id}/html/index.html`;
-  const iframeHtml = `
-<div class="not-prose flex justify-end">
-  <a class="text-sm underline" href="${iframeSrc}" target="_blank" rel="noreferrer">Open Typst render</a>
-</div>
-<iframe class="mt-4 h-[80vh] w-full rounded border bg-white" src="${iframeSrc}" title="${title}" loading="lazy"></iframe>
-`;
-
-  return {
-    metadata,
-    content: iframeHtml,
-    format: "typst",
-  };
-}
-
-export async function getAllPostIds() {
-  const typstIds = getTypstPostIds();
-  const allIds = [...typstIds];
-
-  const seen = new Set<string>();
-  for (const id of allIds) {
-    if (seen.has(id)) {
-      throw `Duplicate post id detected: ${id}`;
-    }
-    seen.add(id);
-  }
-
-  return allIds.map((id) => ({ params: { id } }));
-}
-
-export async function getAllPostsMetadata(): Promise<Metadata[]> {
-  const typstPosts = getTypstPostIds().map(async (id) => {
-    const { sourcePath, metaPath } = getTypstPaths(id);
-    const metaJson = fs.readFileSync(metaPath, "utf-8");
-    const meta = JSON.parse(metaJson) as FrontMatter;
-    const title = meta.title ?? id;
-
-    const { firstCommit, currentCommit } =
-      getCommitInfoForFileOrFallback(sourcePath);
-    return createMetadata(id, title, meta, currentCommit, firstCommit);
-  });
-
-  const allPostsData: Metadata[] = await Promise.all([...typstPosts]);
-  // Sort posts by date
-  return allPostsData.sort((a, b) => {
-    if (a.createdTimestamp < b.createdTimestamp) {
-      return 1;
-    } else {
-      return -1;
-    }
-  });
-}
-
-// Custom Remark plugin to insert metadata
-const assertAndExtractTopHeader: Plugin<[], Root> = () => {
-  return (tree, file) => {
-    if (tree.children.length == 0) {
-      throw "Invalid markdown: no children";
-    }
-    const firstChild = tree.children[0];
-    if (firstChild.type != "heading") {
-      throw "Invalid markdown: first child must be a header";
-    }
-    if (firstChild.depth != 1) {
-      throw "Invalid markdown: first child must be a top level (1) header";
-    }
-    if (firstChild.children.length == 0) {
-      throw "Invalid markdown: heading must have content";
-    }
-    const textNode = firstChild.children[0];
-    if (textNode.type != "text") {
-      throw "Invalid markdown: heading content must be text";
-    }
-    const title = textNode.value;
-    file.data.title = title;
-    tree.children.shift();
-  };
-};
-
-function getMarkdownPostIds(): string[] {
-  if (!fs.existsSync(postsDirectory)) return [];
-  return fs
-    .readdirSync(postsDirectory)
-    .filter((fileName) => fileName.endsWith(".md"))
-    .map((fileName) => fileName.replace(/\.md$/, ""));
-}
-
-function getTypstPostIds(): string[] {
-  if (!fs.existsSync(typstContentDirectory)) return [];
-  return fs
-    .readdirSync(typstContentDirectory, { withFileTypes: true })
-    .filter((dirent) => dirent.isDirectory())
-    .map((dirent) => dirent.name)
-    .filter((id) => {
-      const { sourcePath, metaPath, htmlPath } = getTypstPaths(id);
-      return (
-        fs.existsSync(sourcePath) &&
-        fs.existsSync(metaPath) &&
-        fs.existsSync(htmlPath)
-      );
-    });
-}
-
-function getCommitInfoForFileOrFallback(filepath: string) {
+export function getCommitInfoForFileOrFallback(filepath: string) {
   const firstCommit = getCommitEntryForFile(filepath, false);
   const currentCommit = getCommitEntryForFile(filepath, true);
+  const isDirty = isDirtyFunc(filepath);
   if (firstCommit && currentCommit) {
-    return { firstCommit, currentCommit };
+    return { isDirty, firstCommit, currentCommit };
   }
 
   const nowSeconds = Math.floor(Date.now() / 1000).toString();
@@ -167,13 +24,148 @@ function getCommitInfoForFileOrFallback(filepath: string) {
     get shortCommitHash() {
       return this.commitHash.slice(0, 7);
     },
-    author: "local",
+    author: "Michael Fortunato (unverified)",
     timestamp: nowSeconds,
-    message: "Uncommitted changes",
+    message: "Uncommited/non-existant file",
   };
 
   return {
+    isDirty,
     firstCommit: firstCommit ?? fallbackCommit,
     currentCommit: currentCommit ?? fallbackCommit,
+  };
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//                   This all supports building the blog from typst
+//////////////////////////////////////////////////////////////////////////////
+
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return typeof v === "object" && v !== null;
+}
+
+function asString(v: unknown): string | undefined {
+  if (typeof v === "string") return v;
+  if (isRecord(v) && typeof v.value === "string") return v.value;
+  if (isRecord(v) && typeof v.text === "string") return v.text;
+  return undefined;
+}
+
+function asStringArray(v: unknown): string[] {
+  if (Array.isArray(v)) return v.map(asString).filter(Boolean) as string[];
+  const s = asString(v);
+  return s ? [s] : [];
+}
+
+function normalizeLabel(label: unknown): string | null {
+  if (typeof label !== "string") return null;
+  return label.replace(/^<|>$/g, "").toUpperCase(); // "<TITLE>" -> "TITLE"
+}
+
+function findLabelValue(items: unknown[], ...labels: string[]): unknown {
+  const targets = labels.map((l) => l.toUpperCase());
+  for (const item of items) {
+    if (!isRecord(item)) continue;
+
+    const direct = normalizeLabel(item.label);
+    const nested = isRecord(item.value)
+      ? normalizeLabel(item.value.label)
+      : null;
+
+    if (
+      (direct && targets.includes(direct)) ||
+      (nested && targets.includes(nested))
+    ) {
+      if ("value" in item) return item.value;
+      if ("text" in item) return item.text;
+      return item;
+    }
+  }
+  return undefined;
+}
+
+// --- typst query + parse ---
+export async function _typstQuery(typstFilepath: string): Promise<unknown[]> {
+  const TYPST_QUERY =
+    "selector(<KEYWORDS>).or(<keywords>).or(<tags>).or(<TITLE>).or(<title>)";
+  const root = await getGitDir();
+  const { stdout } = await execFileAsync("typst", [
+    "query",
+    typstFilepath,
+    TYPST_QUERY,
+    "--format",
+    "json",
+    "--root",
+    root,
+  ]);
+  return JSON.parse(stdout);
+}
+
+// Typst compile -> stdout (no temp files)
+export async function _typstFileToHTMLFile(
+  typstFilepath: string,
+): Promise<string> {
+  const root = await getGitDir();
+  const { stdout } = await execFileAsync(
+    "typst",
+    [
+      "compile",
+      "--root",
+      root,
+      "--format=html",
+      "--features=html",
+      typstFilepath,
+      "-", // stdout
+    ],
+    { maxBuffer: 50 * 1024 * 1024 },
+  );
+
+  return stdout;
+}
+
+export async function postPathFromId(id: string): Promise<string> {
+  const gitRoot = await getGitDir();
+
+  // normalize to OS separators
+  const normalized = id.split("/").join(path.sep);
+
+  return path.join(gitRoot, "posts", `${normalized}.typ`);
+}
+export async function idFromPostPath(absPath: string): Promise<string> {
+  const gitRoot = await getGitDir();
+  const rel = path.relative(gitRoot, path.normalize(absPath)); // e.g. "posts/foo/bar.typ"
+  const noExt = rel.replace(/\.typ$/, "");
+
+  // strip leading "posts/" (or "posts\" on Windows)
+  const stripped = noExt.replace(/^posts[\\/]/, "");
+
+  // normalize to URL-style slashes
+  return stripped.split(path.sep).join("/");
+}
+
+export async function _typstFileToMetadata(typstFilepath: string) {
+  const items = await _typstQuery(typstFilepath);
+
+  return {
+    id: await idFromPostPath(typstFilepath),
+    title: asString(findLabelValue(items, "TITLE")),
+    tags: asStringArray(findLabelValue(items, "KEYWORDS", "TAGS")),
+  };
+}
+function splitHeadBody(html: string) {
+  const $ = cheerio.load(html);
+  return {
+    head: $("head").html() ?? "",
+    body: $("body").html() ?? "",
+  };
+}
+
+export async function buildPost(inputFilepath: string) {
+  const htmlString = await _typstFileToHTMLFile(inputFilepath);
+  const headAndBody = splitHeadBody(htmlString);
+  const metadata = await _typstFileToMetadata(inputFilepath);
+  return {
+    content: headAndBody,
+    metadata,
   };
 }

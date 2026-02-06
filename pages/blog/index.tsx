@@ -2,7 +2,6 @@ import RootPageLayout from "@/components/RootPageLayout";
 import Link from "next/link";
 import { NextPageWithLayout } from "pages/_app";
 import { type Metadata } from "@/lib/posts";
-import { getAllPosts as getAllPostsMetadata } from "@/lib/server-only/posts";
 import { BuildInfo } from "@/lib/buildInfo";
 import { getBuildInfo } from "@/lib/server-only/buildInfo";
 

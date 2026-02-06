@@ -16,13 +16,31 @@
 #let output_html(doc) = context [
   // Inline equations: wrap in a box on HTML so they don't break line layout.
   #show math.equation.where(block: false): it => context {
-    if target() == "html" { box(html.frame(it)) } else { it }
+    if target() == "html" {
+      let rendered = box(html.frame(it))
+      if it.has("label") {
+        let lbl = it.label
+        [#html.a(id: str(lbl))[] #rendered]
+      } else {
+        rendered
+      }
+    } else { it }
   }
 
   // Block equations: frame only on HTML.
   #show math.equation.where(block: true): it => context {
-    if target() == "html" { html.frame(it) } else { it }
+    if target() == "html" {
+      let rendered = html.frame(it)
+      if it.has("label") {
+        let lbl = it.label
+        [#html.a(id: str(lbl))[] #rendered]
+      } else {
+        rendered
+      }
+    } else { it }
   }
+
+
   // <link rel="preconnect" href="https://fonts.googleapis.com">
   // <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   // <link href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
@@ -38,29 +56,26 @@
       href: "https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400..700;1,400..700&display=swap",
     )
   }
+  // HACK: This is nice because it attaches an empty <a></a>
+  // tag to all labeled (ie `== foo <bar>`) headings
+  // allowing me to reference them etc.
+  // I've actually had no issue so far but see here out of abundance of
+  // caution?
+  // See: https://github.com/typst/typst/issues/6955?utm_source=chatgpt.com
+  #show heading: it => context {
+    if target() == "html" and it.has("label") {
+      let lbl = it.label
+      // [#html.a(id: str(lbl))[] #link(lbl, it)]
+      [#html.a(id: str(lbl))[] #it]
+    } else {
+      it
+    }
+  }
 
   #doc
 ]
 
-//
-// #let output_html2(doc) = context [
-//   #if target() == "html" {
-//     [
-//       #show math.equation.where(block: false): it => context {
-//         if target() == "html" { box(html.frame(it)) } else { it }
-//       }
-//
-//       // Block equations: frame only on HTML.
-//       #show math.equation.where(block: true): it => context {
-//         if target() == "html" { html.frame(it) } else { it }
-//       }
-//     ]
-//   }
-//
-//   #doc
-// ]
-
-#let page(id: str, title: str, keywords: (), doc) = [
+#let page(title: str, keywords: (), doc) = [
   #set document(
     author: "Michael Newman Fortunato",
     title: title,
@@ -89,10 +104,7 @@
   // // Configure spacing code snippets as in the original LaTeX.
   // #show raw.where(block: true): set block(spacing: 14pt) // TODO: May be 15pt?
 
-  #metadata(id) <ID>
   #metadata(title) <TITLE>
   #metadata(keywords) <KEYWORDS>
   #doc
-
 ]
-
