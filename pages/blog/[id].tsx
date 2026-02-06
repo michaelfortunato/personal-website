@@ -26,7 +26,15 @@ import { blogBodyFont } from "@/lib/fonts";
 function toLocaleStringIfUnixTimestamp(timestamp: string): string {
   const asNumber = Number(timestamp);
   if (!Number.isNaN(asNumber) && asNumber >= -8.64e12 && asNumber <= +8.64e12) {
-    return new Date(asNumber * 1000).toLocaleString();
+    return new Date(asNumber * 1000).toLocaleString(undefined, {
+      month: "numeric",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+      timeZoneName: "short", // for me cst
+    });
   }
   return timestamp;
 }
