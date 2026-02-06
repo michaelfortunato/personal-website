@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/hover-card";
 import { NextPageWithLayout } from "pages/_app";
 import { NextPage } from "next";
+import { blogBodyFont } from "@/lib/fonts";
 
 function toLocaleStringIfUnixTimestamp(timestamp: string): string {
   const asNumber = Number(timestamp);
@@ -45,7 +46,7 @@ function Header(metadata: Metadata) {
           <Dialog>
             <DialogTrigger className="cursor-pointer" asChild>
               <Avatar className="not-prose">
-                <AvatarImage src="/blog/Avatar.jpeg" className="mr-2 inline" />
+                <AvatarImage src="/blog/Avatar.jpeg" />
                 <AvatarFallback>MNF</AvatarFallback>
               </Avatar>
             </DialogTrigger>
@@ -134,9 +135,15 @@ const Page: NextPageWithLayout<PageProps> = ({ post }) => {
   return (
     <Layout>
       <div className="flex h-full justify-center">
-        <div className="prose flex flex-col gap-4 dark:prose-invert">
+        <div
+          className={`${blogBodyFont.className} prose flex flex-col gap-4 dark:prose-invert`}
+          // className={`prose flex flex-col gap-4 dark:prose-invert`}
+        >
           <Header {...post.metadata} />
-          <div dangerouslySetInnerHTML={{ __html: post.content.body }}></div>
+          <div
+            // className={`${blogBodyFont.className}`}
+            dangerouslySetInnerHTML={{ __html: post.content.body }}
+          ></div>
           <Separator />
           <Footer {...post.metadata} />
         </div>

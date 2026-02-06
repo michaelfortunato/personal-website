@@ -17,7 +17,12 @@
   // Inline equations: wrap in a box on HTML so they don't break line layout.
   #show math.equation.where(block: false): it => context {
     if target() == "html" {
-      let rendered = box(html.frame(it))
+      let rendered = box(
+        // class: (
+        //   "inline",
+        // ),
+        html.frame(it),
+      )
       if it.has("label") {
         let lbl = it.label
         [#html.a(id: str(lbl))[] #rendered]
@@ -30,7 +35,12 @@
   // Block equations: frame only on HTML.
   #show math.equation.where(block: true): it => context {
     if target() == "html" {
-      let rendered = html.frame(it)
+      let rendered = html.div(
+        class: ("flex", "justify-center"),
+        html.frame(
+          it,
+        ),
+      )
       if it.has("label") {
         let lbl = it.label
         [#html.a(id: str(lbl))[] #rendered]
@@ -41,21 +51,6 @@
   }
 
 
-  // <link rel="preconnect" href="https://fonts.googleapis.com">
-  // <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  // <link href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
-
-  #if target() == "html" {
-    html.link(rel: "preconnect", href: "https://fonts.googleapis.com")
-    html.link(
-      rel: "preconnect",
-      href: "https://fonts.gstatic.com",
-    )
-    html.link(
-      rel: "stylesheet",
-      href: "https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400..700;1,400..700&display=swap",
-    )
-  }
   // HACK: This is nice because it attaches an empty <a></a>
   // tag to all labeled (ie `== foo <bar>`) headings
   // allowing me to reference them etc.
@@ -71,6 +66,26 @@
       it
     }
   }
+
+
+  // Two types of html export
+  // 1) is vanilla typst compile -f html ..., in which case this is helpful
+  // 2) is for our nextjs-based website, in which case this
+  // is not necessary .
+  // Since 2) is main use case, we can comment it out
+  /*
+  #if target() == "html" {
+    html.link(rel: "preconnect", href: "https://fonts.googleapis.com")
+    html.link(
+      rel: "preconnect",
+      href: "https://fonts.gstatic.com",
+    )
+    html.link(
+      rel: "stylesheet",
+      href: "https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400..700;1,400..700&display=swap",
+    )
+  }
+  */
 
   #doc
 ]
@@ -107,4 +122,6 @@
   #metadata(title) <TITLE>
   #metadata(keywords) <KEYWORDS>
   #doc
+  #bibliography("/posts/Zotero.bib", style: "apa", title: "References")
+
 ]
