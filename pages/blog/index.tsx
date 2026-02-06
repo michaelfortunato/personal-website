@@ -44,7 +44,7 @@ function FeaturedPosts({ posts }: { posts: Metadata[] }) {
 }
 
 type PageProps = {
-  posts: Metadata[];
+  // posts: Metadata[];
   buildInfo: BuildInfo;
 };
 
@@ -52,11 +52,11 @@ function getFeaturedPosts(allPosts: Metadata[]) {
   return allPosts.filter((_post) => true);
 }
 
-const Page: NextPageWithLayout<PageProps> = ({ posts }) => {
-  const postList = getFeaturedPosts(posts); // TODO: Decide which posts to feature
+const Page: NextPageWithLayout<PageProps> = (props) => {
+  // const postList = getFeaturedPosts(posts); // TODO: Decide which posts to feature
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
-      <FeaturedPosts posts={[...postList]} />
+      {/* <FeaturedPosts posts={[...postList]} /> */}
     </div>
   );
 };
@@ -68,9 +68,9 @@ Page.getLayout = (page) => {
 };
 
 export async function getStaticProps() {
-  const allPostsData = await getAllPostsMetadata();
+  // const allPostsData = await getAllPostsMetadata();
   return {
-    props: { posts: allPostsData, buildInfo: await getBuildInfo() },
+    props: { buildInfo: await getBuildInfo() },
   };
 }
 

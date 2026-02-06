@@ -1,6 +1,10 @@
 import Layout from "@/components/Blog/layout";
 import { type Metadata, type Post } from "@/lib/posts";
-import { getAllPostIds, getPostData } from "@/lib/server-only/posts";
+import {
+  buildPost,
+  listPostIds,
+  postPathFromId,
+} from "@/lib/server-only/posts";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Card } from "@/components/ui/card";
@@ -15,6 +19,8 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { NextPageWithLayout } from "pages/_app";
+import { NextPage } from "next";
 
 function toLocaleStringIfUnixTimestamp(timestamp: string): string {
   const asNumber = Number(timestamp);
@@ -119,31 +125,42 @@ function Footer(_metadata: Metadata) {
   );
 }
 
-export default function Post({ postData }: { postData: Post }) {
+type PageProps = {
+  // posts: Metadata[];
+  post: Post;
+};
+
+const Page: NextPageWithLayout<PageProps> = ({ post }) => {
   return (
     <Layout>
       <div className="flex h-full justify-center">
         <div className="prose flex flex-col gap-4 dark:prose-invert">
-          <Header {...postData.metadata} />
-          <div dangerouslySetInnerHTML={{ __html: postData.content }}></div>
+          <Header {...post.metadata} />
+          <div dangerouslySetInnerHTML={{ __html: post.content.body }}></div>
           <Separator />
-          <Footer {...postData.metadata} />
+          <Footer {...post.metadata} />
         </div>
       </div>
     </Layout>
   );
-}
+};
 
 export async function getStaticPaths() {
   // TODO: Return a list of the values for id
-  const paths = await getAllPostIds();
+  const ids = await listPostIds();
+  const paths = ids.map((id) => ({ params: { id } }));
   return { paths, fallback: false };
 }
 
-type Params = { params: { id: string } };
+type StaticParams = { params: { id: string } };
 
-export async function getStaticProps({ params }: Params) {
+export async function getStaticProps({ params: { id } }: StaticParams) {
   // TODO: Fetch necessary data
-  const postData = await getPostData(params.id);
-  return { props: { postData } };
+  const inputFilepath = await postPathFromId(id);
+  const postData = await buildPost(inputFilepath);
+  const post = JSON.parse(JSON.stringify(postData)) as Post;
+
+  return { props: { post } };
 }
+
+export default Page;

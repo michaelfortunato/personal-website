@@ -3,12 +3,14 @@ import path from "path";
 import { execFile } from "child_process";
 import * as cheerio from "cheerio";
 const execFileAsync = promisify(execFile);
+import { readdir } from "fs/promises";
 
 import {
   getCommitEntryForFile,
   getGitDir,
   isDirty as isDirtyFunc,
 } from "./buildInfo";
+import { Metadata, Post } from "@/lib/posts";
 
 export function getCommitInfoForFileOrFallback(filepath: string) {
   const firstCommit = getCommitEntryForFile(filepath, false);
@@ -147,8 +149,8 @@ export async function _typstFileToMetadata(typstFilepath: string) {
   const items = await _typstQuery(typstFilepath);
 
   return {
-    id: await idFromPostPath(typstFilepath),
-    title: asString(findLabelValue(items, "TITLE")),
+    id: (await idFromPostPath(typstFilepath)) || "<UNKNOWN ID>",
+    title: asString(findLabelValue(items, "TITLE")) || "<UNKNOWN TITLE>",
     tags: asStringArray(findLabelValue(items, "KEYWORDS", "TAGS")),
   };
 }
@@ -160,10 +162,44 @@ function splitHeadBody(html: string) {
   };
 }
 
-export async function buildPost(inputFilepath: string) {
+export async function listPostFiles(): Promise<string[]> {
+  const root = await getGitDir();
+  const postsDir = path.join(root, "posts");
+  const results: string[] = [];
+
+  function shouldSkip(name: string) {
+    return name.startsWith("_");
+  }
+
+  async function walk(dir: string) {
+    const entries = await readdir(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      if (shouldSkip(entry.name)) continue;
+
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        await walk(full);
+      } else if (entry.isFile() && entry.name.endsWith(".typ")) {
+        results.push(full);
+      }
+    }
+  }
+
+  await walk(postsDir);
+  return results;
+}
+
+export async function listPostIds(): Promise<string[]> {
+  const files = await listPostFiles();
+  return Promise.all(files.map((file) => idFromPostPath(file)));
+}
+
+export async function buildPost(inputFilepath: string): Promise<Post> {
   const htmlString = await _typstFileToHTMLFile(inputFilepath);
   const headAndBody = splitHeadBody(htmlString);
-  const metadata = await _typstFileToMetadata(inputFilepath);
+  const { id, title, tags } = await _typstFileToMetadata(inputFilepath);
+  const buildInfo = getCommitInfoForFileOrFallback(inputFilepath);
+  const metadata = new Metadata({ id, title, tags, buildInfo });
   return {
     content: headAndBody,
     metadata,

@@ -1,45 +1,52 @@
 import { CommitEntry } from "@/lib/buildInfo";
 
-export type Metadata = {
-  /// for use by other articles for linking and informs the url of the article
+type MetadataArgs = {
   id: string;
-  /// the front matter title
   title: string;
-
-  version?: number;
-
-  tags: string[];
-
-  /// meta information about the build of this article
+  tags?: string[];
   buildInfo: {
     isDirty: boolean;
-    /// The git commit that built this article
     currentCommit: CommitEntry;
-    /// The first git commit that built this article
     firstCommit: CommitEntry;
   };
+  version?: number;
+  createdTimestamp?: string;
+  modifiedTimestamp?: string;
 };
 
-export function createMetadata(
-  id: string,
-  title: string,
-  currentCommit: CommitEntry,
-  firstCommit: CommitEntry,
-  tags: string[] = [],
-  isDirty: boolean = false,
-) {
-  return {
-    id: id,
-    title: title,
-    createdTimestamp: firstCommit.timestamp,
-    modifiedTimestamp: currentCommit.timestamp,
-    tags: tags ?? [],
-    buildInfo: { isDirty, currentCommit, firstCommit },
-  };
-}
+export class Metadata {
+  id: string;
+  title: string;
+  tags: string[];
+  createdTimestamp: string;
+  modifiedTimestamp: string;
+  buildInfo: MetadataArgs["buildInfo"];
+  version?: number;
 
+  constructor({
+    id,
+    title,
+    tags = [],
+    buildInfo,
+    version,
+    createdTimestamp,
+    modifiedTimestamp,
+  }: MetadataArgs) {
+    this.id = id;
+    this.title = title;
+    this.tags = tags;
+    this.buildInfo = buildInfo;
+    this.version = version;
+    this.createdTimestamp =
+      createdTimestamp ?? this.buildInfo.firstCommit.timestamp;
+    this.modifiedTimestamp =
+      modifiedTimestamp ?? this.buildInfo.currentCommit.timestamp;
+  }
+}
 export type Post = {
   metadata: Metadata;
-  content: string; // Rendered file contents, most likely as rendered html
-  [key: string]: any; // TODO: Type correctly
+  content: {
+    head: string;
+    body: string;
+  }; // Rendered file contents, most likely as rendered html
 };
