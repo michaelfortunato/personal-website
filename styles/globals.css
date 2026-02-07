@@ -434,3 +434,15 @@
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
 }
+
+@layer components {
+  .prose svg.typst-frame {
+    color: inherit;
+  }
+
+  .prose svg.typst-frame .typst-text use[fill="#000000"],
+  .prose svg.typst-frame .typst-text use[fill="#000"],
+  .prose svg.typst-frame .typst-text use[fill="black"] {
+    fill: currentColor;
+  }
+}
