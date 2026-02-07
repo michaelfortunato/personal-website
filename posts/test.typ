@@ -308,7 +308,7 @@ So we know the definition of a $G$-invariant function $f: X -> Y$. That is
   $
   Equivariance is similar:
   $
-    f(g compose x) = g star f(x) forall g in G, x in X..
+    f(g compose x) = g star f(x) forall g in G, x in X.
   $
 ]<def:G-equivariant-function-f:-X---Y>
 
