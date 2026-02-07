@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import Link from "next/link";
 import { computeGithubCommitURL } from "@/lib/buildInfo";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { ClockIcon, CommitIcon, TextIcon } from "@radix-ui/react-icons";
 import { NextPageWithLayout } from "pages/_app";
 import { blogBodyFont } from "@/lib/fonts";
@@ -148,13 +149,35 @@ const Page: NextPageWithLayout<PageProps> = ({ post }) => {
           <div className="not-prose flex justify-end">
             <div className="inline-flex items-center gap-2 text-sm text-foreground/75">
               <span>- Michael</span>
-              <Image
-                className="h-5 w-5 rounded-sm object-cover opacity-90"
-                src="/blog/Avatar.jpeg"
-                width={40}
-                height={40}
-                alt="Michael Fortunato"
-              />
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button
+                    type="button"
+                    className="cursor-pointer rounded-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    aria-label="Open profile photo"
+                  >
+                    <Image
+                      className="h-5 w-5 rounded-sm object-cover opacity-90"
+                      src="/blog/Avatar.jpeg"
+                      width={40}
+                      height={40}
+                      alt="Michael Fortunato"
+                    />
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <Image
+                    className="h-auto w-full rounded-sm object-cover"
+                    src="/blog/Avatar.jpeg"
+                    width={1024}
+                    height={1024}
+                    alt="Me apple picking, circa 2021"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Me apple picking, circa 2021.
+                  </p>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
           <Separator />
