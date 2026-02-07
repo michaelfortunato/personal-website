@@ -84,7 +84,7 @@ function Header(metadata: Metadata) {
       </time>
       {isEditedOnDifferentDay ? (
         <div className="not-prose text-xs leading-5 text-foreground/60">
-          Edited on{" "}
+          Updated on{" "}
           <time dateTime={modifiedDateTimeValue}>
             {formatHeaderTimestamp(modifiedTimestamp)}
           </time>
