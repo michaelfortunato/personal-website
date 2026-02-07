@@ -103,13 +103,14 @@ module.exports = {
       },
       typography: () => ({
         // A more "print-like" rhythm for longform reading (Typst → HTML).
+        // THIS IS NOT USED ANymore it didnt look good
         mnf: {
           css: {
             // Base
             // fontSize: "clamp(1rem, 0.96rem + 0.25vw, 1.125rem)",
-            lineHeight: "1.65",
-            textRendering: "optimizeLegibility",
-            fontKerning: "normal",
+            lineHeight: "1.3",
+            // textRendering: "optimizeLegibility",
+            // fontKerning: "normal",
 
             // Better line breaking
             // Paragraph rhythm (less airy than Tailwind defaults)
@@ -118,32 +119,6 @@ module.exports = {
               overflowWrap: "break-word",
               marginTop: "0.85em",
               marginBottom: "0.85em",
-            },
-
-            // Headings: closer to Typst/LaTeX proportions than default prose
-            h2: {
-              fontSize: "1.35em",
-              lineHeight: "1.25",
-              marginTop: "1.8em",
-              marginBottom: "0.75em",
-              fontWeight: "600",
-              textWrap: "balance",
-            },
-            h3: {
-              fontSize: "1.15em",
-              lineHeight: "1.3",
-              marginTop: "1.6em",
-              marginBottom: "0.6em",
-              fontWeight: "600",
-              textWrap: "balance",
-            },
-            h4: {
-              fontSize: "1.05em",
-              lineHeight: "1.35",
-              marginTop: "1.4em",
-              marginBottom: "0.55em",
-              fontWeight: "600",
-              textWrap: "balance",
             },
 
             // Lists
@@ -164,14 +139,10 @@ module.exports = {
               marginBottom: "0.25em",
             },
 
-            // Typst emits display math as <figure class="math-display ...">
+            //Typst emits display math as <figure class="math-display ...">
             "figure.math-display": {
-              marginTop: "1em",
-              marginBottom: "1em",
-              overflowX: "auto",
-            },
-            "figure.math-display > svg.typst-frame": {
-              maxWidth: "100%",
+              marginTop: "1.15em",
+              marginBottom: "1.15em",
             },
 
             // Typst HTML: definitions/theorems often come out as plain <div>
@@ -182,9 +153,9 @@ module.exports = {
               marginBottom: "0.85em",
             },
 
-            // Keep large inline SVG math from overflowing on narrow screens.
-            ".typst-content span.inline-block": { maxWidth: "100%" },
-            ".typst-content svg.typst-frame": { maxWidth: "100%" },
+            // // Keep large inline SVG math from overflowing on narrow screens.
+            // ".typst-content span.inline-block": { maxWidth: "100%" },
+            // ".typst-content svg.typst-frame": { maxWidth: "100%" },
 
             // Typst uses list containers with `list-style-type: none` for
             // bibliography + endnotes; override Tailwind prose indentation.

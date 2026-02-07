@@ -21,6 +21,15 @@
 #set heading(numbering: "1.1")
 
 
+#let op(name) = {
+  if name == "D" {
+    return $Dif$
+  } else {
+    return $std.math.op(name)$
+  }
+}
+
+
 = Something Something <sec:Some>
 
 #lorem(50)
@@ -202,6 +211,7 @@ computer thinks of $X$ as some bing
 
 = Derivative-Once and For All <sec:Derivative-Once-and-For-All>
 
+
 Let $f: RR^(m) -> RR^(n)$ be a function between vector spaces $RR^(m)$ and
 $RR^(n)$. The derivative of $f$ at point $p in RR^(m)$ is the linear function
 $op("D") f(p): RR^(m) -> RR^(n)$ so that
@@ -254,7 +264,7 @@ $x_(3) = g_(1) x_(1) in op("Orb")(x_(1))$, we see that
 $x_(3) in op("Orb")(x_(2))$ because
 $x_(3) = g_(1) compose x_(1) = g_(1) compose g compose x_(2)$, and since
 $g_(1) compose g in G$ we know that
-$g_(1) compose g compose x_(2) in op("Orb")(x_(2)).$. The other way is similar
+$g_(1) compose g compose x_(2) in op("Orb")(x_(2))$. The other way is similar
 to show, and we have that every
 $x'_(1) in op("Orb")(x_(1)) <=> x'_(1) in op("Orb")(x_(2))$, where in the
 forward case we have $x'_(1) in op("Orb")(x_(2))$ because

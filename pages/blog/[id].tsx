@@ -179,7 +179,7 @@ const Page: NextPageWithLayout<PageProps> = ({ post }) => {
     <Layout>
       <div className="flex h-full justify-center">
         <div
-          className={`${blogBodyFont.className} prose prose-mnf flex flex-col gap-4 dark:prose-invert prose-h1:my-0`}
+          className={`${blogBodyFont.className} prose flex flex-col gap-4 dark:prose-invert prose-h1:my-0`}
           // className={`prose flex flex-col gap-4 dark:prose-invert`}
         >
           <Header {...post.metadata} />

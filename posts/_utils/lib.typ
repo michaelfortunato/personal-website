@@ -99,6 +99,12 @@
   #metadata(title) <TITLE>
   #metadata(keywords) <KEYWORDS>
   #doc
-  #bibliography("/posts/Zotero.bib", style: "apa", title: "References")
+
+  // Do not emit the title if there are no citations.
+  #context {
+    if query(cite).len() > 0 {
+      bibliography("/posts/Zotero.bib", style: "apa", title: "References")
+    }
+  }
 
 ]
