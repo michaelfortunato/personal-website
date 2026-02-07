@@ -106,7 +106,7 @@ module.exports = {
         mnf: {
           css: {
             // Base
-            fontSize: "clamp(1rem, 0.96rem + 0.25vw, 1.125rem)",
+            // fontSize: "clamp(1rem, 0.96rem + 0.25vw, 1.125rem)",
             lineHeight: "1.65",
             textRendering: "optimizeLegibility",
             fontKerning: "normal",

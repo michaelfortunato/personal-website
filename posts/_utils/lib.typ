@@ -64,27 +64,6 @@
       it
     }
   }
-
-
-  // Two types of html export
-  // 1) is vanilla typst compile -f html ..., in which case this is helpful
-  // 2) is for our nextjs-based website, in which case this
-  // is not necessary .
-  // Since 2) is main use case, we can comment it out
-  /*
-  #if target() == "html" {
-    html.link(rel: "preconnect", href: "https://fonts.googleapis.com")
-    html.link(
-      rel: "preconnect",
-      href: "https://fonts.gstatic.com",
-    )
-    html.link(
-      rel: "stylesheet",
-      href: "https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400..700;1,400..700&display=swap",
-    )
-  }
-  */
-
   #doc
 ]
 
