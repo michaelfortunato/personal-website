@@ -327,8 +327,8 @@ orbits.
 
 I think a key notational confusion is that we overload $X slash G$ to sometimes
 denote the space of sets of orbits $X slash G = {orb(x) bar.v x in X}$ and
-other-times to denote $G \ X$ as the subset of $G slash X subset.eq X$, where
-each element of $X slash G X$ is a chosen representative for the orbit.
+other-times to denote $G slash X$ as the subset of $G slash X subset.eq X$,
+where each element of $X slash G X$ is a chosen representative for the orbit.
 
 
 
