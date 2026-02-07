@@ -12,16 +12,21 @@ export function resolveURLToTheme(pathname: string) {
 
 export default function Layout({ children }: PropsWithChildren) {
   const router = useRouter();
-  const theme = resolveURLToTheme(router.asPath);
-  const { setTheme } = useTheme();
+  const routeTheme = resolveURLToTheme(router.asPath);
+  const { theme: selectedTheme, setTheme } = useTheme();
 
   useEffect(() => {
-    if (theme == "unknown") {
-      setTheme(`system`);
+    // If the user explicitly selected light/dark, don't override it based on route.
+    if (selectedTheme === "light" || selectedTheme === "dark") {
       return;
     }
-    setTheme(`${theme}`);
-  }, [setTheme, theme]);
+
+    if (routeTheme == "unknown") {
+      setTheme("system");
+      return;
+    }
+    setTheme(routeTheme);
+  }, [routeTheme, selectedTheme, setTheme]);
 
   return <>{children}</>;
 }
