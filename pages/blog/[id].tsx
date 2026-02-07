@@ -36,8 +36,13 @@ function formatHeaderTimestamp(timestamp: string): string {
     day: "numeric",
     month: "long",
     year: "numeric",
-    timeZone: "America/Chicago",
   });
+}
+
+function unixDay(timestamp: string): number | null {
+  const seconds = Number(timestamp);
+  if (Number.isNaN(seconds)) return null;
+  return Math.floor(seconds / 86400);
 }
 
 function formatModifiedTimestamp(timestamp: string): string {
@@ -51,25 +56,40 @@ function formatModifiedTimestamp(timestamp: string): string {
     hour: "numeric",
     minute: "2-digit",
     hour12: true,
-    timeZone: "America/Chicago",
     timeZoneName: "short",
   });
 }
 
 function Header(metadata: Metadata) {
-  const timestamp = metadata.buildInfo.currentCommit.timestamp;
-  const parsedDate = parseTimestamp(timestamp);
-  const dateTimeValue = parsedDate?.toISOString();
+  const createdTimestamp = metadata.buildInfo.firstCommit.timestamp;
+  const modifiedTimestamp = metadata.buildInfo.currentCommit.timestamp;
+  const createdDateTimeValue = parseTimestamp(createdTimestamp)?.toISOString();
+  const modifiedDateTimeValue =
+    parseTimestamp(modifiedTimestamp)?.toISOString();
+  const createdDayKey = unixDay(createdTimestamp);
+  const modifiedDayKey = unixDay(modifiedTimestamp);
+  const isEditedOnDifferentDay =
+    createdDayKey !== null &&
+    modifiedDayKey !== null &&
+    createdDayKey !== modifiedDayKey;
 
   return (
     <div className="flex flex-col items-center text-center">
       <h1 className="min-w-0 leading-tight">{metadata.title}</h1>
       <time
         className="not-prose mt-3 text-sm font-medium leading-5 text-foreground/70"
-        dateTime={dateTimeValue}
+        dateTime={createdDateTimeValue}
       >
-        {formatHeaderTimestamp(timestamp)}
+        {formatHeaderTimestamp(createdTimestamp)}
       </time>
+      {isEditedOnDifferentDay ? (
+        <div className="not-prose text-xs leading-5 text-foreground/60">
+          Edited on{" "}
+          <time dateTime={modifiedDateTimeValue}>
+            {formatHeaderTimestamp(modifiedTimestamp)}
+          </time>
+        </div>
+      ) : null}
       <Separator className="mt-5" />
     </div>
   );
@@ -95,7 +115,10 @@ function Footer(metadata: Metadata) {
         <div className="inline-flex items-center gap-1">
           <CommitIcon />
           {commitUrl ? (
-            <Link href={commitUrl} className="underline-offset-2 hover:underline">
+            <Link
+              href={commitUrl}
+              className="underline-offset-2 hover:underline"
+            >
               {metadata.buildInfo.currentCommit.shortCommitHash}
             </Link>
           ) : (
@@ -138,7 +161,7 @@ const Page: NextPageWithLayout<PageProps> = ({ post }) => {
     <Layout>
       <div className="flex h-full justify-center">
         <div
-          className={`${blogBodyFont.className} prose prose-h1:my-0 flex flex-col gap-4 dark:prose-invert`}
+          className={`${blogBodyFont.className} prose flex flex-col gap-4 dark:prose-invert prose-h1:my-0`}
           // className={`prose flex flex-col gap-4 dark:prose-invert`}
         >
           <Header {...post.metadata} />
