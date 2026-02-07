@@ -124,11 +124,54 @@ function Header(metadata: Metadata) {
   );
 }
 
-function Footer(_metadata: Metadata) {
+function Footer(metadata: Metadata) {
+  const timestamp = metadata.buildInfo.currentCommit.timestamp;
+  const commitHash = metadata.buildInfo.currentCommit.commitHash;
+  const hasValidCommitHash = /^[a-f0-9]{40}$/i.test(commitHash);
+  const commitUrl = hasValidCommitHash
+    ? computeGithubCommitURL("personal-website", commitHash)
+    : null;
+  const tagLine = metadata.tags.map((value) => `#${value}`).join(" ");
+
   return (
-    <div>
+    <div className="not-prose flex flex-col gap-4">
       <div className="flex justify-center">
-        <div>You made it to the end! Thanks for reading!</div>
+        <div className="text-sm text-muted-foreground">
+          You made it to the end! Thanks for reading!
+        </div>
+      </div>
+      <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground md:flex-nowrap">
+        <div className="inline-flex items-center gap-1">
+          <CommitIcon />
+          {commitUrl ? (
+            <Link href={commitUrl} className="underline-offset-2 hover:underline">
+              {metadata.buildInfo.currentCommit.shortCommitHash}
+            </Link>
+          ) : (
+            <span>{metadata.buildInfo.currentCommit.shortCommitHash}</span>
+          )}
+        </div>
+        <span aria-hidden="true">·</span>
+        <div className="inline-flex items-center gap-1">
+          <TextIcon />
+          <span
+            className="max-w-[22ch] truncate md:max-w-[40ch]"
+            title={metadata.buildInfo.currentCommit.message}
+          >
+            {metadata.buildInfo.currentCommit.message}
+          </span>
+        </div>
+        <span aria-hidden="true">·</span>
+        <div className="inline-flex items-center gap-1">
+          <ClockIcon />
+          <span>{formatModifiedTimestamp(timestamp)}</span>
+        </div>
+        {tagLine ? (
+          <>
+            <span aria-hidden="true">·</span>
+            <span>{tagLine}</span>
+          </>
+        ) : null}
       </div>
     </div>
   );
