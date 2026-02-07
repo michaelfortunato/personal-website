@@ -14,39 +14,31 @@
 )
 
 #let output_html(doc) = context [
-  // Inline equations: wrap in a box on HTML so they don't break line layout.
+  // inline
   #show math.equation.where(block: false): it => context {
     if target() == "html" {
-      let rendered = box(
-        // class: (
-        //   "inline",
-        // ),
+      let rendered = html.span(
+        class: "math-inline",
         html.frame(it),
       )
       if it.has("label") {
         let lbl = it.label
         [#html.a(id: str(lbl))[] #rendered]
-      } else {
-        rendered
-      }
+      } else { rendered }
     } else { it }
   }
 
-  // Block equations: frame only on HTML.
+  // block
   #show math.equation.where(block: true): it => context {
     if target() == "html" {
       let rendered = html.div(
-        class: ("flex", "justify-center"),
-        html.frame(
-          it,
-        ),
+        class: ("math-display", "flex", "justify-center"),
+        html.frame(it),
       )
       if it.has("label") {
         let lbl = it.label
         [#html.a(id: str(lbl))[] #rendered]
-      } else {
-        rendered
-      }
+      } else { rendered }
     } else { it }
   }
 

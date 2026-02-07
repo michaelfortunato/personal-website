@@ -446,3 +446,12 @@
     fill: currentColor;
   }
 }
+
+.prose .math-inline > svg.typst-frame {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.prose .math-display > svg.typst-frame {
+  display: block;
+}
