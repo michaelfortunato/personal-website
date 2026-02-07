@@ -5,121 +5,71 @@ import {
   listPostIds,
   postPathFromId,
 } from "@/lib/server-only/posts";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { CommitIcon, TextIcon, CalendarIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { computeGithubCommitURL } from "@/lib/buildInfo";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
+import { ClockIcon, CommitIcon, TextIcon } from "@radix-ui/react-icons";
 import { NextPageWithLayout } from "pages/_app";
-import { NextPage } from "next";
 import { blogBodyFont } from "@/lib/fonts";
 
-function toLocaleStringIfUnixTimestamp(timestamp: string): string {
+function parseTimestamp(timestamp: string): Date | null {
   const asNumber = Number(timestamp);
   if (!Number.isNaN(asNumber) && asNumber >= -8.64e12 && asNumber <= +8.64e12) {
-    return new Date(asNumber * 1000).toLocaleString(undefined, {
-      month: "numeric",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-      timeZoneName: "short", // for me cst
-    });
+    return new Date(asNumber * 1000);
   }
-  return timestamp;
+
+  const asDate = new Date(timestamp);
+  if (!Number.isNaN(asDate.valueOf())) {
+    return asDate;
+  }
+
+  return null;
+}
+
+function formatHeaderTimestamp(timestamp: string): string {
+  const parsedDate = parseTimestamp(timestamp);
+  if (!parsedDate) return timestamp;
+
+  return parsedDate.toLocaleDateString("en-US", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "America/Chicago",
+  });
+}
+
+function formatModifiedTimestamp(timestamp: string): string {
+  const parsedDate = parseTimestamp(timestamp);
+  if (!parsedDate) return timestamp;
+
+  return parsedDate.toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: "America/Chicago",
+    timeZoneName: "short",
+  });
 }
 
 function Header(metadata: Metadata) {
-  const commitHash = metadata.buildInfo.currentCommit.commitHash;
-  const hasValidCommitHash = /^[a-f0-9]{40}$/i.test(commitHash);
-  const commitUrl = hasValidCommitHash
-    ? computeGithubCommitURL("personal-website", commitHash)
-    : null;
+  const timestamp = metadata.buildInfo.currentCommit.timestamp;
+  const parsedDate = parseTimestamp(timestamp);
+  const dateTimeValue = parsedDate?.toISOString();
 
   return (
-    <div>
-      <h1>{metadata.title}</h1>
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-2">
-          <Dialog>
-            <DialogTrigger className="cursor-pointer" asChild>
-              <Avatar className="not-prose">
-                <AvatarImage src="/blog/Avatar.jpeg" />
-                <AvatarFallback>MNF</AvatarFallback>
-              </Avatar>
-            </DialogTrigger>
-            <DialogContent>
-              <Image
-                className="rounded"
-                src="/blog/Avatar.jpeg"
-                width={400}
-                height={400}
-                alt="Me"
-              />
-              <p>Me apple picking, circa 2021.</p>
-            </DialogContent>
-          </Dialog>
-          <p className="not-prose inline font-semibold">me</p>
-        </div>
-        <Card className="p-2 shadow">
-          <div className="flex items-center">
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <CommitIcon className="mr-2 inline cursor-pointer" />
-              </HoverCardTrigger>
-              <HoverCardContent className="w-full p-2 text-center">
-                Commit Hash
-              </HoverCardContent>
-            </HoverCard>
-            {commitUrl ? (
-              <Link href={commitUrl}>
-                {metadata.buildInfo.currentCommit.shortCommitHash}
-              </Link>
-            ) : (
-              <span>{metadata.buildInfo.currentCommit.shortCommitHash}</span>
-            )}
-          </div>
-          <div className="flex items-center">
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <TextIcon className="mr-2 inline cursor-pointer" />
-              </HoverCardTrigger>
-              <HoverCardContent className="w-full p-2 text-center">
-                Commit Message
-              </HoverCardContent>
-            </HoverCard>
-            {metadata.buildInfo.currentCommit.message}
-          </div>
-          <div className="flex items-center">
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <CalendarIcon className="mr-2 inline cursor-pointer" />
-              </HoverCardTrigger>
-              <HoverCardContent className="w-full p-2 text-center">
-                Commit Time
-              </HoverCardContent>
-            </HoverCard>
-            {toLocaleStringIfUnixTimestamp(
-              metadata.buildInfo.currentCommit.timestamp,
-            )}
-          </div>
-        </Card>
-        <div className="flex gap-2">
-          {metadata.tags.map((value, index) => (
-            <Badge key={index}>{value}</Badge>
-          ))}
-        </div>
-      </div>
+    <div className="flex flex-col items-center text-center">
+      <h1 className="min-w-0 leading-tight">{metadata.title}</h1>
+      <time
+        className="not-prose mt-3 text-sm font-medium leading-5 text-foreground/70"
+        dateTime={dateTimeValue}
+      >
+        {formatHeaderTimestamp(timestamp)}
+      </time>
+      <Separator className="mt-5" />
     </div>
   );
 }
@@ -187,7 +137,7 @@ const Page: NextPageWithLayout<PageProps> = ({ post }) => {
     <Layout>
       <div className="flex h-full justify-center">
         <div
-          className={`${blogBodyFont.className} prose flex flex-col gap-4 dark:prose-invert`}
+          className={`${blogBodyFont.className} prose prose-h1:my-0 flex flex-col gap-4 dark:prose-invert`}
           // className={`prose flex flex-col gap-4 dark:prose-invert`}
         >
           <Header {...post.metadata} />
@@ -195,6 +145,18 @@ const Page: NextPageWithLayout<PageProps> = ({ post }) => {
             // className={`${blogBodyFont.className}`}
             dangerouslySetInnerHTML={{ __html: post.content.body }}
           ></div>
+          <div className="not-prose flex justify-end">
+            <div className="inline-flex items-center gap-2 text-sm text-foreground/75">
+              <span>- Michael</span>
+              <Image
+                className="h-5 w-5 rounded-sm object-cover opacity-90"
+                src="/blog/Avatar.jpeg"
+                width={40}
+                height={40}
+                alt="Michael Fortunato"
+              />
+            </div>
+          </div>
           <Separator />
           <Footer {...post.metadata} />
         </div>
