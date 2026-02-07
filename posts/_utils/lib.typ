@@ -18,7 +18,7 @@
   #show math.equation.where(block: false): it => context {
     if target() == "html" {
       let rendered = html.span(
-        class: "math-inline",
+        class: "inline-block",
         html.frame(it),
       )
       if it.has("label") {
@@ -31,8 +31,14 @@
   // block
   #show math.equation.where(block: true): it => context {
     if target() == "html" {
-      let rendered = html.div(
+      // let rendered = html.div(
+      //   class: ("math-display", "flex", "justify-center"),
+      //   html.frame(it),
+      // )
+
+      let rendered = html.figure(
         class: ("math-display", "flex", "justify-center"),
+        role: "math",
         html.frame(it),
       )
       if it.has("label") {
@@ -104,9 +110,9 @@
   // #set par(justify: true, leading: 0.55em)
 
   // Configure quotation (similar to LaTeX's `quoting` package).
-  #show quote: set align(left)
-  #show quote: set pad(x: 4em)
-  #show quote: set block(spacing: 1em) // Original 11pt.
+  // #show quote: set align(left)
+  // #show quote: set pad(x: 4em)
+  // #show quote: set block(spacing: 1em) // Original 11pt.
 
   // // Configure spacing code snippets as in the original LaTeX.
   // #show raw.where(block: true): set block(spacing: 14pt) // TODO: May be 15pt?

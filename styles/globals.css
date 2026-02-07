@@ -440,18 +440,32 @@
     color: inherit;
   }
 
-  .prose svg.typst-frame .typst-text use[fill="#000000"],
-  .prose svg.typst-frame .typst-text use[fill="#000"],
-  .prose svg.typst-frame .typst-text use[fill="black"] {
+  .prose svg.typst-frame [fill="#000000"],
+  .prose svg.typst-frame [fill="#000"],
+  .prose svg.typst-frame [fill="black"] {
     fill: currentColor;
+  }
+
+  .prose svg.typst-frame [stroke="#000000"],
+  .prose svg.typst-frame [stroke="#000"],
+  .prose svg.typst-frame [stroke="black"] {
+    stroke: currentColor;
   }
 }
 
-.prose .math-inline > svg.typst-frame {
-  display: inline-block;
-  vertical-align: middle;
-}
+/* .math-inline > svg.typst-frame { */
+/*   /* display: inline-block; */
+/*   /* vertical-align: baseline; */
+/* } */
 
-.prose .math-display > svg.typst-frame {
-  display: block;
-}
+/* .math-display > svg.typst-frame { */
+/*   display: block; */
+/* } */
+
+/* .prose p:has(+ .math-display) { */
+/*   margin-bottom: 0; */
+/* } */
+/**/
+/* .prose .math-display + p { */
+/*   margin-top: 0; */
+/* } */
