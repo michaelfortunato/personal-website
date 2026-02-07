@@ -15,8 +15,8 @@ function Header() {
         mnf.
       </Link>
       <div className="flex gap-4">
-        <Link href="/on-work">On Work</Link>
-        <Link href="/on-quiet">On Quiet</Link>
+        <Link href="/blog/on-work">On Work</Link>
+        <Link href="/blog/on-quiet">On Quiet</Link>
         <ThemeSwitch />
       </div>
     </div>
