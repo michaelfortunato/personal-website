@@ -122,7 +122,6 @@ $<eq:addition>
 
 
 #definition(name: [Orbit of an element of a $G$-set])[
-
   Let $X$ be a $G$-set with action $compose$. The *orbit* of an element
   $x in X$ is the set
   $
@@ -147,9 +146,9 @@ $<eq:addition>
 ]<def:Projection-matrix>
 
 #definition(name: [Notation])[
-  $M_(n)(RR) := {A bar.v A "is an" n times n "matrix with entries in " RR}$.
-  There is a canonical isomorphism $M_(n)(RR) tilde.equiv RR^(n times n)$, and
-  so we can think of $M_(n)(RR)$ as a vector space.
+  $M_(n)(RR) := {A bar.v A "is an" n times n "matrix with entries in " RR}$,
+  and. There is a canonical isomorphism $M_(n)(RR) tilde.equiv RR^(n times n)$,
+  and so we can think of $M_(n)(RR)$ as a vector space.
 ]<def:Notation>
 
 

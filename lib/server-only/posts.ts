@@ -158,6 +158,17 @@ export async function _typstFileToMetadata(typstFilepath: string) {
 }
 function splitHeadBody(html: string) {
   const $ = cheerio.load(html);
+  // Typst emits anchors as `<p><a id="..."></a></p>` which creates extra
+  // vertical whitespace under Tailwind Typography (`.prose`).
+  $("body p").each((_, el) => {
+    const p = $(el);
+    if (p.children().length !== 1) return;
+    const a = p.children("a[id]");
+    if (a.length !== 1) return;
+    if (p.text().trim() !== "") return;
+
+    p.replaceWith(a);
+  });
   return {
     head: $("head").html() ?? "",
     body: $("body").html() ?? "",

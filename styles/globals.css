@@ -452,20 +452,3 @@
     stroke: currentColor;
   }
 }
-
-/* .math-inline > svg.typst-frame { */
-/*   /* display: inline-block; */
-/*   /* vertical-align: baseline; */
-/* } */
-
-/* .math-display > svg.typst-frame { */
-/*   display: block; */
-/* } */
-
-/* .prose p:has(+ .math-display) { */
-/*   margin-bottom: 0; */
-/* } */
-/**/
-/* .prose .math-display + p { */
-/*   margin-top: 0; */
-/* } */
