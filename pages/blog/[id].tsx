@@ -128,17 +128,35 @@ function Footer(metadata: Metadata) {
         <span aria-hidden="true">·</span>
         <div className="inline-flex items-center gap-1">
           <TextIcon />
-          <span
-            className="max-w-[22ch] truncate md:max-w-[40ch]"
-            title={metadata.buildInfo.currentCommit.message}
-          >
-            {metadata.buildInfo.currentCommit.message}
-          </span>
+          {commitUrl ? (
+            <Link
+              href={commitUrl}
+              className="max-w-[22ch] truncate underline-offset-2 hover:underline md:max-w-[40ch]"
+            >
+              {metadata.buildInfo.currentCommit.message}
+            </Link>
+          ) : (
+            <span
+              className="max-w-[22ch] truncate md:max-w-[40ch]"
+              title={metadata.buildInfo.currentCommit.message}
+            >
+              {metadata.buildInfo.currentCommit.message}
+            </span>
+          )}
         </div>
         <span aria-hidden="true">·</span>
         <div className="inline-flex items-center gap-1">
           <ClockIcon />
-          <span>{formatModifiedTimestamp(timestamp)}</span>
+          {commitUrl ? (
+            <Link
+              className="underline-offset-2 hover:underline"
+              href={commitUrl}
+            >
+              {formatModifiedTimestamp(timestamp)}
+            </Link>
+          ) : (
+            <span>{formatModifiedTimestamp(timestamp)}</span>
+          )}
         </div>
         {tagLine ? (
           <>
