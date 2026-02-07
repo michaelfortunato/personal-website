@@ -108,7 +108,7 @@ function Footer(metadata: Metadata) {
     <div className="not-prose flex flex-col gap-4">
       <div className="flex justify-center">
         <div className="text-sm text-muted-foreground">
-          You made it to the end! Thanks for reading!
+          You made it to the end! Thanks for reading.
         </div>
       </div>
       <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground md:flex-nowrap">
