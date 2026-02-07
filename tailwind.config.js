@@ -182,11 +182,6 @@ module.exports = {
               marginBottom: "0.85em",
             },
 
-            ".typst-content a[id]:not([href])": {
-              display: "block",
-              height: "0",
-            },
-
             // Keep large inline SVG math from overflowing on narrow screens.
             ".typst-content span.inline-block": { maxWidth: "100%" },
             ".typst-content svg.typst-frame": { maxWidth: "100%" },
