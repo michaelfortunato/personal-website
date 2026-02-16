@@ -57,6 +57,7 @@ function formatModifiedTimestamp(timestamp: string): string {
     minute: "2-digit",
     hour12: true,
     timeZoneName: "short",
+    timeZone: "America/Chicago",
   });
 }
 
@@ -84,7 +85,7 @@ function Header(metadata: Metadata) {
       </time>
       {isEditedOnDifferentDay ? (
         <div className="not-prose text-xs leading-5 text-foreground/60">
-          Updated on{" "}
+          Revised on{" "}
           <time dateTime={modifiedDateTimeValue}>
             {formatHeaderTimestamp(modifiedTimestamp)}
           </time>
@@ -180,7 +181,7 @@ const Page: NextPageWithLayout<PageProps> = ({ post }) => {
       <div className="flex h-full justify-center">
         <div
           className={`${blogBodyFont.className} prose flex flex-col gap-4 dark:prose-invert prose-h1:my-0`}
-          // className={`prose flex flex-col gap-4 dark:prose-invert`}
+        // className={`prose flex flex-col gap-4 dark:prose-invert`}
         >
           <Header {...post.metadata} />
           <div
