@@ -109,7 +109,7 @@ function Footer(metadata: Metadata) {
     <div className="not-prose flex flex-col gap-4">
       <div className="flex justify-center">
         <div className="text-sm text-muted-foreground">
-          You made it to the end! Thanks for reading.
+          Thanks for reading.
         </div>
       </div>
       <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground md:flex-nowrap">
@@ -234,14 +234,15 @@ const Page: NextPageWithLayout<PageProps> = ({ post }) => {
 export async function getStaticPaths() {
   // TODO: Return a list of the values for id
   const ids = await listPostIds();
-  const paths = ids.map((id) => ({ params: { id } }));
+  const paths = ids.map((id) => ({ params: { id: id.split("/") } }));
   return { paths, fallback: false };
 }
 
-type StaticParams = { params: { id: string } };
+type StaticParams = { params: { id: string[] } };
 
-export async function getStaticProps({ params: { id } }: StaticParams) {
+export async function getStaticProps({ params: { id: id_list } }: StaticParams) {
   // TODO: Fetch necessary data
+  const id = id_list.join("/")
   const inputFilepath = await postPathFromId(id);
   const postData = await buildPost(inputFilepath);
   const post = JSON.parse(JSON.stringify(postData)) as Post;

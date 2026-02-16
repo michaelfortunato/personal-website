@@ -58,21 +58,20 @@ export function filterByNonTag(posts: Metadata[], tag: string): Metadata[] {
   );
 }
 
-function LatestWritings({ posts }: PropsWithChildren<{ posts: Metadata[] }>) {
-  const sortedPosts = filterByNonTag(sortByMostRecent(posts), "daily");
+function Stack({ posts, title, supplement }: PropsWithChildren<{ posts: Metadata[], title: string, supplement: string }>) {
   return (
     <div className="flex w-full max-w-3xl flex-col gap-8 px-6 pb-16">
       <header>
         <h1 className="text-3xl font-semibold tracking-tight">
-          Latest Writings
+          {title}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          All of my writing, sorted by the last time I edited them
+          {supplement}
         </p>
       </header>
 
       <div className="space-y-4">
-        {sortedPosts.map((post) => {
+        {posts.map((post) => {
           const updatedDateTime = parseTimestamp(
             post.modifiedTimestamp,
           )?.toISOString();
@@ -98,14 +97,18 @@ function LatestWritings({ posts }: PropsWithChildren<{ posts: Metadata[] }>) {
                   className="text-xs text-muted-foreground"
                   dateTime={updatedDateTime}
                 >
-                  Revised on {formatTimestamp(post.modifiedTimestamp)}
+                {post.createdTimestamp == post.modifiedTimestamp ? "Published" : "Revised"} on {formatTimestamp(post.modifiedTimestamp)}
                 </time>
             </div>
           </Card>);
         })}
       </div>
-    </div>
-  );
+    </div>)
+}
+
+function LatestWritings({ posts }: PropsWithChildren<{ posts: Metadata[] }>) {
+  const sortedPosts = filterByNonTag(sortByMostRecent(posts), "daily");
+  return (<Stack posts={sortedPosts} title={"Latest Writings"} supplement={"All of my writing, sorted by the last time I edited them"} />);
 }
 
 function ShortNotes({ posts }: PropsWithChildren<{ posts: Metadata[] }>) {
@@ -113,14 +116,7 @@ function ShortNotes({ posts }: PropsWithChildren<{ posts: Metadata[] }>) {
   if (sortedPosts.length === 0) {
     return null;
   }
-  return (
-    <header>
-      <h1 className="text-3xl font-semibold">Musings</h1>
-      {sortedPosts.map((post, idx) => {
-        return <p key={idx}>TODO</p>;
-      })}
-    </header>
-  );
+  return (<Stack posts={sortedPosts} title={"Short Notes"} supplement={"Daily notes and scrap posts"} />);
 }
 
 type PageProps = {
@@ -129,7 +125,7 @@ type PageProps = {
 
 const Page: NextPageWithLayout<PageProps> = ({ posts }) => {
   return (
-    <div className="flex justify-center">
+    <div className="flex flex-col items-center">
       <LatestWritings posts={posts} />
       <ShortNotes posts={posts} />
     </div>
