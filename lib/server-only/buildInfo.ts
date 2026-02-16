@@ -6,7 +6,15 @@ const execFileAsync = promisify(execFile);
 export async function getBuildInfo(): Promise<BuildInfo> {
   return {
     commitInfo: await getBuildCommitInfo(),
-    buildTimestamp: new Date().toISOString(),
+    buildTimestamp: new Date().toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+      timeZoneName: "short",
+    }),
   };
 }
 
