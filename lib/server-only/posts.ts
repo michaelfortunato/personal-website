@@ -207,6 +207,23 @@ export async function listPostIds(): Promise<string[]> {
   return Promise.all(files.map((file) => idFromPostPath(file)));
 }
 
+export async function listPosts(): Promise<Metadata[]> {
+  const postFiles = await listPostFiles();
+  const postsWithMetadata = await Promise.all(
+    postFiles.map(async (postFile) => {
+      const { id, title, tags } = await _typstFileToMetadata(postFile);
+      const buildInfo = getCommitInfoForFileOrFallback(postFile);
+      return new Metadata({
+        id,
+        title,
+        tags,
+        buildInfo,
+      });
+    }),
+  );
+  return postsWithMetadata;
+}
+
 export async function buildPost(inputFilepath: string): Promise<Post> {
   const htmlString = await _typstFileToHTMLFile(inputFilepath);
   const headAndBody = splitHeadBody(htmlString);

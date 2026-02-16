@@ -17,7 +17,7 @@
 #show: theorem_rules
 
 
-#show: lib.page.with(title: "Test", keywords: ("Yyoyoyo", "Gabba"))
+#show: lib.page.with(title: "Test", keywords: ("Math", "_Internal"))
 #set heading(numbering: "1.1")
 
 

@@ -1,71 +1,148 @@
-import RootPageLayout from "@/components/RootPageLayout";
 import Link from "next/link";
 import { NextPageWithLayout } from "pages/_app";
-import { type Metadata } from "@/lib/posts";
-import { BuildInfo } from "@/lib/buildInfo";
-import { getBuildInfo } from "@/lib/server-only/buildInfo";
-import { listPostIds } from "@/lib/server-only/posts";
+import { Metadata } from "@/lib/posts";
+import {
+  _typstFileToMetadata,
+  getCommitInfoForFileOrFallback,
+  listPostFiles,
+  listPosts,
+} from "@/lib/server-only/posts";
 import Layout from "@/components/Blog/layout";
+import { PropsWithChildren } from "react";
 
-function formatTimestamp(timestamp: string) {
+function parseTimestamp(timestamp: string): Date | null {
   const asNumber = Number(timestamp);
   if (!Number.isNaN(asNumber) && asNumber >= -8.64e12 && asNumber <= +8.64e12) {
-    return new Date(asNumber * 1000).toLocaleDateString();
+    return new Date(asNumber * 1000);
   }
+
   const asDate = new Date(timestamp);
   if (!Number.isNaN(asDate.valueOf())) {
-    return asDate.toLocaleDateString();
+    return asDate;
   }
-  return timestamp;
+
+  return null;
 }
 
-function FeaturedPost(post: Metadata) {
+function formatTimestamp(timestamp: string): string {
+  const parsedDate = parseTimestamp(timestamp);
+  if (!parsedDate) return timestamp;
+
+  return parsedDate.toLocaleDateString("en-US", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function sortByMostRecent(posts: Metadata[]): Metadata[] {
+  return [...posts].sort((left, right) => {
+    const leftTime = parseTimestamp(left.modifiedTimestamp)?.getTime() ?? 0;
+    const rightTime = parseTimestamp(right.modifiedTimestamp)?.getTime() ?? 0;
+    return rightTime - leftTime;
+  });
+}
+
+export function filterByTag(posts: Metadata[], tag: string): Metadata[] {
+  const needle = tag.toLowerCase();
+  return posts.filter((post) =>
+    post.tags.some((t) => t.toLowerCase() === needle),
+  );
+}
+
+export function filterByNonTag(posts: Metadata[], tag: string): Metadata[] {
+  const needle = tag.toLowerCase();
+  return posts.filter((post) =>
+    post.tags.some((t) => t.toLowerCase() !== needle),
+  );
+}
+
+function LatestWritings({ posts }: PropsWithChildren<{ posts: Metadata[] }>) {
+  const sortedPosts = filterByNonTag(sortByMostRecent(posts), "daily");
   return (
-    <div className="rounded bg-card p-4 shadow">
-      <Link
-        className="text-lg font-semibold underline"
-        href={`/blog/${post.id}`}
-      >
-        {post.title}
-      </Link>
-      <div className="mt-2 text-sm text-muted-foreground">
-        {formatTimestamp(post.createdTimestamp)}
+    <div className="mx-auto w-full max-w-3xl px-6 pb-16">
+      <header className="mb-8">
+        <h1 className="text-3xl font-semibold tracking-tight">
+          Latest Writings
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          All entries, sorted by last date of revision.
+        </p>
+      </header>
+
+      <div className="space-y-4">
+        {sortedPosts.map((post) => {
+          const updatedDateTime = parseTimestamp(
+            post.modifiedTimestamp,
+          )?.toISOString();
+          const publishedDateTime = parseTimestamp(
+            post.createdTimestamp,
+          )?.toISOString();
+
+          return (
+            <article
+              key={post.id}
+              className="rounded-lg border border-border/70 bg-card/40 p-5"
+            >
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+                <Link
+                  className="text-lg font-medium leading-tight hover:underline"
+                  href={`/blog/${post.id}`}
+                >
+                  {post.title}
+                </Link>
+                <time
+                  className="text-xs text-muted-foreground"
+                  dateTime={updatedDateTime}
+                >
+                  Revised on {formatTimestamp(post.modifiedTimestamp)}
+                </time>
+              </div>
+
+              <time
+                className="mt-2 block text-xs text-muted-foreground"
+                dateTime={publishedDateTime}
+              >
+                Published {formatTimestamp(post.createdTimestamp)}
+              </time>
+              {post.tags.length > 0 ? (
+                <p className="mt-3 text-xs text-muted-foreground">
+                  {post.tags.map((tag) => `#${tag}`).join(" ")}
+                </p>
+              ) : null}
+            </article>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-function FeaturedPosts({ posts }: { posts: Metadata[] }) {
+function ShortNotes({ posts }: PropsWithChildren<{ posts: Metadata[] }>) {
+  const sortedPosts = filterByTag(sortByMostRecent(posts), "daily");
+  if (sortedPosts.length == 0) {
+    return null;
+  }
   return (
-    <div className="grid grid-cols-2 gap-4">
-      {posts.map((post) => (
-        <FeaturedPost key={post.id} {...post} />
-      ))}
-    </div>
+    <header>
+      <h1 className="text-3xl font-semibold">Musings</h1>
+      {sortedPosts.map((post) => {
+        return <p>TODO</p>;
+      })}
+    </header>
   );
 }
 
 type PageProps = {
-  // posts: Metadata[];
-  postIds: string[];
-  buildInfo: BuildInfo;
+  posts: Metadata[];
 };
 
-function getFeaturedPosts(allPosts: Metadata[]) {
-  return allPosts.filter((_post) => true);
-}
-
-const Page: NextPageWithLayout<PageProps> = (props) => {
-  // const postList = getFeaturedPosts(posts); // TODO: Decide which posts to feature
+const Page: NextPageWithLayout<PageProps> = ({ posts }) => {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center">
-      {props.postIds.map((id) => (
-        <p key={id}>
-          <Link href={`/blog/${id}`}>{id}</Link>
-        </p>
-      ))}
-      {/* <FeaturedPosts posts={[...postList]} /> */}
-    </div>
+    <>
+      <LatestWritings posts={posts} />
+      <ShortNotes posts={posts} />
+    </>
   );
 };
 
@@ -74,10 +151,12 @@ Page.getLayout = (page) => {
 };
 
 export async function getStaticProps() {
-  // const allPostsData = await getAllPostsMetadata();
-  console.log(await listPostIds());
+  const postsWithMetadata = await listPosts();
+
   return {
-    props: { postIds: await listPostIds(), buildInfo: await getBuildInfo() },
+    props: {
+      posts: JSON.parse(JSON.stringify(postsWithMetadata)) as Metadata[],
+    },
   };
 }
 
