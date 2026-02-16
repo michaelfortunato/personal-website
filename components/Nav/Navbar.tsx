@@ -3,7 +3,6 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Twirl as Hamburger } from "hamburger-react";
 import { gsap } from "gsap";
-import { resolveURLToTheme } from "@/components/layout";
 import { RootPageStyle } from "@/components/RootPageLayout";
 
 export type NavbarProps = {
@@ -43,6 +42,14 @@ export type NavPageProps = {
 
 const NavPage = (props: NavPageProps) => {
   const [previewURL, setPreviewURL] = useState<string | null>(null);
+
+  function resolveURLToTheme(pathname: string) {
+    if (pathname === "/") return "home";
+    if (pathname.startsWith("/about")) return "about";
+    if (pathname.startsWith("/projects")) return "projects";
+    // if (pathname.startsWith("/blog")) return "blog";
+    return "";
+  }
   return (
     <AnimatePresence initial={false}>
       {props.isVisible && (

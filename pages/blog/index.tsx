@@ -4,6 +4,8 @@ import { NextPageWithLayout } from "pages/_app";
 import { type Metadata } from "@/lib/posts";
 import { BuildInfo } from "@/lib/buildInfo";
 import { getBuildInfo } from "@/lib/server-only/buildInfo";
+import { listPostIds } from "@/lib/server-only/posts";
+import Layout from "@/components/Blog/layout";
 
 function formatTimestamp(timestamp: string) {
   const asNumber = Number(timestamp);
@@ -45,6 +47,7 @@ function FeaturedPosts({ posts }: { posts: Metadata[] }) {
 
 type PageProps = {
   // posts: Metadata[];
+  postIds: string[];
   buildInfo: BuildInfo;
 };
 
@@ -56,21 +59,25 @@ const Page: NextPageWithLayout<PageProps> = (props) => {
   // const postList = getFeaturedPosts(posts); // TODO: Decide which posts to feature
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
+      {props.postIds.map((id) => (
+        <p key={id}>
+          <Link href={`/blog/${id}`}>{id}</Link>
+        </p>
+      ))}
       {/* <FeaturedPosts posts={[...postList]} /> */}
     </div>
   );
 };
 
 Page.getLayout = (page) => {
-  return (
-    <RootPageLayout buildInfo={page.props.buildInfo}>{page}</RootPageLayout>
-  );
+  return <Layout>{page}</Layout>;
 };
 
 export async function getStaticProps() {
   // const allPostsData = await getAllPostsMetadata();
+  console.log(await listPostIds());
   return {
-    props: { buildInfo: await getBuildInfo() },
+    props: { postIds: await listPostIds(), buildInfo: await getBuildInfo() },
   };
 }
 

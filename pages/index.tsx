@@ -67,7 +67,7 @@ const Page: NextPageWithLayout<Props> = ({ buildInfo: _buildInfo }: Props) => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={triggerGridExit && { opacity: 1 }}
-          transition={{ type: "spring", duration: 7 }}
+          transition={{ type: "spring", duration: 2 }}
           className="flex gap-2 p-6"
         >
           <div>
@@ -169,6 +169,8 @@ Page.getLayout = (page) => {
     <RootPageLayout buildInfo={page.props.buildInfo}>{page}</RootPageLayout>
   );
 };
+
+Page.paletteClass = "home";
 
 // This function gets called at build time on server-side.
 // It won't be called on client-side, so you can even do

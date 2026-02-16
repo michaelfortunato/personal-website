@@ -79,6 +79,8 @@ Page.getLayout = (page) => {
   );
 };
 
+Page.paletteClass = "about";
+
 export async function getStaticProps() {
   return {
     props: { buildInfo: await getBuildInfo() },

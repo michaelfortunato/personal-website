@@ -178,6 +178,8 @@ Page.getLayout = (page) => {
   );
 };
 
+Page.paletteClass = "projects";
+
 export async function getStaticProps() {
   return {
     props: { buildInfo: await getBuildInfo() },

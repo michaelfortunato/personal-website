@@ -11,12 +11,12 @@ import { cn } from "@/lib/utils";
 import { NextPage } from "next";
 import { buildManfestHeadingFont } from "@/lib/fonts";
 import { ThemeProvider } from "@/components/themeProvider";
-import Layout from "@/components/layout";
 
 export type GetLayout = (page: ReactElement) => ReactNode;
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: GetLayout;
+  paletteClass?: string;
 };
 
 export type MyAppProps = AppProps & {
@@ -39,28 +39,15 @@ export default function App({ Component, pageProps }: MyAppProps) {
         attribute="class"
         enableSystem
         disableTransitionOnChange={false}
-        themes={[
-          "light",
-          "dark",
-          "system",
-          "home-light",
-          "home-dark",
-          "about-light",
-          "about-light",
-          "projects-light",
-          "projects-dark",
-          "blog-light",
-          "blog-dark",
-          "x",
-        ]}
       >
         <main
           className={cn(
             "min-h-screen w-full font-sans antialiased",
             buildManfestHeadingFont.variable,
+            Component.paletteClass,
           )}
         >
-          <Layout>{getLayout(<Component {...pageProps} />)}</Layout>
+          {getLayout(<Component {...pageProps} />)}
           <GoogleAnalytics gaId="G-PG5ZXTMN4Z" />
         </main>
       </ThemeProvider>

@@ -9,7 +9,7 @@ const TooltipProvider = TooltipPrimitive.Provider;
 
 const Tooltip: React.FC<TooltipPrimitive.TooltipProps> = ({
   children,
-  delayDuration = 700,
+  delayDuration = 0,
   ...props
 }) => {
   return (
