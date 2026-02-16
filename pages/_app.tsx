@@ -16,7 +16,7 @@ export type GetLayout = (page: ReactElement) => ReactNode;
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: GetLayout;
-  paletteClass?: string;
+  paletteClass?: "home" | "about" | "projects";
 };
 
 export type MyAppProps = AppProps & {
