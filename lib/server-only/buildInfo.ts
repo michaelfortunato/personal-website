@@ -14,6 +14,7 @@ export async function getBuildInfo(): Promise<BuildInfo> {
       minute: "2-digit",
       hour12: true,
       timeZoneName: "short",
+      timeZone: "America/Chicago"
     }),
   };
 }
