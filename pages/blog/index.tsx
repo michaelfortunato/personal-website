@@ -108,7 +108,7 @@ function Stack({ posts, title, supplement }: PropsWithChildren<{ posts: Metadata
 
 function LatestWritings({ posts }: PropsWithChildren<{ posts: Metadata[] }>) {
   const sortedPosts = filterByNonTag(sortByMostRecent(posts), "daily");
-  return (<Stack posts={sortedPosts} title={"Latest Writings"} supplement={"All of my writing, sorted by the last time I edited them"} />);
+  return (<Stack posts={sortedPosts} title={"Latest Writings"} supplement={"All of my writing, sorted by most recently revised"} />);
 }
 
 function ShortNotes({ posts }: PropsWithChildren<{ posts: Metadata[] }>) {

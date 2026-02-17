@@ -50,3 +50,6 @@ yarn-error.log*
 # legacy local folders (not part of deploy)
 backend/
 frontend/
+
+# Advised to not track
+next-env.d.ts

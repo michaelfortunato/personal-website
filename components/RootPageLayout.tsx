@@ -18,12 +18,13 @@ const pageConfigs: Record<string, RootPageStyle> = {
     previewTextColor: "#264653",
     backgroundColor: "#e6af4b",
   },
-  "/about": {
-    name: "About",
-    previewColor: "rgba(20, 33, 61, 1)",
-    previewTextColor: "#e6af4b",
-    backgroundColor: "#14213D",
-  },
+  // FIXME: Get about in a better place before letting recruiters see.
+  // "/about": {
+  //   name: "About",
+  //   previewColor: "rgba(20, 33, 61, 1)",
+  //   previewTextColor: "#e6af4b",
+  //   backgroundColor: "#14213D",
+  // },
   "/projects": {
     name: "Projects",
     previewColor: "#D5E5E5",
