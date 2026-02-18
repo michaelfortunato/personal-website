@@ -1,6 +1,78 @@
 -- Example `~/.config/nvim/.lazy.lua` template
 -- Everything is commented out; uncomment and tweak as needed.
 
+local today = {
+	get_title = function(self)
+		return os.date("%A, %B, %Y")
+	end,
+	get_filename = function()
+		return os.date("%Y-%m-%d.typ")
+	end,
+
+	get_filepath = function(self)
+		return vim.fs.joinpath(LazyVim.root(), "./posts/daily/", self:get_filename())
+	end,
+
+	get_template = function(self)
+		return string.format(
+			[[
+#import "/posts/_utils/lib.typ" as lib
+#show: lib.page.with(title: "%s", keywords: ("daily"))
+]],
+			self:get_title()
+		)
+	end,
+
+	open = function(self)
+		vim.cmd.edit(vim.fn.fnameescape(self:get_filepath()))
+		local buf = vim.api.nvim_get_current_buf()
+		local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+		if #lines > 1 or lines[1] ~= "" then
+			return
+		end
+		vim.api.nvim_buf_set_lines(
+			buf,
+			0,
+			-1,
+			false,
+			vim.split(self:get_template(), "\n", { plain = true, trimempty = false })
+		)
+	end,
+}
+
+--- Copied right from my lsp.lua but with this added.
+--- Merges perfectly with my lsp.lua. Though its unclear
+--- if .lazy.lua is called first or if lsp.lua is called first.
+vim.lsp.config("tinymist", {
+	settings = {
+		typstExtraArgs = {
+			"--features=html",
+			"--root=" .. LazyVim.root(),
+		},
+	},
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "typst",
+	callback = function()
+		local cmd = {
+			"typst",
+			"compile",
+			"--root=" .. vim.fn.shellescape(LazyVim.root()),
+			"--features=html",
+			"%:S",
+		}
+		vim.opt_local.makeprg = vim.fn.join(cmd, " ")
+	end,
+})
+
+-- =========================
+-- 2. User Commands
+-- =========================
+vim.api.nvim_create_user_command("Daily", function()
+	today:open()
+end, { desc = "Open today's daily note." })
+
 return {
 	"foo",
 	virtual = true,
@@ -45,7 +117,21 @@ return {
 -- vim.keymap.set("n", "<leader>f", "<cmd>Telescope find_files<CR>", { noremap = true, silent = true })
 
 -- =========================
--- 2. AUTOCOMMANDS
+-- 2. User Commands
+-- =========================
+-- vim.api.nvim_create_user_command('Upper',
+--   function(opts)
+--     print(string.upper(opts.fargs[1]))
+--   end,
+--   { nargs = 1,
+--     complete = function(ArgLead, CmdLine, CursorPos)
+--       -- return completion candidates as a list-like table
+--       return { "foo", "bar", "baz" }
+--     end,
+-- })
+
+-- =========================
+-- 3. AUTOCOMMANDS
 -- =========================
 
 -- vim.api.nvim_create_autocmd("BufWritePre", {
@@ -66,7 +152,7 @@ return {
 -- })
 
 -- =========================
--- 3. Minimal lazy.nvim SPEC
+-- 4. Minimal lazy.nvim SPEC
 -- =========================
 
 -- return {
