@@ -3,7 +3,7 @@
 
 local today = {
 	get_title = function(self)
-		return os.date("%A, %B, %Y")
+		return os.date("%A, %B %e, %Y")
 	end,
 	get_filename = function()
 		return os.date("%Y-%m-%d.typ")
@@ -71,13 +71,22 @@ vim.api.nvim_create_autocmd("FileType", {
 -- =========================
 vim.api.nvim_create_user_command("Daily", function()
 	today:open()
-end, { desc = "Open today's daily note." })
+end, { desc = "Open today's daily note" })
+
+vim.keymap.set("n", "<leader>md", "<Cmd>Daily<CR>", { desc = "Open today's daily note" })
 
 return {
-	"foo",
+	"personal-website-plugin",
 	virtual = true,
-	dependencies = { "L3MON4D3/LuaSnip" },
+	dependencies = { "L3MON4D3/LuaSnip", "mnf.terminal" },
 	config = function()
+		require("mnf.terminal.jobs").define_job(1, {
+			command = vim.fn.join({ "npm", "run", "dev" }, " "),
+			external_terminal = false,
+			use_terminal = true,
+			focus = true,
+		})
+
 		local s = require("luasnip").extend_decorator.apply(require("luasnip").snippet, { hidden = true })
 		local fmta = require("luasnip.extras.fmt").fmta
 		local i = require("luasnip").insert_node
