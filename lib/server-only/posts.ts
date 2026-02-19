@@ -10,7 +10,8 @@ import {
   getGitDir,
   isDirty as isDirtyFunc,
 } from "./buildInfo";
-import { Metadata, Post } from "@/lib/posts";
+import { PostMetadata, Post } from "@/lib/posts";
+import { parseTimestamp, unwrap } from "@/lib/utils"
 
 export function getCommitInfoForFileOrFallback(filepath: string) {
   const firstCommit = getCommitEntryForFile(filepath, false);
@@ -20,14 +21,14 @@ export function getCommitInfoForFileOrFallback(filepath: string) {
     return { isDirty, firstCommit, currentCommit };
   }
 
-  const nowSeconds = Math.floor(Date.now() / 1000).toString();
+  const now = new Date()
   const fallbackCommit = {
     commitHash: "UNCOMMITTED",
     get shortCommitHash() {
       return this.commitHash.slice(0, 7);
     },
     author: "Michael Fortunato (unverified)",
-    timestamp: nowSeconds,
+    timestamp: now,
     message: "Uncommited/non-existant file",
   };
 
@@ -46,11 +47,34 @@ function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null;
 }
 
-function asString(v: unknown): string | undefined {
+function asString(v: unknown): string | null {
   if (typeof v === "string") return v;
   if (isRecord(v) && typeof v.value === "string") return v.value;
   if (isRecord(v) && typeof v.text === "string") return v.text;
-  return undefined;
+  return null;
+}
+
+function asNumber(v: unknown):  number | null {
+  if (typeof v === "number") return Number(v);
+  return null;
+}
+
+function asBoolean(v: unknown): boolean | null {
+  if (typeof v === "boolean") return v;
+  // There must be a better way than this...
+  const vs = asString(v)
+  if (vs === null) {
+    return null
+  }
+  const t = vs.trim().toLowerCase();
+  if (t === "true") return true;
+  if (t === "false") return false;
+  return null;
+}
+
+function asTimestamp(v: unknown): Date | null {
+  const ms_since_unix_epoch = asNumber(v)
+  return parseTimestamp(ms_since_unix_epoch)
 }
 
 function asStringArray(v: unknown): string[] {
@@ -89,7 +113,10 @@ function findLabelValue(items: unknown[], ...labels: string[]): unknown {
 // --- typst query + parse ---
 export async function _typstQuery(typstFilepath: string): Promise<unknown[]> {
   const TYPST_QUERY =
-    "selector(<KEYWORDS>).or(<keywords>).or(<tags>).or(<TITLE>).or(<title>)";
+    "selector(<KEYWORDS>).or(<keywords>)"
+    + ".or(<tags>)"
+    + ".or(<TITLE>).or(<title>)"
+    + ".or(<CREATED_TIMESTAMP>).or(<MODIFIED_TIMESTAMP>)";
   const root = await getGitDir();
   const { stdout } = await execFileAsync("typst", [
     "query",
@@ -154,6 +181,8 @@ export async function _typstFileToMetadata(typstFilepath: string) {
     id: (await idFromPostPath(typstFilepath)) || "<UNKNOWN ID>",
     title: asString(findLabelValue(items, "TITLE")) || "<UNKNOWN TITLE>",
     tags: asStringArray(findLabelValue(items, "KEYWORDS", "TAGS")),
+    createdTimestamp: asTimestamp(findLabelValue(items, "CREATED_TIMESTAMP")),
+    modifiedTimestamp: asTimestamp(findLabelValue(items, "MODIFIED_TIMESTAMP")),
   };
 }
 function splitHeadBody(html: string) {
@@ -207,15 +236,17 @@ export async function listPostIds(): Promise<string[]> {
   return Promise.all(files.map((file) => idFromPostPath(file)));
 }
 
-export async function listPosts(): Promise<Metadata[]> {
+export async function listPosts(): Promise<PostMetadata[]> {
   const postFiles = await listPostFiles();
   const postsWithMetadata = await Promise.all(
     postFiles.map(async (postFile) => {
-      const { id, title, tags } = await _typstFileToMetadata(postFile);
+      const { id, title, tags, createdTimestamp, modifiedTimestamp } = await _typstFileToMetadata(postFile);
       const buildInfo = getCommitInfoForFileOrFallback(postFile);
-      return new Metadata({
+      return new PostMetadata({
         id,
         title,
+        createdTimestamp,
+        modifiedTimestamp,
         tags,
         buildInfo,
       });
@@ -227,9 +258,9 @@ export async function listPosts(): Promise<Metadata[]> {
 export async function buildPost(inputFilepath: string): Promise<Post> {
   const htmlString = await _typstFileToHTMLFile(inputFilepath);
   const headAndBody = splitHeadBody(htmlString);
-  const { id, title, tags } = await _typstFileToMetadata(inputFilepath);
+  const { id, title, tags, createdTimestamp, modifiedTimestamp } = await _typstFileToMetadata(inputFilepath);
   const buildInfo = getCommitInfoForFileOrFallback(inputFilepath);
-  const metadata = new Metadata({ id, title, tags, buildInfo });
+  const metadata = new PostMetadata({ id, title, createdTimestamp, modifiedTimestamp, tags, buildInfo });
   return {
     content: headAndBody,
     metadata,

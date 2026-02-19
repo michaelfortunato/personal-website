@@ -20,16 +20,21 @@ export async function getBuildInfo(): Promise<BuildInfo> {
 }
 
 export function getCommitEntryForFile(filepath: string, head: boolean = true) {
-  const commitEntryPattern = /^([a-f0-9]+) - ([^,]+), ([^:]+) : (.+)$/;
+  // Prior style for reference: "%H - %an, %at : %s"
+  // Example: "8fd2212f... - Michael Fortunato, 1739958235 : tighten static props typing"
+  const commitEntryFormat = "%H%x1f%an%x1f%aI%x1f%s";
   const cmd = !head
-    ? `git log --reverse --pretty=format:"%H - %an, %at : %s" -- ${filepath} | head -1`
-    : `git log -1 --pretty=format:"%H - %an, %at : %s" -- ${filepath}`;
+    ? `git log --reverse --pretty=format:"${commitEntryFormat}" -- ${filepath} | head -1`
+    : `git log -1 --pretty=format:"${commitEntryFormat}" -- ${filepath}`;
   const commitEntry = launchShellCmd(cmd)?.toString().trim();
-  if (commitEntry == undefined) return undefined;
-  const [, commitHash, author, timestamp, message] =
-    commitEntry.match(commitEntryPattern) || [];
-  if (!(commitHash && author && timestamp && message)) {
-    return undefined;
+  if (commitEntry == null) return null;
+  const [commitHash, author, authorDateISO, message] = commitEntry.split("\x1f");
+  if (!(commitHash && author && authorDateISO && message)) {
+    return null;
+  }
+  const timestamp = new Date(authorDateISO);
+  if (Number.isNaN(timestamp.valueOf())) {
+    return null;
   }
   return {
     commitHash,

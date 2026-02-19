@@ -14,7 +14,7 @@ export type CommitEntry = {
   commitHash: string;
   readonly shortCommitHash: string;
   author: string;
-  timestamp: string;
+  timestamp: Date;
   message: string;
 };
 

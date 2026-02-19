@@ -67,7 +67,7 @@
   #doc
 ]
 
-#let page(title: str, keywords: (), doc) = [
+#let page(title: str, keywords: (), created_timestamp: none, doc) = [
   #set document(
     author: "Michael Newman Fortunato",
     title: title,
@@ -98,6 +98,12 @@
 
   #metadata(title) <TITLE>
   #metadata(keywords) <KEYWORDS>
+  #if type(created_timestamp) == datetime [
+    #let unixBegin = datetime(day: 1, month: 1, year: 1970)
+    // NOTE(Feb 2026): tinymist does not infer that duration is no longer none sadly
+    #let duration_ms = int((created_timestamp - unixBegin).seconds() * 1000)
+    #metadata(duration_ms) <CREATED_TIMESTAMP>
+  ]
   #doc
 
   // HACK: This kind of works its not great though

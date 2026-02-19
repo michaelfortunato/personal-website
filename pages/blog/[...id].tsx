@@ -1,5 +1,10 @@
 import Layout from "@/components/Blog/layout";
-import { type Metadata, type Post } from "@/lib/posts";
+import {
+  deserializePost,
+  serializePost,
+  type PostMetadata,
+  type SerializedPost,
+} from "@/lib/posts";
 import {
   buildPost,
   listPostIds,
@@ -8,48 +13,26 @@ import {
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import Link from "next/link";
+import { GetStaticPaths, GetStaticProps } from "next"
 import { computeGithubCommitURL } from "@/lib/buildInfo";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { ClockIcon, CommitIcon, TextIcon } from "@radix-ui/react-icons";
 import { NextPageWithLayout } from "pages/_app";
 import { blogBodyFont } from "@/lib/fonts";
+import { happenedSameDay, parseTimestamp } from "@/lib/utils";
+import { ParsedUrlQuery } from "querystring";
 
-function parseTimestamp(timestamp: string): Date | null {
-  const asNumber = Number(timestamp);
-  if (!Number.isNaN(asNumber) && asNumber >= -8.64e12 && asNumber <= +8.64e12) {
-    return new Date(asNumber * 1000);
-  }
 
-  const asDate = new Date(timestamp);
-  if (!Number.isNaN(asDate.valueOf())) {
-    return asDate;
-  }
-
-  return null;
-}
-
-function formatHeaderTimestamp(timestamp: string): string {
-  const parsedDate = parseTimestamp(timestamp);
-  if (!parsedDate) return timestamp;
-
-  return parsedDate.toLocaleDateString("en-US", {
+function formatHeaderTimestamp(timestamp: Date): string {
+  return timestamp.toLocaleDateString("en-US", {
     day: "numeric",
     month: "long",
     year: "numeric",
   });
 }
 
-function unixDay(timestamp: string): number | null {
-  const seconds = Number(timestamp);
-  if (Number.isNaN(seconds)) return null;
-  return Math.floor(seconds / 86400);
-}
-
-function formatModifiedTimestamp(timestamp: string): string {
-  const parsedDate = parseTimestamp(timestamp);
-  if (!parsedDate) return timestamp;
-
-  return parsedDate.toLocaleString("en-US", {
+function formatModifiedTimestamp(timestamp: Date): string {
+  return timestamp.toLocaleString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -61,18 +44,13 @@ function formatModifiedTimestamp(timestamp: string): string {
   });
 }
 
-function Header(metadata: Metadata) {
+function Header(metadata: PostMetadata) {
   const createdTimestamp = metadata.buildInfo.firstCommit.timestamp;
   const modifiedTimestamp = metadata.buildInfo.currentCommit.timestamp;
-  const createdDateTimeValue = parseTimestamp(createdTimestamp)?.toISOString();
-  const modifiedDateTimeValue =
-    parseTimestamp(modifiedTimestamp)?.toISOString();
-  const createdDayKey = unixDay(createdTimestamp);
-  const modifiedDayKey = unixDay(modifiedTimestamp);
-  const isEditedOnDifferentDay =
-    createdDayKey !== null &&
-    modifiedDayKey !== null &&
-    createdDayKey !== modifiedDayKey;
+  const createdDateTimeValue = createdTimestamp.toISOString();
+  const modifiedDateTimeValue = modifiedTimestamp.toISOString();
+
+  const isEditedOnDifferentDay = !happenedSameDay(createdTimestamp, modifiedTimestamp)
 
   return (
     <div className="flex flex-col items-center text-center">
@@ -96,7 +74,7 @@ function Header(metadata: Metadata) {
   );
 }
 
-function Footer(metadata: Metadata) {
+function Footer(metadata: PostMetadata) {
   const timestamp = metadata.buildInfo.currentCommit.timestamp;
   const commitHash = metadata.buildInfo.currentCommit.commitHash;
   const hasValidCommitHash = /^[a-f0-9]{40}$/i.test(commitHash);
@@ -170,12 +148,15 @@ function Footer(metadata: Metadata) {
   );
 }
 
-type PageProps = {
-  // posts: Metadata[];
-  post: Post;
-};
+interface GetStaticPathsResult extends ParsedUrlQuery {
+  id: string[];
+}
+type GetStaticPropsResult = { post: SerializedPost };
 
-const Page: NextPageWithLayout<PageProps> = ({ post }) => {
+const Page: NextPageWithLayout<GetStaticPropsResult> = ({
+  post: serializedPost,
+}) => {
+  const post = deserializePost(serializedPost);
   return (
     <Layout>
       <div className="flex h-full justify-center">
@@ -231,21 +212,22 @@ const Page: NextPageWithLayout<PageProps> = ({ post }) => {
   );
 };
 
-export async function getStaticPaths() {
-  // TODO: Return a list of the values for id
+
+export const getStaticPaths: GetStaticPaths<GetStaticPathsResult> = async () => {
   const ids = await listPostIds();
   const paths = ids.map((id) => ({ params: { id: id.split("/") } }));
   return { paths, fallback: false };
 }
 
-type StaticParams = { params: { id: string[] } };
-
-export async function getStaticProps({ params: { id: id_list } }: StaticParams) {
+export const getStaticProps: GetStaticProps<GetStaticPropsResult, GetStaticPathsResult> = async ( {params} ) => {
   // TODO: Fetch necessary data
+  const id_list = params?.id
+  if (!id_list) return { notFound: true };
+
   const id = id_list.join("/")
   const inputFilepath = await postPathFromId(id);
   const postData = await buildPost(inputFilepath);
-  const post = JSON.parse(JSON.stringify(postData)) as Post;
+  const post = serializePost(postData);
 
   return { props: { post } };
 }
