@@ -11,7 +11,7 @@ import {
   isDirty as isDirtyFunc,
 } from "./buildInfo";
 import { PostMetadata, Post } from "@/lib/posts";
-import { parseTimestamp, unwrap } from "@/lib/utils"
+import { parseTimestamp } from "@/lib/utils"
 
 export function getCommitInfoForFileOrFallback(filepath: string) {
   const firstCommit = getCommitEntryForFile(filepath, false);

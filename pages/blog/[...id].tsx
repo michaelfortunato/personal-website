@@ -19,7 +19,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { ClockIcon, CommitIcon, TextIcon } from "@radix-ui/react-icons";
 import { NextPageWithLayout } from "pages/_app";
 import { blogBodyFont } from "@/lib/fonts";
-import { happenedSameDay, parseTimestamp } from "@/lib/utils";
+import { happenedSameDay } from "@/lib/utils";
 import { ParsedUrlQuery } from "querystring";
 
 
