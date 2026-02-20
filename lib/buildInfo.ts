@@ -1,8 +1,15 @@
-export function computeGithubURLs(commit: BuildCommitInfo) {
+import {
+  fromISODateString,
+  ISODateString,
+  Serialized,
+  toISODateString,
+} from "./utils";
+
+export function computeGithubURLs(buildInfo: BuildInfo) {
   return {
-    repoURL: `https://github.com/michaelfortunato/${commit.repo}`,
-    commitURL: `https://github.com/michaelfortunato/${commit.repo}/commit/${commit.hash}`,
-    branchURL: `https://github.com/michaelfortunato/${commit.repo}/tree/${commit.branch}`,
+    repoURL: `https://github.com/michaelfortunato/personal-website`,
+    commitURL: `https://github.com/michaelfortunato/personal-website/commit/${buildInfo.buildCommitEntry.commitHash}`,
+    branchURL: `https://github.com/michaelfortunato/personal-website/tree/${buildInfo.branch}`,
   };
 }
 
@@ -18,14 +25,56 @@ export type CommitEntry = {
   message: string;
 };
 
+export type SerializedCommitEntry = Serialized<CommitEntry>;
+
+export function serializeCommitEntry(
+  entry: CommitEntry,
+): SerializedCommitEntry {
+  return {
+    ...entry,
+    timestamp: toISODateString(entry.timestamp),
+  };
+}
+
+export function deserializeCommitEntry(
+  entry: SerializedCommitEntry,
+): CommitEntry {
+  return {
+    ...entry,
+    timestamp: fromISODateString(entry.timestamp),
+  };
+}
+
 /// Define the expected structure of the Commit information.
-export type BuildCommitInfo = {
-  repo: string;
-  hash: string;
+///@deprecated use CommitEntry instead
+export type BuildInfo = {
   branch: string;
+  buildTimestamp: Date;
+  buildCommitEntry: CommitEntry;
 };
 
-export type BuildInfo = {
-  commitInfo: BuildCommitInfo;
-  buildTimestamp: string;
+export type SerializedBuildInfo = {
+  branch: string;
+  buildTimestamp: string | ISODateString;
+  buildCommitEntry: SerializedCommitEntry;
 };
+
+export function serializeBuildInfo(buildInfo: BuildInfo): SerializedBuildInfo {
+  return {
+    ...buildInfo,
+    buildCommitEntry: {
+      ...buildInfo.buildCommitEntry,
+      timestamp: toISODateString(buildInfo.buildCommitEntry.timestamp),
+    },
+    buildTimestamp: buildInfo.buildTimestamp.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+      timeZoneName: "short",
+      timeZone: "America/Chicago",
+    }),
+  };
+}

@@ -1,5 +1,9 @@
 import React, { useMemo, useState } from "react";
-import { type BuildInfo, type BuildCommitInfo } from "@/lib/buildInfo";
+import {
+  type BuildInfo,
+  CommitEntry,
+  SerializedBuildInfo,
+} from "@/lib/buildInfo";
 
 import { CodeXml, DatabaseIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,27 +11,23 @@ import Link from "next/link";
 import { ClockIcon, CommitIcon } from "@radix-ui/react-icons";
 import { blogInitialsFont } from "@/lib/fonts";
 
-export function computeGithubURLs(commit: BuildCommitInfo) {
+export function computeGithubURLs(buildInfo: SerializedBuildInfo) {
   return {
-    repoURL: `https://github.com/michaelfortunato/${commit.repo}`,
-    commitURL: `https://github.com/michaelfortunato/${commit.repo}/commit/${commit.hash}`,
-    branchURL: `https://github.com/michaelfortunato/${commit.repo}/tree/${commit.branch}`,
+    repoURL: `https://github.com/michaelfortunato/personal-website`,
+    commitURL: `https://github.com/michaelfortunato/personal-website/commit/${buildInfo.buildCommitEntry.commitHash}`,
+    branchURL: `https://github.com/michaelfortunato/personal-website/tree/${buildInfo.branch}`,
   };
 }
 
 const BuildStamp: React.FC<{
-  buildInfo: BuildInfo;
+  serializedBuildInfo: SerializedBuildInfo;
   triggerFadeIn?: boolean;
-}> = ({
-  buildInfo: {
-    commitInfo: { repo, hash, branch },
-    buildTimestamp,
-  },
-}) => {
+}> = ({ serializedBuildInfo }) => {
   const { commitURL, branchURL } = useMemo(
-    () => computeGithubURLs({ repo, hash, branch }),
-    [repo, hash, branch],
+    () => computeGithubURLs(serializedBuildInfo),
+    [serializedBuildInfo.buildCommitEntry.commitHash],
   );
+
   return (
     <div className="flex justify-center p-2 pb-4">
       <div className="flex flex-col">
@@ -45,7 +45,7 @@ const BuildStamp: React.FC<{
             <div>
               <ClockIcon />
             </div>
-            <Link href={commitURL}>{buildTimestamp}</Link>
+            <Link href={commitURL}>{serializedBuildInfo.buildTimestamp}</Link>
           </div>
           <div className="flex items-center gap-1">
             <div>
@@ -53,13 +53,15 @@ const BuildStamp: React.FC<{
             </div>
             <div>
               <Link href={branchURL}>
-                {repo}/{branch}
+                {"personal-website/" + serializedBuildInfo.branch}
               </Link>
             </div>
           </div>
           <div className="inline-flex items-center">
             <CommitIcon className="translate-y-[1px]" />
-            <Link href={commitURL}>{hash}</Link>
+            <Link href={commitURL}>
+              {serializedBuildInfo.buildCommitEntry.shortCommitHash}
+            </Link>
           </div>
         </div>
       </div>

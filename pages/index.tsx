@@ -2,7 +2,11 @@ import { useState } from "react";
 import Grid from "@/components/Grid";
 import Hero from "@/components/Hero";
 import { AnimatePresence, motion } from "framer-motion";
-import { type BuildInfo } from "@/lib/buildInfo";
+import {
+  serializeBuildInfo,
+  SerializedBuildInfo,
+  type BuildInfo,
+} from "@/lib/buildInfo";
 
 import { GetStaticProps } from "next";
 import { Fingerprint } from "lucide-react";
@@ -37,12 +41,14 @@ const defaultGridConfig = {
   isDot: true,
 };
 
-type Props = {
-  buildInfo: BuildInfo;
+type GetStaticPropsResult = {
+  serializedBuildInfo: SerializedBuildInfo;
 };
 
 // Renders home page of a nextjs app (index.tsx)
-const Page: NextPageWithLayout<Props> = ({ buildInfo: _buildInfo }: Props) => {
+const Page: NextPageWithLayout<GetStaticPropsResult> = ({
+  serializedBuildInfo: _buildInfo,
+}: GetStaticPropsResult) => {
   const [triggerNameEnter, setTriggerNameEnter] = useState(false);
   const [triggerGridExit, setTriggerGridExit] = useState(false);
   // NOTE: work around to get tool tip with dialog
@@ -166,7 +172,9 @@ const Page: NextPageWithLayout<Props> = ({ buildInfo: _buildInfo }: Props) => {
 
 Page.getLayout = (page) => {
   return (
-    <RootPageLayout buildInfo={page.props.buildInfo}>{page}</RootPageLayout>
+    <RootPageLayout serializedBuildInfo={page.props.serializedBuildInfo}>
+      {page}
+    </RootPageLayout>
   );
 };
 
@@ -175,12 +183,14 @@ Page.paletteClass = "home";
 // This function gets called at build time on server-side.
 // It won't be called on client-side, so you can even do
 // direct database queries.
-export const getStaticProps: GetStaticProps = async () => {
-  // By returning { props: { posts } }, the Blog component
-  // will receive `posts` as a prop at build time
+export const getStaticProps: GetStaticProps<
+  GetStaticPropsResult
+> = async () => {
+  const buildInfo = await getBuildInfo();
+  const serializedBuildInfo = serializeBuildInfo(buildInfo);
   return {
     props: {
-      buildInfo: await getBuildInfo(),
+      serializedBuildInfo,
     },
   };
 };

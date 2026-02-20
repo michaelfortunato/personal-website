@@ -10,6 +10,12 @@ import { NextPageWithLayout } from "pages/_app";
 import RootPageLayout from "@/components/RootPageLayout";
 import { getBuildInfo } from "@/lib/server-only/buildInfo";
 import { Button } from "@/components/ui/button";
+import { serializeBuildInfo, SerializedBuildInfo } from "@/lib/buildInfo";
+import { GetStaticProps } from "next";
+
+type GetStaticPropsResult = {
+  serializedBuildInfo: SerializedBuildInfo;
+};
 
 export function TileFactory(
   title: string,
@@ -174,16 +180,22 @@ const Page: NextPageWithLayout = () => {
 
 Page.getLayout = (page) => {
   return (
-    <RootPageLayout buildInfo={page.props.buildInfo}>{page}</RootPageLayout>
+    <RootPageLayout serializedBuildInfo={page.props.serializedBuildInfo}>
+      {page}
+    </RootPageLayout>
   );
 };
 
 Page.paletteClass = "projects";
 
-export async function getStaticProps() {
+export const getStaticProps: GetStaticProps<
+  GetStaticPropsResult
+> = async () => {
+  const buildInfo = await getBuildInfo();
+  const serializedBuildInfo = serializeBuildInfo(buildInfo);
   return {
-    props: { buildInfo: await getBuildInfo() },
+    props: { serializedBuildInfo },
   };
-}
+};
 
 export default Page;

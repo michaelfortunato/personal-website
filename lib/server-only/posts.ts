@@ -5,17 +5,13 @@ import * as cheerio from "cheerio";
 const execFileAsync = promisify(execFile);
 import { readdir } from "fs/promises";
 
-import {
-  getCommitEntryForFile,
-  getGitDir,
-  isDirty as isDirtyFunc,
-} from "./buildInfo";
+import { getCommitEntry, getGitDir, isDirty as isDirtyFunc } from "./buildInfo";
 import { PostMetadata, Post } from "@/lib/posts";
 import { parseTimestamp } from "@/lib/utils";
 
 export function getCommitInfoForFileOrFallback(filepath: string) {
-  const firstCommit = getCommitEntryForFile(filepath, false);
-  const currentCommit = getCommitEntryForFile(filepath, true);
+  const firstCommit = getCommitEntry(filepath, false);
+  const currentCommit = getCommitEntry(filepath, true);
   const isDirty = isDirtyFunc(filepath);
   if (firstCommit && currentCommit) {
     return { isDirty, firstCommit, currentCommit };

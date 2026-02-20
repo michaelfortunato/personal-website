@@ -13,7 +13,11 @@ import { PropsWithChildren } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import BuildStamp from "@/components/BuildStamp";
-import { BuildInfo } from "@/lib/buildInfo";
+import {
+  BuildInfo,
+  serializeBuildInfo,
+  SerializedBuildInfo,
+} from "@/lib/buildInfo";
 import { getBuildInfo } from "@/lib/server-only/buildInfo";
 
 function sortByMostRecent(posts: PostMetadata[]): PostMetadata[] {
@@ -141,12 +145,14 @@ function ShortNotes({ posts }: PropsWithChildren<{ posts: PostMetadata[] }>) {
   );
 }
 
-type PageProps = {
+type GetStaticPropsResult = {
   posts: SerializedPostMetadata[];
-  websiteWideBuildInfo: BuildInfo;
+  websiteWideBuildInfo: SerializedBuildInfo;
 };
 
-const Page: NextPageWithLayout<PageProps> = ({ posts: serializedPosts }) => {
+const Page: NextPageWithLayout<GetStaticPropsResult> = ({
+  posts: serializedPosts,
+}) => {
   const posts = serializedPosts.map(deserializePostMetadata);
   return (
     <div>
@@ -166,9 +172,11 @@ Page.getLayout = (page) => {
   );
 };
 
-export const getStaticProps: GetStaticProps<PageProps> = async () => {
+export const getStaticProps: GetStaticProps<
+  GetStaticPropsResult
+> = async () => {
   const postsWithMetadata = await listPosts();
-  const websiteWideBuildInfo = await getBuildInfo();
+  const websiteWideBuildInfo = serializeBuildInfo(await getBuildInfo());
 
   return {
     props: {

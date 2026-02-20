@@ -7,10 +7,16 @@ import { useInView } from "react-intersection-observer";
 import { NextPageWithLayout } from "./_app";
 import RootPageLayout from "@/components/RootPageLayout";
 import { getBuildInfo } from "@/lib/server-only/buildInfo";
+import { serializeBuildInfo, SerializedBuildInfo } from "@/lib/buildInfo";
+import { GetStaticProps } from "next";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
-const Page: NextPageWithLayout = () => {
+type GetStaticPropsResult = {
+  serializedBuildInfo: SerializedBuildInfo;
+};
+
+const Page: NextPageWithLayout<GetStaticPropsResult> = () => {
   const lottieRef = useRef(null) as LottieRef;
   const [isXL, setIsXL] = useState(false);
   const [triggerAniRef, isAniInView] = useInView({ initialInView: true });
@@ -75,19 +81,26 @@ const Page: NextPageWithLayout = () => {
 
 Page.getLayout = (page) => {
   return (
-    <RootPageLayout buildInfo={page.props.buildInfo}>{page}</RootPageLayout>
+    <RootPageLayout serializedBuildInfo={page.props.serializedBuildInfo}>
+      {page}
+    </RootPageLayout>
   );
 };
 
 Page.paletteClass = "about";
 
-export async function getStaticProps() {
+export const getStaticProps: GetStaticProps<
+  GetStaticPropsResult
+> = async () => {
   // FIXME: Get about in a better place before letting recruiters see.
   return { notFound: true };
 
+  const buildInfo = await getBuildInfo();
+  const serializedBuildInfo = serializeBuildInfo(buildInfo);
+
   return {
-    props: { buildInfo: await getBuildInfo() },
+    props: { serializedBuildInfo },
   };
-}
+};
 
 export default Page;

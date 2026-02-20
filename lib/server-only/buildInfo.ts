@@ -1,31 +1,36 @@
 import { execSync, execFile } from "child_process";
 import { promisify } from "util";
-import type { BuildInfo, BuildCommitInfo } from "@/lib/buildInfo";
+import { BuildInfo, CommitEntry } from "@/lib/buildInfo";
+import { fromISODateString, Serialized, toISODateString } from "../utils";
 const execFileAsync = promisify(execFile);
 
 export async function getBuildInfo(): Promise<BuildInfo> {
-  return {
-    commitInfo: await getBuildCommitInfo(),
-    buildTimestamp: new Date().toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-      timeZoneName: "short",
-      timeZone: "America/Chicago",
-    }),
-  };
+  // NOTE: We assume our build environment has our git repo
+  // and git history configured, which getCommitEntryForFile already assumes.
+  // So lets just use the git cli to get the info.
+  const branch =
+    launchShellCmd("git branch --show-current")?.toString().trim() || null;
+  if (branch == null) {
+    throw "Could not compute branch for the build build, are you sure you set up git";
+  }
+  const buildCommitEntry = getCommitEntry(null, true);
+  if (buildCommitEntry == null) {
+    throw "Could not compute commit entry for build, are you sure you set up git";
+  }
+  const buildTimestamp = new Date();
+  return { branch, buildTimestamp, buildCommitEntry };
 }
 
-export function getCommitEntryForFile(filepath: string, head: boolean = true) {
+export function getCommitEntry(
+  forFilepath: string | null = null,
+  head: boolean = true,
+): CommitEntry | null {
   // Prior style for reference: "%H - %an, %at : %s"
   // Example: "8fd2212f... - Michael Fortunato, 1739958235 : tighten static props typing"
   const commitEntryFormat = "%H%x1f%an%x1f%aI%x1f%s";
   const cmd = !head
-    ? `git log --reverse --pretty=format:"${commitEntryFormat}" -- ${filepath} | head -1`
-    : `git log -1 --pretty=format:"${commitEntryFormat}" -- ${filepath}`;
+    ? `git log --reverse --pretty=format:"${commitEntryFormat}" ${forFilepath != null ? "-- " + forFilepath : ""} | head -1`
+    : `git log -1 --pretty=format:"${commitEntryFormat}" ${forFilepath != null ? "-- " + forFilepath : ""}`;
   const commitEntry = launchShellCmd(cmd)?.toString().trim();
   if (commitEntry == null) return null;
   const [commitHash, author, authorDateISO, message] =
@@ -37,6 +42,7 @@ export function getCommitEntryForFile(filepath: string, head: boolean = true) {
   if (Number.isNaN(timestamp.valueOf())) {
     return null;
   }
+
   return {
     commitHash,
     get shortCommitHash() {
@@ -58,28 +64,6 @@ export function isDirty(filepath?: string) {
   } catch {
     return false;
   }
-}
-
-/// Returns the commit info for this build
-async function getBuildCommitInfo(): Promise<BuildCommitInfo> {
-  // NOTE: We assume our build environment has our git repo
-  // and git history configured, which getCommitEntryForFile already assumes.
-  // So lets just use the git cli to get the info.
-  const branch = launchShellCmd("git branch --show-current")?.toString().trim();
-  if (!branch)
-    throw "Could not compute build branch using git cli. Are you sure the build environment has git set up?";
-  const hash = launchShellCmd(`git log -1 --pretty=format:"%H"`)
-    ?.toString()
-    .trim();
-  if (!hash)
-    throw "Could not compute build commit hash using git cli. Are you sure the build environment has git set up?";
-  const repo = "personal-website"; // This should never change.
-
-  return {
-    repo,
-    hash,
-    branch,
-  };
 }
 
 let _gitDir: string | null = null;

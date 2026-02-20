@@ -50,8 +50,8 @@ export default function Name(props: NameProps) {
     <>
       {isClient && (
         <div className="relative flex justify-center overflow-visible pt-[2%] text-center text-[56px] text-[#264653]">
-          <div className="flex gap-6">
-            <div className="inline-block">
+          <div className="md:flex gap-6">
+            <div>
               <LayoutGroup>
                 {props.firstName.split("").map((_, index) => (
                   <Letter
@@ -62,7 +62,7 @@ export default function Name(props: NameProps) {
                 ))}
               </LayoutGroup>
             </div>
-            <div className="inline-block">
+            <div>
               <LayoutGroup>
                 {props.lastName.split("").map((_, index) => (
                   <Letter

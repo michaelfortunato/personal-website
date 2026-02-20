@@ -1,11 +1,11 @@
 import { blogInitialsFont } from "@/lib/fonts";
 import Link from "next/link";
 import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
-import { BuildInfo } from "@/lib/buildInfo";
+import { BuildInfo, SerializedBuildInfo } from "@/lib/buildInfo";
 import BuildStamp from "@/components/BuildStamp";
 type Props = {
   children: React.ReactNode;
-  websiteWideBuildInfo?: BuildInfo;
+  websiteWideBuildInfo?: SerializedBuildInfo;
 };
 
 function Header() {
@@ -14,9 +14,9 @@ function Header() {
       <div className="flex justify-center">
         <Link
           href="/blog"
-          className={`bold ${blogInitialsFont.className} text-4xl`}
+          className={`bold ${blogInitialsFont.className} text-4xl relative inline-block after:content-['.'] after:absolute after:left-full`}
         >
-          mnf.
+          mnf
         </Link>
       </div>
       <div className="hidden md:flex md:gap-4">
@@ -38,7 +38,7 @@ const Layout = (props: Props) => {
       {props.websiteWideBuildInfo ? (
         <div className="flex-grow flex flex-col justify-end">
           <footer className="w-full text-muted-foreground mt-auto">
-            <BuildStamp buildInfo={props.websiteWideBuildInfo} />
+            <BuildStamp serializedBuildInfo={props.websiteWideBuildInfo} />
           </footer>
         </div>
       ) : null}

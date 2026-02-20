@@ -1,7 +1,7 @@
 import { PropsWithChildren } from "react";
 import Navbar from "./Nav/Navbar";
 import { Toaster } from "./ui/toaster";
-import { BuildInfo } from "@/lib/buildInfo";
+import { BuildInfo, SerializedBuildInfo } from "@/lib/buildInfo";
 import BuildStamp from "@/components/BuildStamp";
 
 export type RootPageStyle = {
@@ -41,15 +41,15 @@ const pageConfigs: Record<string, RootPageStyle> = {
 
 export default function RootPageLayout({
   children,
-  buildInfo,
-}: PropsWithChildren<{ buildInfo: BuildInfo }>) {
+  serializedBuildInfo,
+}: PropsWithChildren<{ serializedBuildInfo: SerializedBuildInfo }>) {
   return (
     <div>
       <Navbar routes={pageConfigs} />
       <div className="absolute min-h-screen min-w-full bg-background transition duration-1000">
         {children}
         <div className="absolute bottom-0 left-0 w-full">
-          <BuildStamp buildInfo={buildInfo} />
+          <BuildStamp serializedBuildInfo={serializedBuildInfo} />
         </div>
       </div>
       <Toaster />

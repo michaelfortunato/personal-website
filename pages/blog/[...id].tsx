@@ -226,7 +226,10 @@ Page.getLayout = (page) => {
 export const getStaticPaths: GetStaticPaths<
   GetStaticPathsResult
 > = async () => {
-  const ids = await listPostIds();
+  const ids =
+    process.env.NODE_ENV != "development"
+      ? await listPostIds()
+      : ["_test", ...(await listPostIds())];
   const paths = ids.map((id) => ({ params: { id: id.split("/") } }));
   return { paths, fallback: false };
 };

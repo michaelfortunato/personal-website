@@ -1,4 +1,8 @@
-import { CommitEntry } from "@/lib/buildInfo";
+import {
+  CommitEntry,
+  deserializeCommitEntry,
+  serializeCommitEntry,
+} from "@/lib/buildInfo";
 import { fromISODateString, Serialized, toISODateString } from "@/lib/utils";
 
 type MetadataArgs = {
@@ -51,20 +55,6 @@ export type Post = {
 
 export type SerializedPostMetadata = Serialized<PostMetadata>;
 export type SerializedPost = Serialized<Post>;
-
-function serializeCommitEntry(entry: CommitEntry): Serialized<CommitEntry> {
-  return {
-    ...entry,
-    timestamp: toISODateString(entry.timestamp),
-  };
-}
-
-function deserializeCommitEntry(entry: Serialized<CommitEntry>): CommitEntry {
-  return {
-    ...entry,
-    timestamp: fromISODateString(entry.timestamp),
-  };
-}
 
 export function serializePostMetadata(
   metadata: PostMetadata,

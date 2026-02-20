@@ -10,7 +10,7 @@ export type ISODateString = string & { readonly __isoDateStringBrand: true };
 type Primitive = string | number | boolean | null | undefined;
 
 export type Serialized<T> = T extends Date
-  ? ISODateString
+  ? ISODateString | string
   : T extends Primitive
     ? T
     : T extends readonly (infer U)[]
