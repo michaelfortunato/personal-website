@@ -24,18 +24,10 @@ const BuildStamp: React.FC<{
     buildTimestamp,
   },
 }) => {
-  const [isOpen, setIsOpen] = useState(true);
   const { commitURL, branchURL } = useMemo(
     () => computeGithubURLs({ repo, hash, branch }),
     [repo, hash, branch],
   );
-  if (!isOpen) {
-    return (
-      <Button className="z-10" onClick={() => setIsOpen(true)}>
-        <CodeXml className="z-10" />
-      </Button>
-    );
-  }
   return (
     <div className="flex justify-center p-2 pb-4">
       <div className="flex flex-col">
