@@ -40,14 +40,13 @@ const BuildStamp: React.FC<{
     <div className="flex justify-center p-2 pb-4">
       <div className="flex flex-col">
         <div className="flex justify-center gap-1">
-          <div>
-            Last built by <b>me,</b>
-          </div>
+          <div>Website last built by me, </div>
           <div
             className={`inline-block ${blogInitialsFont.className} font-extrabold`}
           >
-            mnf
+            mnf,
           </div>
+          on
         </div>
         <div className="flex flex-wrap justify-center gap-2">
           <div className="flex items-center gap-1">
