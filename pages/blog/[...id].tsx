@@ -94,16 +94,16 @@ function Footer(metadata: PostMetadata) {
       </div>
       <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground md:flex-nowrap">
         <div className="inline-flex items-center gap-1">
-          <CommitIcon />
+          <ClockIcon />
           {commitUrl ? (
             <Link
-              href={commitUrl}
               className="underline-offset-2 hover:underline"
+              href={commitUrl}
             >
-              {metadata.buildInfo.currentCommit.shortCommitHash}
+              {formatModifiedTimestamp(timestamp)}
             </Link>
           ) : (
-            <span>{metadata.buildInfo.currentCommit.shortCommitHash}</span>
+            <span>{formatModifiedTimestamp(timestamp)}</span>
           )}
         </div>
         <span aria-hidden="true">·</span>
@@ -127,16 +127,16 @@ function Footer(metadata: PostMetadata) {
         </div>
         <span aria-hidden="true">·</span>
         <div className="inline-flex items-center gap-1">
-          <ClockIcon />
+          <CommitIcon />
           {commitUrl ? (
             <Link
-              className="underline-offset-2 hover:underline"
               href={commitUrl}
+              className="underline-offset-2 hover:underline"
             >
-              {formatModifiedTimestamp(timestamp)}
+              {metadata.buildInfo.currentCommit.shortCommitHash}
             </Link>
           ) : (
-            <span>{formatModifiedTimestamp(timestamp)}</span>
+            <span>{metadata.buildInfo.currentCommit.shortCommitHash}</span>
           )}
         </div>
         {tagLine ? (
