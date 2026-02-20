@@ -40,18 +40,18 @@ const BuildStamp: React.FC<{
     <div className="flex justify-center p-2 pb-4">
       <div className="flex flex-col">
         <div className="flex justify-center gap-1">
-          <div>Website last built by me, </div>
+          <div>Website last built by</div>
           <div
             className={`inline-block ${blogInitialsFont.className} font-extrabold`}
           >
-            mnf,
+            mnf
           </div>
-          on
+          (me) on
         </div>
         <div className="flex flex-wrap justify-center gap-2">
           <div className="flex items-center gap-1">
             <div>
-              <ClockIcon stroke="20px" />
+              <ClockIcon />
             </div>
             <Link href={commitURL}>{buildTimestamp}</Link>
           </div>
@@ -65,13 +65,9 @@ const BuildStamp: React.FC<{
               </Link>
             </div>
           </div>
-          <div className="flex items-center gap-1">
-            <div>
-              <CommitIcon stroke="20px" />
-            </div>
-            <div>
-              <Link href={commitURL}>{hash}</Link>
-            </div>
+          <div className="inline-flex items-center">
+            <CommitIcon className="translate-y-[1px]" />
+            <Link href={commitURL}>{hash}</Link>
           </div>
         </div>
       </div>
