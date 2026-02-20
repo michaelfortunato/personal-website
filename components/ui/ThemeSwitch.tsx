@@ -4,8 +4,7 @@ import * as React from "react";
 import * as SwitchPrimitives from "@radix-ui/react-switch";
 
 import { cn } from "@/lib/utils";
-import { MoonIcon } from "@radix-ui/react-icons";
-import { SunIcon } from "lucide-react";
+import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
 import { useTheme } from "next-themes";
 import { useIsMounted } from "@/lib/hooks";
 
