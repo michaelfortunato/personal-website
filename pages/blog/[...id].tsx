@@ -163,12 +163,15 @@ const Page: NextPageWithLayout<GetStaticPropsResult> = ({
   post: serializedPost,
 }) => {
   const post = deserializePost(serializedPost);
+  // NOTE: Maybe document why prose mx-auto fixes the sizing on mobile
+  // (content respects tailwind container class further up the stack)
+  // and why its preferable to having a single dedicated flex item in
+  // justify-center.
   return (
-    <div className="flex h-full justify-center">
-      <div
-        className={`${blogBodyFont.className} prose flex flex-col gap-4 dark:prose-invert prose-h1:my-0`}
-        // className={`prose flex flex-col gap-4 dark:prose-invert`}
-      >
+    <div
+      className={`${blogBodyFont.className} prose mx-auto dark:prose-invert prose-h1:my-0`}
+    >
+      <div className="flex flex-col gap-4 ">
         <Header {...post.metadata} />
         <div
           // className={`${blogBodyFont.className}`}

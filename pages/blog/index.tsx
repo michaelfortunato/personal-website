@@ -64,6 +64,8 @@ function Stack({
         {posts.map((post) => {
           const updatedDateTime = post.modifiedTimestamp.toISOString();
           return (
+            // NOTE: justify-between w gap-4 will trt ti create the
+            // largest horizontal gap but ensure its at least 4 pixels wide
             <Card key={post.id} className="flex justify-between gap-4 p-5">
               <div className="gap-2 sm:flex-row sm:items-baseline sm:justify-between">
                 <Link
