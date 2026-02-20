@@ -240,16 +240,23 @@
 /*                                  Blog Components                          */
 /*****************************************************************************/
 @layer components {
+  .prose .typst-content svg,
   .prose svg.typst-frame {
     color: inherit;
   }
 
+  .prose .typst-content svg [fill="#000000"],
+  .prose .typst-content svg [fill="#000"],
+  .prose .typst-content svg [fill="black"],
   .prose svg.typst-frame [fill="#000000"],
   .prose svg.typst-frame [fill="#000"],
   .prose svg.typst-frame [fill="black"] {
     fill: currentColor;
   }
 
+  .prose .typst-content svg [stroke="#000000"],
+  .prose .typst-content svg [stroke="#000"],
+  .prose .typst-content svg [stroke="black"],
   .prose svg.typst-frame [stroke="#000000"],
   .prose svg.typst-frame [stroke="#000"],
   .prose svg.typst-frame [stroke="black"] {
