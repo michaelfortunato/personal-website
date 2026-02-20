@@ -1,8 +1,11 @@
 import { blogInitialsFont } from "@/lib/fonts";
 import Link from "next/link";
 import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
+import { BuildInfo } from "@/lib/buildInfo";
+import BuildStamp from "@/components/BuildStamp";
 type Props = {
   children: React.ReactNode;
+  websiteWideBuildInfo?: BuildInfo;
 };
 
 function Header() {
@@ -23,13 +26,20 @@ function Header() {
   );
 }
 
-const Layout = ({ children }: Props) => {
+const Layout = (props: Props) => {
   return (
-    <div className="container min-h-screen">
+    <div className="container flex flex-col min-h-screen">
       <div className="invisible h-16 w-full" />
       <Header />
       <div className="invisible h-20 w-full" />
-      <article>{children}</article>
+      <article>{props.children}</article>
+      {props.websiteWideBuildInfo ? (
+        <div className="flex-grow flex flex-col justify-end">
+          <footer className="w-full text-muted-foreground mt-auto">
+            <BuildStamp buildInfo={props.websiteWideBuildInfo} />
+          </footer>
+        </div>
+      ) : null}
     </div>
   );
 };

@@ -158,12 +158,9 @@ const Page: NextPageWithLayout<PageProps> = ({ posts: serializedPosts }) => {
 
 Page.getLayout = (page) => {
   return (
-    <>
-      <Layout>{page}</Layout>
-      <div className="absolute bottom-0 left-0 w-full">
-        <BuildStamp buildInfo={page.props.websiteWideBuildInfo} />
-      </div>
-    </>
+    <Layout websiteWideBuildInfo={page.props.websiteWideBuildInfo}>
+      {page}
+    </Layout>
   );
 };
 
