@@ -10,14 +10,16 @@ type Props = {
 
 function Header() {
   return (
-    <div className={`flex items-center justify-between px-16`}>
-      <Link
-        href="/blog"
-        className={`bold ${blogInitialsFont.className} text-4xl`}
-      >
-        mnf.
-      </Link>
-      <div className="flex gap-4">
+    <div className={`px-16 md:flex md:items-center md:justify-between `}>
+      <div className="flex justify-center">
+        <Link
+          href="/blog"
+          className={`bold ${blogInitialsFont.className} text-4xl`}
+        >
+          mnf.
+        </Link>
+      </div>
+      <div className="hidden md:flex md:gap-4">
         <Link href="/blog/on-work">On Work</Link>
         <Link href="/blog/on-quiet">On Quiet</Link>
         <ThemeSwitch />

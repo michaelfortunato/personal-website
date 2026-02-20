@@ -64,7 +64,7 @@ function Stack({
         {posts.map((post) => {
           const updatedDateTime = post.modifiedTimestamp.toISOString();
           return (
-            <Card key={post.id} className="flex justify-between p-5">
+            <Card key={post.id} className="flex justify-between gap-4 p-5">
               <div className="gap-2 sm:flex-row sm:items-baseline sm:justify-between">
                 <Link
                   className="text-lg font-medium leading-tight hover:underline"
