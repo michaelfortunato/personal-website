@@ -1,0 +1,2 @@
+# This file is so that formatter commits are not referenced in the git blames.
+# Syntax of file is, for each line: `<rev> [# optional comment]`
