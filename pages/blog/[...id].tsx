@@ -144,7 +144,7 @@ function Footer(metadata: PostMetadata) {
             <span aria-hidden="true">·</span>
             <span className="flex flex-col">
               {metadata.tags.map((value) => (
-                <div>#{value}</div>
+                <div>{value}</div>
               ))}
             </span>
           </>
