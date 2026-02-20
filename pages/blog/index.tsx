@@ -12,6 +12,9 @@ import Layout from "@/components/Blog/layout";
 import { PropsWithChildren } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import BuildStamp from "@/components/BuildStamp";
+import { BuildInfo } from "@/lib/buildInfo";
+import { getBuildInfo } from "@/lib/server-only/buildInfo";
 
 function sortByMostRecent(posts: PostMetadata[]): PostMetadata[] {
   return [...posts].sort((left, right) => {
@@ -138,29 +141,40 @@ function ShortNotes({ posts }: PropsWithChildren<{ posts: PostMetadata[] }>) {
 
 type PageProps = {
   posts: SerializedPostMetadata[];
+  websiteWideBuildInfo: BuildInfo;
 };
 
 const Page: NextPageWithLayout<PageProps> = ({ posts: serializedPosts }) => {
   const posts = serializedPosts.map(deserializePostMetadata);
   return (
-    <div className="flex flex-col items-center">
-      <LatestWritings posts={posts} />
-      <ShortNotes posts={posts} />
+    <div>
+      <div className="flex flex-col items-center">
+        <LatestWritings posts={posts} />
+        <ShortNotes posts={posts} />
+      </div>
     </div>
   );
 };
 
 Page.getLayout = (page) => {
-  return <Layout>{page}</Layout>;
+  return (
+    <>
+      <Layout>{page}</Layout>
+      <div className="absolute bottom-0 left-0 w-full">
+        <BuildStamp buildInfo={page.props.websiteWideBuildInfo} />
+      </div>
+    </>
+  );
 };
 
 export const getStaticProps: GetStaticProps<PageProps> = async () => {
   const postsWithMetadata = await listPosts();
-  console.log(postsWithMetadata);
+  const websiteWideBuildInfo = await getBuildInfo();
 
   return {
     props: {
       posts: postsWithMetadata.map(serializePostMetadata),
+      websiteWideBuildInfo,
     },
   };
 };

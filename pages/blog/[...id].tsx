@@ -164,58 +164,60 @@ const Page: NextPageWithLayout<GetStaticPropsResult> = ({
 }) => {
   const post = deserializePost(serializedPost);
   return (
-    <Layout>
-      <div className="flex h-full justify-center">
+    <div className="flex h-full justify-center">
+      <div
+        className={`${blogBodyFont.className} prose flex flex-col gap-4 dark:prose-invert prose-h1:my-0`}
+        // className={`prose flex flex-col gap-4 dark:prose-invert`}
+      >
+        <Header {...post.metadata} />
         <div
-          className={`${blogBodyFont.className} prose flex flex-col gap-4 dark:prose-invert prose-h1:my-0`}
-          // className={`prose flex flex-col gap-4 dark:prose-invert`}
-        >
-          <Header {...post.metadata} />
-          <div
-            // className={`${blogBodyFont.className}`}
-            className="typst-content"
-            dangerouslySetInnerHTML={{ __html: post.content.body }}
-          ></div>
-          <div className="not-prose flex justify-end">
-            <div className="inline-flex items-center gap-2 text-sm text-foreground/75">
-              <span>- Michael</span>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <button
-                    type="button"
-                    className="cursor-pointer rounded-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                    aria-label="Open profile photo"
-                  >
-                    <Image
-                      className="h-5 w-5 rounded-sm object-cover opacity-90"
-                      src="/blog/Avatar.jpeg"
-                      width={40}
-                      height={40}
-                      alt="Michael Fortunato"
-                    />
-                  </button>
-                </DialogTrigger>
-                <DialogContent className="max-w-md">
+          // className={`${blogBodyFont.className}`}
+          className="typst-content"
+          dangerouslySetInnerHTML={{ __html: post.content.body }}
+        ></div>
+        <div className="not-prose flex justify-end">
+          <div className="inline-flex items-center gap-2 text-sm text-foreground/75">
+            <span>- Michael</span>
+            <Dialog>
+              <DialogTrigger asChild>
+                <button
+                  type="button"
+                  className="cursor-pointer rounded-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  aria-label="Open profile photo"
+                >
                   <Image
-                    className="h-auto w-full rounded-sm object-cover"
+                    className="h-5 w-5 rounded-sm object-cover opacity-90"
                     src="/blog/Avatar.jpeg"
-                    width={1024}
-                    height={1024}
-                    alt="Me apple picking, circa 2021"
+                    width={40}
+                    height={40}
+                    alt="Michael Fortunato"
                   />
-                  <p className="text-sm text-muted-foreground">
-                    Me apple picking, circa 2021.
-                  </p>
-                </DialogContent>
-              </Dialog>
-            </div>
+                </button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <Image
+                  className="h-auto w-full rounded-sm object-cover"
+                  src="/blog/Avatar.jpeg"
+                  width={1024}
+                  height={1024}
+                  alt="Me apple picking, circa 2021"
+                />
+                <p className="text-sm text-muted-foreground">
+                  Me apple picking, circa 2021.
+                </p>
+              </DialogContent>
+            </Dialog>
           </div>
-          <Separator />
-          <Footer {...post.metadata} />
         </div>
+        <Separator />
+        <Footer {...post.metadata} />
       </div>
-    </Layout>
+    </div>
   );
+};
+
+Page.getLayout = (page) => {
+  return <Layout>{page}</Layout>;
 };
 
 export const getStaticPaths: GetStaticPaths<
