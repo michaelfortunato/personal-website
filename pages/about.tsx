@@ -81,7 +81,6 @@ Page.getLayout = (page) => {
 
 Page.paletteClass = "about";
 
-
 export async function getStaticProps() {
   // FIXME: Get about in a better place before letting recruiters see.
   return { notFound: true };

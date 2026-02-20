@@ -13,7 +13,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import Link from "next/link";
-import { GetStaticPaths, GetStaticProps } from "next"
+import { GetStaticPaths, GetStaticProps } from "next";
 import { computeGithubCommitURL } from "@/lib/buildInfo";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { ClockIcon, CommitIcon, TextIcon } from "@radix-ui/react-icons";
@@ -21,7 +21,6 @@ import { NextPageWithLayout } from "pages/_app";
 import { blogBodyFont } from "@/lib/fonts";
 import { happenedSameDay } from "@/lib/utils";
 import { ParsedUrlQuery } from "querystring";
-
 
 function formatHeaderTimestamp(timestamp: Date): string {
   return timestamp.toLocaleDateString("en-US", {
@@ -50,7 +49,10 @@ function Header(metadata: PostMetadata) {
   const createdDateTimeValue = createdTimestamp.toISOString();
   const modifiedDateTimeValue = modifiedTimestamp.toISOString();
 
-  const isEditedOnDifferentDay = !happenedSameDay(createdTimestamp, modifiedTimestamp)
+  const isEditedOnDifferentDay = !happenedSameDay(
+    createdTimestamp,
+    modifiedTimestamp,
+  );
 
   return (
     <div className="flex flex-col items-center text-center">
@@ -81,14 +83,14 @@ function Footer(metadata: PostMetadata) {
   const commitUrl = hasValidCommitHash
     ? computeGithubCommitURL("personal-website", commitHash)
     : null;
-  const tagLine = metadata.tags.map((value) => `#${value}`).join(" ");
+  const tagLine = metadata.tags
+    .map((value) => <div>`#${value}`</div>)
+    .join(" ");
 
   return (
     <div className="not-prose flex flex-col gap-4">
       <div className="flex justify-center">
-        <div className="text-sm text-muted-foreground">
-          Thanks for reading.
-        </div>
+        <div className="text-sm text-muted-foreground">Thanks for reading.</div>
       </div>
       <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground md:flex-nowrap">
         <div className="inline-flex items-center gap-1">
@@ -140,7 +142,11 @@ function Footer(metadata: PostMetadata) {
         {tagLine ? (
           <>
             <span aria-hidden="true">·</span>
-            <span>{tagLine}</span>
+            <span className="flex flex-col">
+              {metadata.tags.map((value) => (
+                <div>#{value}</div>
+              ))}
+            </span>
           </>
         ) : null}
       </div>
@@ -162,7 +168,7 @@ const Page: NextPageWithLayout<GetStaticPropsResult> = ({
       <div className="flex h-full justify-center">
         <div
           className={`${blogBodyFont.className} prose flex flex-col gap-4 dark:prose-invert prose-h1:my-0`}
-        // className={`prose flex flex-col gap-4 dark:prose-invert`}
+          // className={`prose flex flex-col gap-4 dark:prose-invert`}
         >
           <Header {...post.metadata} />
           <div
@@ -212,24 +218,28 @@ const Page: NextPageWithLayout<GetStaticPropsResult> = ({
   );
 };
 
-
-export const getStaticPaths: GetStaticPaths<GetStaticPathsResult> = async () => {
+export const getStaticPaths: GetStaticPaths<
+  GetStaticPathsResult
+> = async () => {
   const ids = await listPostIds();
   const paths = ids.map((id) => ({ params: { id: id.split("/") } }));
   return { paths, fallback: false };
-}
+};
 
-export const getStaticProps: GetStaticProps<GetStaticPropsResult, GetStaticPathsResult> = async ( {params} ) => {
+export const getStaticProps: GetStaticProps<
+  GetStaticPropsResult,
+  GetStaticPathsResult
+> = async ({ params }) => {
   // TODO: Fetch necessary data
-  const id_list = params?.id
+  const id_list = params?.id;
   if (!id_list) return { notFound: true };
 
-  const id = id_list.join("/")
+  const id = id_list.join("/");
   const inputFilepath = await postPathFromId(id);
   const postData = await buildPost(inputFilepath);
   const post = serializePost(postData);
 
   return { props: { post } };
-}
+};
 
 export default Page;

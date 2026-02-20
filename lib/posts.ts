@@ -1,9 +1,5 @@
 import { CommitEntry } from "@/lib/buildInfo";
-import {
-  fromISODateString,
-  Serialized,
-  toISODateString,
-} from "@/lib/utils";
+import { fromISODateString, Serialized, toISODateString } from "@/lib/utils";
 
 type MetadataArgs = {
   id: string;

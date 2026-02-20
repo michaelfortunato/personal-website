@@ -35,15 +35,15 @@ export const Some = <T>(x: T): Option<T> => x;
 export const isSome = <T>(o: Option<T>): o is T => o !== null;
 export const map = <T, U>(o: Option<T>, f: (x: T) => U): Option<U> =>
   o === null ? null : f(o);
-export const andThen = <T, U>(o: Option<T>, f: (x: T) => Option<U>): Option<U> =>
-  o === null ? null : f(o);
+export const andThen = <T, U>(
+  o: Option<T>,
+  f: (x: T) => Option<U>,
+): Option<U> => (o === null ? null : f(o));
 export const unwrapOr = <T>(o: Option<T>, d: T): T => (o === null ? d : o);
 export const unwrap = <T>(o: Option<T>): T => {
-  if (o === null) 
-    throw "Error"
+  if (o === null) throw "Error";
   return o;
-}
-
+};
 
 /**
  * NOTE: This was AI Generated.
@@ -68,22 +68,25 @@ ISO-8601
 unparseable date values.
 */
 export function parseTimestamp(timestamp: unknown): Date | null {
-
-  if (timestamp === null || (!(timestamp instanceof Date)) && typeof timestamp !== "number" && typeof timestamp !== "string") {
-    return null
+  if (
+    timestamp === null ||
+    (!(timestamp instanceof Date) &&
+      typeof timestamp !== "number" &&
+      typeof timestamp !== "string")
+  ) {
+    return null;
   }
   const date = timestamp instanceof Date ? timestamp : new Date(timestamp);
   return Number.isNaN(date.valueOf()) ? null : date;
 }
 
-
 function happenedSameYear(ts1: Date, ts2: Date): boolean {
-  return ts1.getFullYear() == ts2.getFullYear()
+  return ts1.getFullYear() == ts2.getFullYear();
 }
 
 function happenedSameMonth(ts1: Date, ts2: Date): boolean {
-  return happenedSameYear(ts1, ts2) && (ts1.getMonth() == ts2.getMonth())
+  return happenedSameYear(ts1, ts2) && ts1.getMonth() == ts2.getMonth();
 }
 export function happenedSameDay(ts1: Date, ts2: Date): boolean {
-  return happenedSameMonth(ts1, ts2) && (ts1.getDate() == ts2.getDate())
+  return happenedSameMonth(ts1, ts2) && ts1.getDate() == ts2.getDate();
 }

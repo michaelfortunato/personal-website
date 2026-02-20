@@ -11,6 +11,7 @@ import { listPosts } from "@/lib/server-only/posts";
 import Layout from "@/components/Blog/layout";
 import { PropsWithChildren } from "react";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 function sortByMostRecent(posts: PostMetadata[]): PostMetadata[] {
   return [...posts].sort((left, right) => {
@@ -20,36 +21,47 @@ function sortByMostRecent(posts: PostMetadata[]): PostMetadata[] {
   });
 }
 
-export function filterByTag(posts: PostMetadata[], tag: string): PostMetadata[] {
+export function filterByTag(
+  posts: PostMetadata[],
+  tag: string,
+): PostMetadata[] {
   const needle = tag.toLowerCase();
   return posts.filter((post) =>
     post.tags.some((t) => t.toLowerCase() === needle),
   );
 }
 
-export function filterByNonTag(posts: PostMetadata[], tag: string): PostMetadata[] {
+export function filterByNonTag(
+  posts: PostMetadata[],
+  tag: string,
+): PostMetadata[] {
   const needle = tag.toLowerCase();
   return posts.filter((post) =>
     post.tags.every((t) => t.toLowerCase() !== needle),
   );
 }
 
-function Stack({ posts, title, supplement }: PropsWithChildren<{ posts: PostMetadata[], title: string, supplement: string }>) {
+function Stack({
+  posts,
+  title,
+  supplement,
+}: PropsWithChildren<{
+  posts: PostMetadata[];
+  title: string;
+  supplement: string;
+}>) {
   return (
     <div className="flex w-full max-w-3xl flex-col gap-8 px-6 pb-16">
       <header>
-        <h1 className="text-3xl font-semibold tracking-tight">
-          {title}
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          {supplement}
-        </p>
+        <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{supplement}</p>
       </header>
 
       <div className="space-y-4">
         {posts.map((post) => {
-          const updatedDateTime = post.modifiedTimestamp.toISOString()
-          return (<Card key={post.id} className="flex justify-between p-5">
+          const updatedDateTime = post.modifiedTimestamp.toISOString();
+          return (
+            <Card key={post.id} className="flex justify-between p-5">
               <div className="gap-2 sm:flex-row sm:items-baseline sm:justify-between">
                 <Link
                   className="text-lg font-medium leading-tight hover:underline"
@@ -57,34 +69,57 @@ function Stack({ posts, title, supplement }: PropsWithChildren<{ posts: PostMeta
                 >
                   {post.title}
                 </Link>
-              {post.tags.length > 0 ? (
-                <p className="mt-3 text-xs text-muted-foreground">
-                  {post.tags.map((tag) => `${tag}`).join(", ")}
-                </p>
-              ) : null}
-            </div>
-            <div>
-                <time
-                  className="text-xs text-muted-foreground"
-                  dateTime={updatedDateTime}
-                >
-                {post.createdTimestamp.getTime() == post.modifiedTimestamp.getTime() ? "Published" : "Revised"} on {
-                  post.modifiedTimestamp.toLocaleDateString("en-US", {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                  })}
-                </time>
-            </div>
-          </Card>);
+                {post.tags.length > 0 ? (
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    {post.tags.map((tag) => `${tag}`).join(", ")}
+                  </p>
+                ) : null}
+              </div>
+              <div>
+                <div className="flex flex-col">
+                  <time
+                    className="text-xs text-muted-foreground"
+                    dateTime={updatedDateTime}
+                  >
+                    {post.createdTimestamp.getTime() ==
+                    post.modifiedTimestamp.getTime()
+                      ? "Published"
+                      : "Revised"}{" "}
+                    on{" "}
+                    {post.modifiedTimestamp.toLocaleDateString("en-US", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </time>
+                  <div>
+                    <span>
+                      {post.buildInfo.isDirty ? (
+                        <Badge variant={"destructive"}>Is Dirty</Badge>
+                      ) : null}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          );
         })}
       </div>
-    </div>)
+    </div>
+  );
 }
 
-function LatestWritings({ posts }: PropsWithChildren<{ posts: PostMetadata[] }>) {
+function LatestWritings({
+  posts,
+}: PropsWithChildren<{ posts: PostMetadata[] }>) {
   const sortedPosts = filterByNonTag(sortByMostRecent(posts), "daily");
-  return (<Stack posts={sortedPosts} title={"Latest Writings"} supplement={"All of my writing, sorted by most recently revised"} />);
+  return (
+    <Stack
+      posts={sortedPosts}
+      title={"Latest Writings"}
+      supplement={"All of my writing, sorted by most recently revised"}
+    />
+  );
 }
 
 function ShortNotes({ posts }: PropsWithChildren<{ posts: PostMetadata[] }>) {
@@ -92,7 +127,13 @@ function ShortNotes({ posts }: PropsWithChildren<{ posts: PostMetadata[] }>) {
   if (sortedPosts.length === 0) {
     return null;
   }
-  return (<Stack posts={sortedPosts} title={"Short Notes"} supplement={"Daily notes and scrap posts"} />);
+  return (
+    <Stack
+      posts={sortedPosts}
+      title={"Short Notes"}
+      supplement={"Daily notes and scrap posts"}
+    />
+  );
 }
 
 type PageProps = {
@@ -115,6 +156,7 @@ Page.getLayout = (page) => {
 
 export const getStaticProps: GetStaticProps<PageProps> = async () => {
   const postsWithMetadata = await listPosts();
+  console.log(postsWithMetadata);
 
   return {
     props: {

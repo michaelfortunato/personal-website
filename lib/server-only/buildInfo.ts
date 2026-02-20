@@ -14,7 +14,7 @@ export async function getBuildInfo(): Promise<BuildInfo> {
       minute: "2-digit",
       hour12: true,
       timeZoneName: "short",
-      timeZone: "America/Chicago"
+      timeZone: "America/Chicago",
     }),
   };
 }
@@ -28,7 +28,8 @@ export function getCommitEntryForFile(filepath: string, head: boolean = true) {
     : `git log -1 --pretty=format:"${commitEntryFormat}" -- ${filepath}`;
   const commitEntry = launchShellCmd(cmd)?.toString().trim();
   if (commitEntry == null) return null;
-  const [commitHash, author, authorDateISO, message] = commitEntry.split("\x1f");
+  const [commitHash, author, authorDateISO, message] =
+    commitEntry.split("\x1f");
   if (!(commitHash && author && authorDateISO && message)) {
     return null;
   }
