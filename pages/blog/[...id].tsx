@@ -83,10 +83,6 @@ function Footer(metadata: PostMetadata) {
   const commitUrl = hasValidCommitHash
     ? computeGithubCommitURL("personal-website", commitHash)
     : null;
-  const tagLine = metadata.tags
-    .map((value) => <div>`#${value}`</div>)
-    .join(" ");
-
   return (
     <div className="not-prose flex flex-col gap-4">
       <div className="flex justify-center">
@@ -139,12 +135,12 @@ function Footer(metadata: PostMetadata) {
             <span>{metadata.buildInfo.currentCommit.shortCommitHash}</span>
           )}
         </div>
-        {tagLine ? (
+        {metadata.tags.length > 0 ? (
           <>
             <span aria-hidden="true">·</span>
             <span className="flex flex-col">
               {metadata.tags.map((value) => (
-                <div>{value}</div>
+                <div key={value}>{value}</div>
               ))}
             </span>
           </>
