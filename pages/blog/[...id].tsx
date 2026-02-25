@@ -14,13 +14,14 @@ import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import Link from "next/link";
 import { GetStaticPaths, GetStaticProps } from "next";
-import { computeGithubCommitURL } from "@/lib/buildInfo";
+import { computeGithubCommitURL, dateToPrettyString } from "@/lib/buildInfo";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { ClockIcon, CommitIcon, TextIcon } from "@radix-ui/react-icons";
+
 import { NextPageWithLayout } from "pages/_app";
 import { blogBodyFont } from "@/lib/fonts";
 import { happenedSameDay } from "@/lib/utils";
 import { ParsedUrlQuery } from "querystring";
+import { TextIcon, ClockIcon, GitCommit } from "lucide-react";
 
 function formatHeaderTimestamp(timestamp: Date): string {
   return timestamp.toLocaleDateString("en-US", {
@@ -71,79 +72,49 @@ function Header(metadata: PostMetadata) {
           </time>
         </div>
       ) : null}
-      <Separator className="mt-5" />
+      <Separator className="mt-5 bg-slate-900" />
     </div>
   );
 }
-
 function Footer(metadata: PostMetadata) {
-  const timestamp = metadata.buildInfo.currentCommit.timestamp;
   const commitHash = metadata.buildInfo.currentCommit.commitHash;
-  const hasValidCommitHash = /^[a-f0-9]{40}$/i.test(commitHash);
-  const commitUrl = hasValidCommitHash
-    ? computeGithubCommitURL("personal-website", commitHash)
-    : null;
+  const commitURL = computeGithubCommitURL("personal-website", commitHash);
+
   return (
-    <div className="not-prose flex flex-col gap-4">
+    <div className="not-prose flex flex-col gap-1">
       <div className="flex justify-center">
         <div className="text-sm text-muted-foreground">Thanks for reading.</div>
       </div>
-      <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground md:flex-nowrap">
+
+      {/* changed: items-center -> items-baseline (so the tag column starts at the same baseline) */}
+      <div className="flex flex-wrap items-baseline md:flex-nowrap justify-center gap-1 text-xs text-muted-foreground">
         <div className="inline-flex items-center gap-1">
-          <ClockIcon />
-          {commitUrl ? (
-            <Link
-              className="underline-offset-2 hover:underline"
-              href={commitUrl}
-            >
-              {formatModifiedTimestamp(timestamp)}
+          <div>
+            <Link href={commitURL}>
+              {dateToPrettyString(metadata.modifiedTimestamp)}
             </Link>
-          ) : (
-            <span>{formatModifiedTimestamp(timestamp)}</span>
-          )}
+          </div>
         </div>
         <span aria-hidden="true">·</span>
-        <div className="inline-flex items-center gap-1">
-          <TextIcon />
-          {commitUrl ? (
-            <Link
-              href={commitUrl}
-              className="max-w-[22ch] truncate underline-offset-2 hover:underline md:max-w-[40ch]"
-            >
-              {metadata.buildInfo.currentCommit.message}
-            </Link>
-          ) : (
-            <span
-              className="max-w-[22ch] truncate md:max-w-[40ch]"
-              title={metadata.buildInfo.currentCommit.message}
-            >
-              {metadata.buildInfo.currentCommit.message}
-            </span>
-          )}
+        <div className="max-w-[22ch] truncate inline-flex items-center gap-1">
+          <Link href={commitURL}>
+            {metadata.buildInfo.currentCommit.message}
+          </Link>
         </div>
         <span aria-hidden="true">·</span>
-        <div className="inline-flex items-center gap-1">
-          <CommitIcon />
-          {commitUrl ? (
-            <Link
-              href={commitUrl}
-              className="underline-offset-2 hover:underline"
-            >
-              {metadata.buildInfo.currentCommit.shortCommitHash}
-            </Link>
-          ) : (
-            <span>{metadata.buildInfo.currentCommit.shortCommitHash}</span>
-          )}
-        </div>
+        <Link href={commitURL}>
+          <GitCommit className="inline" width="15px" strokeWidth={1} />
+          {metadata.buildInfo.currentCommit.shortCommitHash}
+        </Link>
+        <span aria-hidden="true">·</span>
         {metadata.tags.length > 0 ? (
-          <>
-            <span aria-hidden="true">·</span>
-            <span className="flex flex-col">
-              {metadata.tags.map((value) => (
-                <div key={value}>{value}</div>
-              ))}
-            </span>
-          </>
+          <div className="inline-flex flex-col">
+            {/* <span aria-hidden="true">·</span> */}
+            {/* keep as inline-flex so it participates in baseline alignment nicely */}
+            {metadata.tags.map((value) => (
+              <div key={value}>{value}</div>
+            ))}
+          </div>
         ) : null}
       </div>
     </div>
@@ -199,10 +170,10 @@ const Page: NextPageWithLayout<GetStaticPropsResult> = ({
                   src="/blog/Avatar.jpeg"
                   width={1024}
                   height={1024}
-                  alt="Me apple picking, circa 2021"
+                  alt="Me apple picking in 2021."
                 />
                 <p className="text-sm text-muted-foreground">
-                  Me apple picking, circa 2021.
+                  Me apple picking in 2021.
                 </p>
               </DialogContent>
             </Dialog>

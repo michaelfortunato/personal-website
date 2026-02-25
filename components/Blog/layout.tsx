@@ -1,8 +1,6 @@
 import { blogInitialsFont } from "@/lib/fonts";
 import Link from "next/link";
-import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
-import { BuildInfo, SerializedBuildInfo } from "@/lib/buildInfo";
-import BuildStamp from "@/components/BuildStamp";
+import type { ReactNode } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,8 +13,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useTheme } from "next-themes";
 type Props = {
-  children: React.ReactNode;
-  websiteWideBuildInfo?: SerializedBuildInfo;
+  children: ReactNode;
+  footer?: ReactNode;
 };
 
 function Header() {
@@ -39,6 +37,9 @@ function Header() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuGroup>
+              <DropdownMenuItem asChild>
+                <Link href="/blog">Home</Link>
+              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/blog/on-work">On Work</Link>
               </DropdownMenuItem>
@@ -75,9 +76,10 @@ function Header() {
         </DropdownMenu>
       </div>
       <div className="hidden md:flex md:gap-4">
-        <Link href="/blog/on-work">On Work</Link>
-        <Link href="/blog/on-quiet">On Quiet</Link>
-        <ThemeSwitch />
+        {/* TODO: What to put here ? */}
+        {/* <Link href="/blog/on-work">On Work</Link> */}
+        {/* <Link href="/blog/on-quiet">On Quiet</Link> */}
+        {/* <ThemeSwitch /> */}
       </div>
     </div>
   );
@@ -90,10 +92,10 @@ const Layout = (props: Props) => {
       <Header />
       <div className="invisible h-20 w-full" />
       <article>{props.children}</article>
-      {props.websiteWideBuildInfo ? (
+      {props.footer ? (
         <div className="flex-grow flex flex-col justify-end">
-          <footer className="w-full text-muted-foreground mt-auto">
-            <BuildStamp serializedBuildInfo={props.websiteWideBuildInfo} />
+          <footer className="w-full text-xs leading-tight text-muted-foreground mt-auto">
+            {props.footer}
           </footer>
         </div>
       ) : null}

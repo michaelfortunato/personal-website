@@ -1,7 +1,7 @@
 const tags = [
   "Researcher In AI + Group Theory",
-  "Symmmetry Discovery",
   "Group Equivariant NNs",
+  "Symmmetry Discovery",
 ];
 
 const Description = () => {

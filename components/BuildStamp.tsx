@@ -5,10 +5,8 @@ import {
   SerializedBuildInfo,
 } from "@/lib/buildInfo";
 
-import { CodeXml, DatabaseIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { CodeXml, TextIcon, ClockIcon, GitCommit } from "lucide-react";
 import Link from "next/link";
-import { ClockIcon, CommitIcon } from "@radix-ui/react-icons";
 import { blogInitialsFont } from "@/lib/fonts";
 
 export function computeGithubURLs(buildInfo: SerializedBuildInfo) {
@@ -43,22 +41,26 @@ const BuildStamp: React.FC<{
         <div className="flex flex-wrap justify-center gap-2">
           <div className="flex items-center gap-1">
             <div>
-              <ClockIcon />
+              <ClockIcon width="15px" strokeWidth={1} />
             </div>
             <Link href={commitURL}>{serializedBuildInfo.buildTimestamp}</Link>
           </div>
           <div className="flex items-center gap-1">
             <div>
-              <DatabaseIcon width="15px" />
+              <TextIcon width="15px" strokeWidth={1} />
             </div>
             <div>
-              <Link href={branchURL}>
-                {"personal-website/" + serializedBuildInfo.branch}
+              <Link href={commitURL}>
+                {serializedBuildInfo.buildCommitEntry.message}
               </Link>
             </div>
           </div>
           <div className="inline-flex items-center">
-            <CommitIcon className="translate-y-[1px]" />
+            <GitCommit
+              className="translate-y-[1px]"
+              width="15px"
+              strokeWidth={1}
+            />
             <Link href={commitURL}>
               {serializedBuildInfo.buildCommitEntry.shortCommitHash}
             </Link>

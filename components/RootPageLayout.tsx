@@ -48,7 +48,7 @@ export default function RootPageLayout({
       <Navbar routes={pageConfigs} />
       <div className="absolute min-h-screen min-w-full bg-background transition duration-1000">
         {children}
-        <div className="absolute bottom-0 left-0 w-full">
+        <div className="absolute bottom-0 left-0 w-full text-xs">
           <BuildStamp serializedBuildInfo={serializedBuildInfo} />
         </div>
       </div>
