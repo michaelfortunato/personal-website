@@ -14,7 +14,6 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import BuildStamp from "@/components/BuildStamp";
 import {
-  BuildInfo,
   serializeBuildInfo,
   SerializedBuildInfo,
 } from "@/lib/buildInfo";
@@ -71,13 +70,16 @@ function Stack({
             // NOTE: justify-between w gap-4 will trt ti create the
             // largest horizontal gap but ensure its at least 4 pixels wide
             <Card key={post.id} className="flex justify-between gap-4 p-5">
-              <div className="gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+              <div className="prose">
                 <Link
-                  className="text-lg font-medium leading-tight hover:underline"
+                  className="text-lg font-medium leading-tight hover:underline no-underline"
                   href={`/blog/${post.id}`}
                 >
                   {post.title}
                 </Link>
+                {post.mini_abstract != null ? (
+                  <p>{post.mini_abstract}</p>
+                ) : null}
                 {post.tags.length > 0 ? (
                   <p className="mt-3 text-xs text-muted-foreground">
                     {post.tags.map((tag) => `${tag}`).join(", ")}
@@ -104,7 +106,7 @@ function Stack({
                   <div>
                     <span>
                       {post.buildInfo.isDirty ? (
-                        <Badge variant={"destructive"}>Is Dirty</Badge>
+                        <Badge variant={"destructive"}>Draft</Badge>
                       ) : null}
                     </span>
                   </div>
@@ -166,7 +168,13 @@ const Page: NextPageWithLayout<GetStaticPropsResult> = ({
 
 Page.getLayout = (page) => {
   return (
-    <Layout websiteWideBuildInfo={page.props.websiteWideBuildInfo}>
+    <Layout
+      footer={
+        <BuildStamp
+          serializedBuildInfo={page.props.websiteWideBuildInfo}
+        />
+      }
+    >
       {page}
     </Layout>
   );

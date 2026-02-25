@@ -17,6 +17,19 @@ export function computeGithubCommitURL(repoName: string, commitHash: string) {
   return `https://github.com/michaelfortunato/${repoName}/commit/${commitHash}`;
 }
 
+export function dateToPrettyString(date: Date): string {
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZoneName: "short",
+    timeZone: "America/Chicago",
+  });
+}
+
 export type CommitEntry = {
   commitHash: string;
   readonly shortCommitHash: string;
@@ -66,15 +79,6 @@ export function serializeBuildInfo(buildInfo: BuildInfo): SerializedBuildInfo {
       ...buildInfo.buildCommitEntry,
       timestamp: toISODateString(buildInfo.buildCommitEntry.timestamp),
     },
-    buildTimestamp: buildInfo.buildTimestamp.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-      timeZoneName: "short",
-      timeZone: "America/Chicago",
-    }),
+    buildTimestamp: dateToPrettyString(buildInfo.buildTimestamp),
   };
 }

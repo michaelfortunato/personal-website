@@ -9,6 +9,7 @@ type MetadataArgs = {
   id: string;
   title: string;
   tags: string[];
+  mini_abstract: string | null;
   buildInfo: {
     isDirty: boolean;
     currentCommit: CommitEntry;
@@ -22,14 +23,16 @@ export class PostMetadata {
   id: string;
   title: string;
   tags: string[];
+  mini_abstract: string | null;
+  buildInfo: MetadataArgs["buildInfo"];
   createdTimestamp: Date;
   modifiedTimestamp: Date;
-  buildInfo: MetadataArgs["buildInfo"];
 
   constructor({
     id,
     title,
     tags = [],
+    mini_abstract,
     buildInfo,
     createdTimestamp,
     modifiedTimestamp,
@@ -42,6 +45,7 @@ export class PostMetadata {
       createdTimestamp ?? this.buildInfo.firstCommit.timestamp;
     this.modifiedTimestamp =
       modifiedTimestamp ?? this.buildInfo.currentCommit.timestamp;
+    this.mini_abstract = mini_abstract;
   }
 }
 

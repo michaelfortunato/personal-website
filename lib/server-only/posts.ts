@@ -112,7 +112,8 @@ export async function _typstQuery(typstFilepath: string): Promise<unknown[]> {
     "selector(<KEYWORDS>).or(<keywords>)" +
     ".or(<tags>)" +
     ".or(<TITLE>).or(<title>)" +
-    ".or(<CREATED_TIMESTAMP>).or(<MODIFIED_TIMESTAMP>)";
+    ".or(<CREATED_TIMESTAMP>).or(<MODIFIED_TIMESTAMP>)" +
+    ".or(metadata)";
   const root = await getGitDir();
   const { stdout } = await execFileAsync("typst", [
     "query",
@@ -184,6 +185,7 @@ export async function _typstFileToMetadata(typstFilepath: string) {
     id: (await idFromPostPath(typstFilepath)) || "<UNKNOWN ID>",
     title: asString(findLabelValue(items, "TITLE")) || "<UNKNOWN TITLE>",
     tags: asStringArray(findLabelValue(items, "KEYWORDS", "TAGS")),
+    mini_abstract: asString(findLabelValue(items, "MINI_ABSTRACT")),
     createdTimestamp,
     modifiedTimestamp,
   };
@@ -243,13 +245,20 @@ export async function listPosts(): Promise<PostMetadata[]> {
   const postFiles = await listPostFiles();
   const postsWithMetadata = await Promise.all(
     postFiles.map(async (postFile) => {
-      const { id, title, tags, createdTimestamp, modifiedTimestamp } =
-        await _typstFileToMetadata(postFile);
+      const {
+        id,
+        title,
+        tags,
+        mini_abstract,
+        createdTimestamp,
+        modifiedTimestamp,
+      } = await _typstFileToMetadata(postFile);
       const buildInfo = getCommitInfoForFileOrFallback(postFile);
       return new PostMetadata({
         id,
         title,
         createdTimestamp,
+        mini_abstract,
         modifiedTimestamp,
         tags,
         buildInfo,
@@ -262,12 +271,19 @@ export async function listPosts(): Promise<PostMetadata[]> {
 export async function buildPost(inputFilepath: string): Promise<Post> {
   const htmlString = await _typstFileToHTMLFile(inputFilepath);
   const headAndBody = splitHeadBody(htmlString);
-  const { id, title, tags, createdTimestamp, modifiedTimestamp } =
-    await _typstFileToMetadata(inputFilepath);
+  const {
+    id,
+    title,
+    tags,
+    mini_abstract,
+    createdTimestamp,
+    modifiedTimestamp,
+  } = await _typstFileToMetadata(inputFilepath);
   const buildInfo = getCommitInfoForFileOrFallback(inputFilepath);
   const metadata = new PostMetadata({
     id,
     title,
+    mini_abstract,
     createdTimestamp,
     modifiedTimestamp,
     tags,

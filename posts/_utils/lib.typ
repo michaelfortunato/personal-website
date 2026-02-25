@@ -1,3 +1,4 @@
+// TODO: Emmit proper anchors for definitions when using frame-it
 // Default font sizes from original LaTeX style file.
 // TODO: See if we want to use this
 #let FONT_DEFAULTS = (
@@ -67,7 +68,14 @@
   #doc
 ]
 
-#let page(title: str, keywords: (), created_timestamp: none, doc) = [
+#let page(
+  title: str,
+  keywords: (),
+  created_timestamp: none,
+  mini_abstract: none,
+  full_abstract: none,
+  doc,
+) = [
   #set document(
     author: "Michael Newman Fortunato",
     title: title,
@@ -98,6 +106,9 @@
 
   #metadata(title) <TITLE>
   #metadata(keywords) <KEYWORDS>
+  #if mini_abstract != none [ #metadata(mini_abstract) <MINI_ABSTRACT> ]
+  #if full_abstract != none [ #metadata(full_abstract) <FULL_ABSTRACT> ]
+
   #if type(created_timestamp) == datetime [
     #let unixBegin = datetime(day: 1, month: 1, year: 1970)
     // NOTE(Feb 2026): tinymist does not infer that duration is no longer none sadly
