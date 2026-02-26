@@ -154,14 +154,6 @@ function BlogIndexFooter({
 }: {
   serializedBuildInfo: SerializedBuildInfo;
 }) {
-  const {
-    settings: { showCommitInformation },
-  } = useBlogSettings();
-
-  if (!showCommitInformation) {
-    return null;
-  }
-
   return <BuildStamp serializedBuildInfo={serializedBuildInfo} />;
 }
 
@@ -182,6 +174,7 @@ const Page: NextPageWithLayout<GetStaticPropsResult> = ({
 Page.getLayout = (page) => {
   return (
     <Layout
+      isIndexPage={true}
       footer={
         <BlogIndexFooter
           serializedBuildInfo={page.props.websiteWideBuildInfo}

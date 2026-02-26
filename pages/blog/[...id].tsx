@@ -31,6 +31,24 @@ function formatHeaderTimestamp(timestamp: Date): string {
     year: "numeric",
   });
 }
+import { blogInitialsFont } from "@/lib/fonts";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuGroupLabel,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+  DropdownMenuCheckboxItem,
+  DropdownMenuLinkItem,
+} from "@/components/ui/dropdown-menu";
+import { useTheme } from "next-themes";
+import { Ellipsis } from "lucide-react";
 
 function Header(metadata: PostMetadata) {
   const createdTimestamp = metadata.buildInfo.firstCommit.timestamp;
@@ -110,6 +128,81 @@ function Footer(metadata: PostMetadata) {
   );
 }
 
+function MNFMenuForNote() {
+  const { theme, setTheme } = useTheme();
+  const {
+    settings: { showCommitInformation },
+    setShowCommitInformation,
+  } = useBlogSettings();
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        className={`md:inline-block bold ${blogInitialsFont.className} text-4xl relative inline-block after:content-['.'] after:absolute after:left-full`}
+        render={<button>mnf</button>}
+      />
+      <DropdownMenuContent className="" align="center">
+        <DropdownMenuLinkItem href="/blog">Home</DropdownMenuLinkItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuGroupLabel>UI Elements</DropdownMenuGroupLabel>
+          {/* Place holder */}
+          <DropdownMenuCheckboxItem disabled>
+            Table of Contents
+          </DropdownMenuCheckboxItem>
+
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Footer</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuCheckboxItem
+                checked={showCommitInformation}
+                onCheckedChange={(checked) =>
+                  setShowCommitInformation(checked === true)
+                }
+              >
+                Commit Information
+              </DropdownMenuCheckboxItem>
+              {/* Place holder */}
+              <DropdownMenuCheckboxItem disabled>
+                {"Views & Likes"}
+              </DropdownMenuCheckboxItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+        </DropdownMenuGroup>
+        <DropdownMenuGroup>
+          <DropdownMenuGroupLabel>Theme</DropdownMenuGroupLabel>
+          <DropdownMenuRadioGroup
+            onValueChange={(value) => setTheme(value)}
+            value={theme}
+          >
+            <DropdownMenuRadioItem
+              onSelect={(e) => e.preventDefault()}
+              value="light"
+              className="hover:cursor-pointer"
+            >
+              Light
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem
+              onSelect={(e) => e.preventDefault()}
+              value="dark"
+              className="hover:cursor-pointer"
+            >
+              Dark
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem
+              onSelect={(e) => e.preventDefault()}
+              value="system"
+              className="hover:cursor-pointer"
+            >
+              System
+            </DropdownMenuRadioItem>
+          </DropdownMenuRadioGroup>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 interface GetStaticPathsResult extends ParsedUrlQuery {
   id: string[];
 }
@@ -176,7 +269,7 @@ const Page: NextPageWithLayout<GetStaticPropsResult> = ({
 };
 
 Page.getLayout = (page) => {
-  return <Layout>{page}</Layout>;
+  return <Layout isIndexPage={false}>{page}</Layout>;
 };
 
 export const getStaticPaths: GetStaticPaths<
