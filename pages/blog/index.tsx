@@ -125,7 +125,7 @@ function LatestWritings({
     <Stack
       posts={sortedPosts}
       title={"Latest Writings"}
-      supplement={"All of my writing, sorted by most recently revised"}
+      supplement={"All of my writing, sorted by most recently revised."}
     />
   );
 }
