@@ -1,4 +1,5 @@
 import Layout from "@/components/Blog/layout";
+import { useBlogSettings } from "@/components/Blog/settings";
 import {
   deserializePost,
   serializePost,
@@ -21,26 +22,13 @@ import { NextPageWithLayout } from "pages/_app";
 import { blogBodyFont } from "@/lib/fonts";
 import { happenedSameDay } from "@/lib/utils";
 import { ParsedUrlQuery } from "querystring";
-import { TextIcon, ClockIcon, GitCommit } from "lucide-react";
+import { GitCommit } from "lucide-react";
 
 function formatHeaderTimestamp(timestamp: Date): string {
   return timestamp.toLocaleDateString("en-US", {
     day: "numeric",
     month: "long",
     year: "numeric",
-  });
-}
-
-function formatModifiedTimestamp(timestamp: Date): string {
-  return timestamp.toLocaleString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-    timeZoneName: "short",
-    timeZone: "America/Chicago",
   });
 }
 
@@ -77,46 +65,47 @@ function Header(metadata: PostMetadata) {
   );
 }
 function Footer(metadata: PostMetadata) {
+  const {
+    settings: { showCommitInformation },
+  } = useBlogSettings();
   const commitHash = metadata.buildInfo.currentCommit.commitHash;
   const commitURL = computeGithubCommitURL("personal-website", commitHash);
+  const hasTags = metadata.tags.length > 0;
 
   return (
     <div className="not-prose flex flex-col gap-1">
       <div className="flex justify-center">
         <div className="text-sm text-muted-foreground">Thanks for reading.</div>
       </div>
-
-      {/* changed: items-center -> items-baseline (so the tag column starts at the same baseline) */}
-      <div className="flex flex-wrap items-baseline md:flex-nowrap justify-center gap-1 text-xs text-muted-foreground">
-        <div className="inline-flex items-center gap-1">
-          <div>
+      {showCommitInformation ? (
+        // NOTE: items-baseline keeps tag stack aligned with metadata text.
+        <div className="flex flex-wrap items-baseline md:flex-nowrap justify-center gap-1 text-xs text-muted-foreground">
+          <div className="inline-flex items-center gap-1 hover:underline">
             <Link href={commitURL}>
               {dateToPrettyString(metadata.modifiedTimestamp)}
             </Link>
           </div>
-        </div>
-        <span aria-hidden="true">·</span>
-        <div className="max-w-[22ch] truncate inline-flex items-center gap-1">
-          <Link href={commitURL}>
-            {metadata.buildInfo.currentCommit.message}
-          </Link>
-        </div>
-        <span aria-hidden="true">·</span>
-        <Link href={commitURL}>
-          <GitCommit className="inline" width="15px" strokeWidth={1} />
-          {metadata.buildInfo.currentCommit.shortCommitHash}
-        </Link>
-        <span aria-hidden="true">·</span>
-        {metadata.tags.length > 0 ? (
+          <span aria-hidden="true">·</span>
+          <div className="max-w-[22ch] hover:underline truncate inline-flex items-center gap-1">
+            <Link href={commitURL}>
+              {metadata.buildInfo.currentCommit.message}
+            </Link>
+          </div>
+          <span aria-hidden="true">·</span>
+          <div className="hover:underline">
+            <Link about="View Commit" href={commitURL}>
+              <GitCommit className="inline" width="15px" strokeWidth={1} />
+              {metadata.buildInfo.currentCommit.shortCommitHash}
+            </Link>
+          </div>
+          <span aria-hidden="true">·</span>
           <div className="inline-flex flex-col">
-            {/* <span aria-hidden="true">·</span> */}
-            {/* keep as inline-flex so it participates in baseline alignment nicely */}
             {metadata.tags.map((value) => (
               <div key={value}>{value}</div>
             ))}
           </div>
-        ) : null}
-      </div>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -179,7 +168,7 @@ const Page: NextPageWithLayout<GetStaticPropsResult> = ({
             </Dialog>
           </div>
         </div>
-        <Separator />
+        <Separator className="bg-slate-900" />
         <Footer {...post.metadata} />
       </div>
     </div>

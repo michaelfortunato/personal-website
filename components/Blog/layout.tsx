@@ -1,17 +1,23 @@
 import { blogInitialsFont } from "@/lib/fonts";
-import Link from "next/link";
 import type { ReactNode } from "react";
+import { BlogSettingsProvider, useBlogSettings } from "@/components/Blog/settings";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
+  DropdownMenuGroupLabel,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+  DropdownMenuCheckboxItem,
+  DropdownMenuLinkItem,
 } from "@/components/ui/dropdown-menu";
 import { useTheme } from "next-themes";
+import { Ellipsis } from "lucide-react";
 type Props = {
   children: ReactNode;
   footer?: ReactNode;
@@ -19,59 +25,75 @@ type Props = {
 
 function Header() {
   const { theme, setTheme } = useTheme();
+  const {
+    settings: { showCommitInformation },
+    setShowCommitInformation,
+  } = useBlogSettings();
+
   return (
     <div className={`px-16 md:flex md:items-center md:justify-between `}>
       <div className="flex justify-center">
-        <Link
-          href="/blog"
-          className={`hidden md:inline-block bold ${blogInitialsFont.className} text-4xl relative inline-block after:content-['.'] after:absolute after:left-full`}
-        >
-          mnf
-        </Link>
         <DropdownMenu>
           <DropdownMenuTrigger
-            className={`md:hidden bold ${blogInitialsFont.className} text-4xl relative inline-block after:content-['.'] after:absolute after:left-full`}
-            asChild
-          >
-            <button>mnf</button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuGroup>
-              <DropdownMenuItem asChild>
-                <Link href="/blog">Home</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/blog/on-work">On Work</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/blog/on-quiet">On Quiet</Link>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
+            className={`md:inline-block bold ${blogInitialsFont.className} text-4xl relative inline-block after:content-['.'] after:absolute after:left-full`}
+            render={<button>mnf</button>}
+          />
+          <DropdownMenuContent className="" align="center">
+            <DropdownMenuLinkItem href="/blog">Home</DropdownMenuLinkItem>
             <DropdownMenuSeparator />
-            <DropdownMenuRadioGroup
-              onValueChange={(value) => setTheme(value)}
-              value={theme}
-              className="flex"
-            >
-              <DropdownMenuRadioItem
-                onSelect={(e) => e.preventDefault()}
-                value="light"
+            <DropdownMenuGroup>
+              <DropdownMenuGroupLabel>UI Elements</DropdownMenuGroupLabel>
+              <DropdownMenuCheckboxItem>
+                Table of Contents Widget
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={showCommitInformation}
+                onCheckedChange={(checked) =>
+                  setShowCommitInformation(checked === true)
+                }
               >
-                Light
-              </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem
-                onSelect={(e) => e.preventDefault()}
-                value="dark"
+                Commit Information
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  <Ellipsis />
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  {/* <DropdownMenuCheckboxItem> */}
+                  {/*   Show Commit Information */}
+                  {/* </DropdownMenuCheckboxItem> */}
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            </DropdownMenuGroup>
+            <DropdownMenuGroup>
+              <DropdownMenuGroupLabel>Theme</DropdownMenuGroupLabel>
+              <DropdownMenuRadioGroup
+                onValueChange={(value) => setTheme(value)}
+                value={theme}
               >
-                Dark
-              </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem
-                onSelect={(e) => e.preventDefault()}
-                value="system"
-              >
-                System
-              </DropdownMenuRadioItem>
-            </DropdownMenuRadioGroup>
+                <DropdownMenuRadioItem
+                  onSelect={(e) => e.preventDefault()}
+                  value="light"
+                  className="hover:cursor-pointer"
+                >
+                  Light
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem
+                  onSelect={(e) => e.preventDefault()}
+                  value="dark"
+                  className="hover:cursor-pointer"
+                >
+                  Dark
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem
+                  onSelect={(e) => e.preventDefault()}
+                  value="system"
+                  className="hover:cursor-pointer"
+                >
+                  System
+                </DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+            </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -87,19 +109,21 @@ function Header() {
 
 const Layout = (props: Props) => {
   return (
-    <div className="container flex flex-col min-h-screen">
-      <div className="invisible h-16 w-full" />
-      <Header />
-      <div className="invisible h-20 w-full" />
-      <article>{props.children}</article>
-      {props.footer ? (
-        <div className="flex-grow flex flex-col justify-end">
-          <footer className="w-full text-xs leading-tight text-muted-foreground mt-auto">
-            {props.footer}
-          </footer>
-        </div>
-      ) : null}
-    </div>
+    <BlogSettingsProvider>
+      <div className="container flex flex-col min-h-screen">
+        <div className="invisible h-16 w-full" />
+        <Header />
+        <div className="invisible h-20 w-full" />
+        <article>{props.children}</article>
+        {props.footer ? (
+          <div className="flex-grow flex flex-col justify-end">
+            <footer className="w-full text-xs leading-tight text-muted-foreground mt-auto">
+              {props.footer}
+            </footer>
+          </div>
+        ) : null}
+      </div>
+    </BlogSettingsProvider>
   );
 };
 

@@ -9,14 +9,12 @@ import {
 } from "@/lib/posts";
 import { listPosts } from "@/lib/server-only/posts";
 import Layout from "@/components/Blog/layout";
+import { useBlogSettings } from "@/components/Blog/settings";
 import { PropsWithChildren } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import BuildStamp from "@/components/BuildStamp";
-import {
-  serializeBuildInfo,
-  SerializedBuildInfo,
-} from "@/lib/buildInfo";
+import { serializeBuildInfo, SerializedBuildInfo } from "@/lib/buildInfo";
 import { getBuildInfo } from "@/lib/server-only/buildInfo";
 
 function sortByMostRecent(posts: PostMetadata[]): PostMetadata[] {
@@ -69,25 +67,28 @@ function Stack({
           return (
             // NOTE: justify-between w gap-4 will trt ti create the
             // largest horizontal gap but ensure its at least 4 pixels wide
-            <Card key={post.id} className="flex justify-between gap-4 p-5">
-              <div className="prose">
-                <Link
-                  className="text-lg font-medium leading-tight hover:underline no-underline"
-                  href={`/blog/${post.id}`}
-                >
-                  {post.title}
-                </Link>
-                {post.mini_abstract != null ? (
-                  <p>{post.mini_abstract}</p>
-                ) : null}
-                {post.tags.length > 0 ? (
-                  <p className="mt-3 text-xs text-muted-foreground">
-                    {post.tags.map((tag) => `${tag}`).join(", ")}
-                  </p>
-                ) : null}
-              </div>
-              <div>
-                <div className="flex flex-col">
+            <Card key={post.id} className="p-5">
+              <article className="flex items-start justify-between gap-4">
+                <header className="prose min-w-0">
+                  <h2 className="m-0 text-lg font-medium leading-tight">
+                    <Link
+                      className="no-underline hover:underline"
+                      href={`/blog/${post.id}`}
+                    >
+                      {post.title}
+                    </Link>
+                  </h2>
+                  {post.mini_abstract != null ? (
+                    <p>{post.mini_abstract}</p>
+                  ) : null}
+                  {post.tags.length > 0 ? (
+                    <p className="not-prose mt-3 text-xs text-muted-foreground">
+                      {post.tags.join(", ")}
+                    </p>
+                  ) : null}
+                </header>
+
+                <footer className="flex flex-col items-end gap-2">
                   <time
                     className="text-xs text-muted-foreground"
                     dateTime={updatedDateTime}
@@ -103,15 +104,11 @@ function Stack({
                       year: "numeric",
                     })}
                   </time>
-                  <div>
-                    <span>
-                      {post.buildInfo.isDirty ? (
-                        <Badge variant={"destructive"}>Draft</Badge>
-                      ) : null}
-                    </span>
-                  </div>
-                </div>
-              </div>
+                  {post.buildInfo.isDirty ? (
+                    <Badge variant={"destructive"}>Draft</Badge>
+                  ) : null}
+                </footer>
+              </article>
             </Card>
           );
         })}
@@ -152,6 +149,22 @@ type GetStaticPropsResult = {
   websiteWideBuildInfo: SerializedBuildInfo;
 };
 
+function BlogIndexFooter({
+  serializedBuildInfo,
+}: {
+  serializedBuildInfo: SerializedBuildInfo;
+}) {
+  const {
+    settings: { showCommitInformation },
+  } = useBlogSettings();
+
+  if (!showCommitInformation) {
+    return null;
+  }
+
+  return <BuildStamp serializedBuildInfo={serializedBuildInfo} />;
+}
+
 const Page: NextPageWithLayout<GetStaticPropsResult> = ({
   posts: serializedPosts,
 }) => {
@@ -170,7 +183,7 @@ Page.getLayout = (page) => {
   return (
     <Layout
       footer={
-        <BuildStamp
+        <BlogIndexFooter
           serializedBuildInfo={page.props.websiteWideBuildInfo}
         />
       }

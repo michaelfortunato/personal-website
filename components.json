@@ -3,6 +3,7 @@
   "style": "default",
   "rsc": true,
   "tsx": true,
+  "iconLibrary": "lucide",
   "tailwind": {
     "config": "tailwind.config.js",
     "css": "styles/globals.css",

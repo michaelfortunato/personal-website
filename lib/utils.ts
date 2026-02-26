@@ -46,7 +46,7 @@ export const unwrap = <T>(o: Option<T>): T => {
 };
 
 /**
- * NOTE: This was AI Generated.
+ * NOTE: This documentation is AI Generated.
  *
  * WARN: If you give a string that looks like a number 
  * (specifically the numbers of ms since unix birth), we will not parse it.
