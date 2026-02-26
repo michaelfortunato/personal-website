@@ -19,7 +19,7 @@ type BlogSettingsContextValue = {
 const BLOG_SETTINGS_STORAGE_KEY = "blog-settings-v1";
 
 const defaultBlogSettings: BlogSettings = {
-  showCommitInformation: true,
+  showCommitInformation: false,
 };
 
 const BlogSettingsContext = createContext<BlogSettingsContextValue | null>(
