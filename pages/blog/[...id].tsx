@@ -148,7 +148,6 @@ const Page: NextPageWithLayout<GetStaticPropsResult> = ({
       <div className="flex flex-col gap-4 ">
         <Header {...post.metadata} />
         <div
-          // className={`${blogBodyFont.className}`}
           className="typst-content"
           dangerouslySetInnerHTML={{ __html: post.content.body }}
         ></div>

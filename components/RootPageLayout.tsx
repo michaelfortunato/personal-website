@@ -46,10 +46,12 @@ export default function RootPageLayout({
   return (
     <div>
       <Navbar routes={pageConfigs} />
-      <div className="absolute min-h-screen min-w-full bg-background transition duration-1000">
+      <div className="flex min-h-screen min-w-full flex-col bg-background transition duration-1000">
         {children}
-        <div className="absolute bottom-0 left-0 w-full text-xs">
-          <BuildStamp serializedBuildInfo={serializedBuildInfo} />
+        <div className="flex-grow flex flex-col justify-end">
+          <footer className="mt-auto w-full text-xs">
+            <BuildStamp serializedBuildInfo={serializedBuildInfo} />
+          </footer>
         </div>
       </div>
       <Toaster />
